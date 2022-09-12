@@ -1,0 +1,579 @@
+//. 初期設定
+//debuginfo 2;
+#time_start = tickcount;
+call dbginfo "開始", getarg(0), getarg(1);
+call prep_dlls;
+
+$fn_ini = currentmacrodirectory + "\\cmdp.ini";	//iniファイル
+$fn_tool_mac = currentmacrodirectory + "\\tool.mac"; //- tool.mac
+$fn_tool2_mac = currentmacrodirectory + "\\tool2.mac"; //- tool.mac
+$arg_separator = " ;:";	//コマンド名・コマンド引数のセパレータ（一文字、複数種）
+$capt_separator = "  #";	//- キャプション用セパレータ
+
+//.. 呼び出したプログラム
+/*
+h: 秀丸エディタ
+e: メールエディタ
+m: メールメインウインドウ
+*/
+$win_type = "h";
+if ( (platform & 0x00800000) != 0 ) {
+	loaddll "TKInfo.dll";
+	if( dllfunc( "IsHidemaruMailMain" ) || dllfunc( "IsHidemaruMailGrep" ) )
+		$win_type = "m";
+	else
+		$win_type = "e";
+}
+//call dbginfo "window: " + $win_type;
+//call time_log "init";
+
+//. マクロ起動時の引数でコマンドを受け取った？
+$cmd_line = getarg(0);
+if ( $cmd_line != "" ) {
+	call dbginfo "マクロ引数", $cmd_line;
+	goto command;
+} else {
+	goto inputd
+}
+
+//. inputd - (コマンドランチャ風入力ボックス)
+inputd:
+	call get_all_section;
+
+//.. コマンドリストから候補リスト
+	#idx = -1;
+	$item_set = "";
+	while ( true ) {
+		#idx = #idx + 1;
+		$cmd_name = $all_cmd[ #idx ];
+		if ( $cmd_name == "" ) break;
+		$capt = $all_capt[ #idx ];
+
+		call tobe_hidden $all_cmd_orig[ #idx ];
+		if ( ##return ) continue;
+
+		if ( $group_name != "" ) {
+			//- グループモード
+			if ( $cmd_name == $group_name || strstr( $cmd_name, $group_name ) != 0 ) continue;
+			$cmd_name = midstr( $cmd_name, strlen( $group_name ) );
+		} else {
+			//- hidden
+			if ( getinistr( $fn_ini, $cmd_name, "hidden" ) != "" ) continue;
+		}
+		//- キャプション付加
+		$c = "";
+		if ( $capt != "" )
+			$c = $capt_separator + $capt;
+		$item_set = $item_set + $cmd_name + $c + ",";
+	}
+	
+//.. コマンドパレット実行
+	if ( $item_set == "" )
+		$item_set = "  # no item";
+	
+	#ime_state = imestate;
+	if ( #ime_state ) imeswitch;
+	loaddll $macrodll;
+	$cmdp_title = "秀丸エディタ コマンドパレット";
+	if ( $win_type != "h" )
+		$cmdp_title = "秀丸メール コマンドパレット";
+	if ( $group_caption != "" )
+		$cmdp_title = $group_caption;
+	call time_log "command list";
+
+	$cmd_line = dllfuncstr(
+		"EDIT_CREATE",
+		hidemaruhandle(0),
+		$item_set,
+		$cmdp_title
+	);
+	freedll;
+	if ( #ime_state != imestate ) imeswitch;
+	if ( $cmd_line == "" ) goto end;
+	if ( $group_name != "" )
+		$cmd_line = $group_name + $cmd_line;
+	
+//.. キャプション削除
+	//- [コマンド名]$capt_separator[キャプション]";"[コマンド引数] の並びと判断
+	call split $cmd_line, $capt_separator;
+	if ( $split_r != "" ) {
+		$cmd_line = $split_l;
+		call split $split_r, ";";
+		if ( $split_r != "" )
+			$cmd_line = $cmd_line + " " +$split_r;
+	}
+goto command;
+
+//. コマンド解釈
+command:
+	call dbginfo "cmd_line", $cmd_line;
+
+//.. 「コマンド名」 と 「引数」にわける
+	call split2 $cmd_line, $arg_separator;
+	loaddll $httools;
+	$cmd_name = dllfuncstr( "Trim", $split_l );
+	$cmd_arg  = dllfuncstr( "Trim", $split_r );
+	call dbginfo "\"" +$cmd_name + "\" \"" + $cmd_arg + "\"";
+	if ( getarg(1) != "" ) //- 引数の上書き（使いみちあるか？）
+		$cmd_arg = getarg(1);
+
+//.. エイリアス (コマンドの別名処理)
+	if ( $alias == "" ) { //- 多重処理しない
+		$alias = getinistr( $fn_ini, "_alias", $cmd_name );
+		if ( $alias != "" ) {
+			call dbginfo "エイリアス", $cmd_name + " => " + $alias;
+			$cmd_line = $alias;
+			if ( $cmd_arg != "" )
+				$cmd_line = $alias + " " + $cmd_arg;
+			goto command;
+		}
+	}
+//.. iniのアイテム
+	$mac_cmd	= getinistr( $fn_ini, $cmd_name, "mac_cmd" );
+	$mac  		= getinistr( $fn_ini, $cmd_name, "mac" );
+	$open 		= getinistr( $fn_ini, $cmd_name, "open" );
+	$tool 		= getinistr( $fn_ini, $cmd_name, "tool" );
+	$tool2 		= getinistr( $fn_ini, $cmd_name, "tool2" );
+	$arg		= getinistr( $fn_ini, $cmd_name, "arg" );
+	$menu		= getinistr( $fn_ini, $cmd_name, "menu" );
+	call get_capt $cmd_name; //- >$capt
+
+	if ( $arg == "-" ) $arg = $cmd_name;
+	if ( $mac_cmd	!= "" ) goto macro_command;
+	if ( $mac 		!= "" ) goto exec_mac;
+	if ( $open		!= "" ) goto open;
+	if ( $tool		!= "" ) goto tool;
+	if ( $tool2		!= "" ) goto tool2;
+	if ( $menu		!= "" ) goto make_menu;
+	if ( rightstr( $cmd_name, 1 ) == "/" ) goto group_item;
+	if ( strstr( $cmd_name, "menu/" ) == 0 ) goto group_menu;
+
+//.. 未登録コマンド
+//... そういうtoolがある？
+	call read_all_text $fn_tool_mac;
+	if ( strstr( $$return, "\n" + $cmd_name + ":" ) > -1 ) {
+		call dbginfo "tool発見";
+		if ( $arg == "" ) {
+			execmacro $fn_tool_mac, $cmd_name, $cmd_arg;
+		} else {
+			execmacro $fn_tool_mac, $cmd_name, $arg, $cmd_arg;
+		}
+		goto end;
+	}
+	$$return = "";
+//	call time_log "tool scan end";
+
+//... そういう名前のマクロがある？
+	call findmac $cmd_name;
+	if ( $$return != "" ) {
+		call dbginfo "マクロ発見", $$return;
+		execmacro $$return, $cmd_arg;
+		goto end;
+	}
+//	call time_log "mac scan end";
+
+//... 先頭文字列がエイリアスにマッチ
+	loaddll $httools;
+	#_ = dllfunc( "ReadSectionKeys", $fn_ini, "_alias_head" );
+	while (1) {
+		$key = dllfuncstr( "GetIniKey" );
+		if ( $key == "" ) break;
+		if ( strstr( $cmd_line, $key ) != 0 ) {
+			#n = dllfunc( "NextKey" );
+			continue;
+		}
+		call dbginfo "先頭文字列マッチ", $key;
+
+		$cmd_line = getinistr( $fn_ini, "_alias_head", $key ) + " "
+			+ midstr( $cmd_line, strlen( $key ) );
+		goto command;
+	}
+
+//.. エラー表示して終了
+	message "不明なコマンド: " + $cmd_line, $cmdp_title;
+goto end;
+
+//. コマンド実行 
+//.. マクロコマンド
+macro_command:
+	$arg = $cmd_arg;
+	if ( $mac_cmd == "-" )
+		$mac_cmd = $cmd_name;
+	eval $mac_cmd;
+goto end;
+
+//.. マクロファイル実行
+exec_mac:
+	if ( $mac == "-" )
+		$mac = $cmd_name;
+	call findmac $mac;
+	if ( $$return == "" ) {
+		message "マクロファイルが見つかりません\n" + $mac, $cmdp_title;;
+		goto end;
+	}
+	call dbginfo "mac file: " + $$return;
+	if ( $arg == "" ) {
+		execmacro $$return, $cmd_arg;
+	} else {
+		execmacro $$return, $arg, $cmd_arg;
+	}
+goto end;
+
+//.. シェルで開く
+open:
+	if ( strstr( $open, "%arg%" ) != -1 ) {
+		if ( $cmd_arg == "" )
+			$cmd_arg = gettext( seltopx, seltopy, selendx, selendy );
+//		$open = strreplace( $open, "%arg%", $cmd_arg ); //- 秀丸メールにはまだない
+		loaddll "hmjre.dll";
+		$open = dllfuncstr( "ReplaceRegular", "%arg%", $open, 0, $cmd_arg, 1 );
+	}
+
+	openbyshell $open;
+	if ( result ) goto end;
+	run $open;
+goto end;
+
+//.. tool
+tool:
+	if ( $tool == "-" )
+		$tool = $cmd_name;
+	if ( $arg == "" ) {
+		execmacro $fn_tool_mac, $tool, $cmd_arg;
+	} else {
+		execmacro $fn_tool_mac, $tool, $arg, $cmd_arg;
+	}
+goto end;
+
+//.. tool2
+tool2:
+	if ( $tool2 == "-" )
+		$tool2 = $cmd_name;
+	if ( $arg == "" ) {
+		execmacro $fn_tool2_mac, $tool2, $cmd_arg;
+	} else {
+		execmacro $fn_tool2_mac, $tool2, $arg, $cmd_arg;
+	}
+goto end;
+
+
+//.. menu
+make_menu:
+	#idx_menuitem = 0;
+	//- captがあれば、メニュー名とする
+	if ( $capt != "" ) {
+		$cmd_set[0] = $cmd_name;
+		$item_set[0] = "--- " + $capt + " ---";
+		$item_set[1] = "\x01";
+		#idx_menuitem = 2;
+	}
+
+	//- アイテム収集
+	while ( $menu != "" ) {
+		call get_left_term $menu; //- 秀丸メール（正式）はまだrefcallが使えない
+		$cmd = $$return;
+		$menu = $rest;
+
+		loaddll $httools;
+		$cmd = dllfuncstr( "Trim", $cmd );
+		if ( $cmd == "" ) continue;
+
+		call tobe_hidden $cmd;
+		if ( ##return ) continue;
+		$cmd_set[ #idx_menuitem ] = $cmd;
+
+		//- キャプション取得
+		call get_capt $cmd; //- >$capt
+		if ( $capt == "" ) $capt = $cmd;
+
+		//- アクセスキーが登録されていれば追加
+		$key = getinistr( $fn_ini, $cmd, "key" );
+		if ( $key == "" ) {
+			loaddll "hmjre.dll";
+			$key = leftstr( dllfuncstr( "ReplaceRegular", "^.*/", $cmd, 0, "", 1 ), 1 );
+		}
+		$capt = $capt + "\t&" + toupper( $key );
+		$item_set[ #idx_menuitem ] = $capt;
+		#idx_menuitem = #idx_menuitem + 1;
+	}
+
+	//- 実行
+	menuarray $item_set, #idx_menuitem;
+	#sel = result - 1;
+	if ( $cmd_set[ #sel ] != "" ) {
+		$cmd_line = $cmd_set[ #sel ];
+		goto command:
+	}
+goto end;
+
+//.. グループ => メニュー
+group_menu:
+	call get_all_section;
+	$group = midstr( $cmd_name, 5 ) + "/";
+	$menu = "";
+	#idx = 0;
+	while (true) {
+		$cmd = $all_cmd[ #idx ];
+		if ( $cmd == "" ) break;
+		#idx = #idx + 1;
+		if ( $cmd == $group || strstr( $cmd, $group ) != 0 ) continue;
+		$menu = $menu + $cmd + " ";
+	}
+
+	call get_capt $group; //- >$capt	
+	if ( $capt != "" )
+		$capt = $capt + " メニュー";
+	goto make_menu;
+
+//.. グループアイテム
+group_item:
+	$group_name = $cmd_name;
+	$group_caption = $group_name;
+	call get_capt $cmd_name; //- >$capt
+	if ( $capt != "" )
+		$group_caption = $group_caption + " - " + $capt; 
+goto inputd;
+
+//. 終了処理
+end:
+freedll;
+endmacro;
+
+//. サブルーチン
+//.. read_all_section
+get_all_section:
+	if ( $all_cmd[0] != "" ) return;
+	loaddll $httools; 
+	##n = dllfunc( "ReadSectionNames", $fn_ini );
+	##num = 0;
+	while (1) {
+		$section = dllfuncstr( "GetSection" );
+		if ( leftstr( $section, 1 ) != "_" && $section != "" ) {
+			$all_cmd[ ##num ] = $section;
+			$all_cmd_orig[ ##num ] = $section;
+			call get_capt $section; //- >$capt
+			$all_capt[ ##num ] = $capt;
+			##num = ##num + 1;
+
+			//- グループメニュー
+			if ( rightstr( $section, 1 ) == "/" ) {
+				$section_menu = "menu/" + leftstr( $section, strlen( $section ) - 1 );
+				//- 作ってあったら上書きしない
+				if ( dllfunc( "ExistSection", $section_menu ) == -1 ) {
+					$all_cmd[ ##num ] = $section_menu;
+					$all_cmd_orig[ ##num ] = $section;
+					$all_capt[ ##num ] = $capt + " メニュー";
+					##num = ##num + 1;
+				}
+			}
+		}
+		if ( ! dllfunc( "NextSection" ) ) break;
+	}
+	call dbginfo "コマンド数: " + str( ##num );
+return;
+
+//.. tobe_hidden
+tobe_hidden:
+	//- 特定の拡張子のみ？
+	$ext = getinistr( $fn_ini, $$1, "ext" );
+	if ( $ext != "" && strstr( $ext, filetype ) == -1 )
+		return true;
+
+	//- プログラムが条件に合うか？
+	$window = getinistr( $fn_ini, $$1, "window" );
+	if ( $window == "" ) return false;
+
+	if ( $window == "mail" )//- mail_editr mail_main はOK
+		$window = "e m";
+	else if ( $window == "editor" )//- editor mail_editor はOK
+		$window = "h e";
+	return strstr( $window, $win_type ) == -1;
+
+//.. get_capt
+get_capt:
+	$capt = getinistr( $fn_ini, $$1, "capt" );
+	if ( strstr( $capt, "$capt" ) == 0 ) eval $capt;
+return;
+
+//.. findmac
+//- $$1 ファイル名 $$2 拡張子 (デフォ: mac)
+findmac:
+	$mac = $$1;
+	$ext = $$2;
+	if ( $ext == "" )
+		$ext = "mac";
+	$mac_ex = $mac + "." + $ext;
+	$fn[0] = macrodir + "\\" + $mac + "\\" + $mac;
+	$fn[1] = macrodir + "\\" + $mac + "\\" + $mac_ex;
+	$fn[2] = macrodir + "\\" + $mac;
+	$fn[3] = macrodir + "\\" + $mac_ex;
+	$fn[4] = currentmacrodirectory + "\\" + $mac;
+	$fn[5] = currentmacrodirectory + "\\" + $mac_ex;
+	#i = 0;
+	while(1){
+		if ( $fn[#i] == "" ) break;
+//		call dbginfo $fn[#i];
+		if ( existfile( $fn[#i] ) ) return $fn[#i];
+		#i = #i + 1;
+	}
+return;
+
+//. 共通サブルーチンライブラリ ==============
+//- @共通ライブラリ編集{commonfunc:edit}
+//- @共通ライブラリ挿入{commonfunc}
+
+//.. prep_dlls
+prep_dlls:
+	call dll_path "ht_tools";
+	$httools = $$return;
+	call dll_path "macrodll";
+	$macrodll = $$return;
+return;
+
+//.. dll_path
+dll_path:
+	$$fn = getinistr( $fn_ini, "_config", "path_" + $$1 );
+	if ( $$fn == "" ) {
+		$$bit = "32";
+		if ( platform & 0x00080000 )
+			$$bit = "64";
+		$$fn = currentmacrodirectory + "\\" + $$1 + "-" + $$bit + ".dll";
+	}
+	if ( ! existfile( $$fn ) ) {
+		message "DLLファイルが見つかりません\n" + $$fn, "マクロ共通ライブラリ";
+		endmacro;
+	}
+//	call dbginfo $$1 + " - DLLパス: " + $$fn;
+	return $$fn;
+return;
+
+//.. read_all_text
+read_all_text:
+	return member( member(
+		createobject("Scripting.FileSystemObject") ,
+		"OpenTextFile", $$1
+	), "ReadAll" );
+
+//.. env_expand
+env_expand:
+	$$1 = member(
+		createobject("Scripting.FileSystemObject") ,
+		"ExpandEnvironmentStrings", $$1
+	);
+return;
+
+//.. split: 文字列分割
+//- $$1 heystac, $$2 needle
+split:
+	##num = strstr( $$1, $$2 );
+	if ( ##num == -1 ) {
+		$split_l = $$1;
+		$split_r = "";
+		return;
+	}
+	$split_l = leftstr( $$1, ##num );
+	$split_r = midstr( $$1, ##num + strlen( $$2 ) );
+return;
+
+//.. split2: 文字列分割 複数文字種バージョン
+//- {tool_test hello world}{menu/edit
+split2:
+	$$repto = leftstr( $$2, 1 );
+	loaddll "hmjre.dll";
+	##num = strstr( 
+		dllfuncstr( "ReplaceRegular", "[" + $$2 + "]", $$1, 0, $$repto, 1 ) ,
+		$$repto
+	);
+	if ( ##num == -1 ) {
+		$split_l = $$1;
+		$split_r = "";
+	} else {
+		$split_l = leftstr( $$1, ##num );
+		$split_r = midstr( $$1, ##num + 1 );
+	}
+return;
+
+//.. get_left_term: 前から順に取り出す デフォルト空白区切り
+//- $$1 heystac, $$2 needle
+get_left_term:
+	$$sep = $$2;
+	if ( $$sep == "" )
+		$$sep = " ";
+	##num = strstr( $$1, $$sep );
+	if ( ##num == -1 ) {
+		//- 最後のterm;
+		$$ret = $$1;
+		$$1 = "";
+	} else {
+		$$ret = leftstr( $$1, ##num );
+		$$1 = midstr( $$1, ##num + strlen( $$sep ) );
+	}
+	$rest = $$1;
+	return $$ret;
+
+//.. trim
+trim:
+	loaddll $httools;
+	$$1 = dllfuncstr( "Trim", $$1 );
+return;
+
+//.. redo_on_mail_main: メールメイン画面じゃなかったら、やりなおし
+redo_on_mail_main:
+	loaddll "TKInfo.dll";
+	if ( result && dllfunc( "IsHidemaruMailMain" ) ) return;
+	openreg "CURRENTUSER", "Software\\Hidemaruo\\TuruKame\\Config";
+	$dn = getregstr( "Turukamedir" );
+	if ( $dn == "" ) {
+		message "秀丸メールが見つかりません";
+		endmacro;
+	}
+	run  $dn + "Turukame.exe"
+		+ " /x " + currentmacrofilename
+		+ " /a " + getarg(0)
+		+ " /a " + getarg(1)
+	;
+	endmacro;
+return;
+
+//.. dbginfo
+dbginfo:
+	if ( $debug_str == "" ) {
+		#debug_mode = getininum(
+			currentmacrodirectory + "\\cmdp.ini",
+			"_config",
+			"debug_mode"
+		);
+		debuginfo #debug_mode;
+		$a[0] = "停止";
+		$a[1] = "出力モニタ";
+		$a[2] = "アウトプット枠";
+		$debug_str = $a[ #debug_mode ];
+	}
+	$msg = "[" + currentmacrobasename + "]";
+	if ( $$1 != "" ) $msg = $msg + " "  + $$1;
+	if ( $$2 != "" ) $msg = $msg + ", " + $$2;
+	if ( $$3 != "" ) $msg = $msg + ", " + $$3;
+	if ( $$4 != "" ) $msg = $msg + ", " + $$4;
+	if ( $$5 != "" ) $msg = $msg + ", " + $$5;
+	if ( $$6 != "" ) $msg = $msg + ", " + $$6;
+	if ( $$7 != "" ) $msg = $msg + ", " + $$7;
+	if ( $$8 != "" ) $msg = $msg + ", " + $$8;
+	if ( $$9 != "" ) $msg = $msg + ", " + $$9;
+	debuginfo $msg + "\x0A";
+
+return;
+
+//.. time_log
+time_log:
+	call dbginfo str( tickcount - #time_start ) + " msec, " + $$1;
+return;
+
+//.. test_msg
+test_msg:
+	question $$1 + "\n「いいえ」で終了";
+	if ( !result ) endmacro;
+return;
+
+dummy:
+
+

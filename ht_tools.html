@@ -1,0 +1,7114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ht_tools.dll Version 1.26.01 Copyright(C) 2002-2021 h-tom</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <style type="text/css">
+  <!--
+  body {
+    margin : 2em ;
+  }
+
+  dd > code {
+    color : black ;
+    border-style : double ;
+    padding : 0.5ex ;
+  }
+
+
+  em {
+    color : red ;
+    padding : 0.5em 0.5em ;
+    font-style : normal ;
+    font-weight : bold ;
+  }
+
+  h1 {
+    color : Blue ;
+    font-style : oblique ;
+    border-color : red ;
+    border-style : solid ;
+    text-indent : 2ex ;
+  }
+
+  h2 {
+    text-indent : 3ex ;
+    font-weight : bold ;
+    border-style : double ;
+    border-color : red ;
+  }
+
+  h3 {
+    text-indent : 4ex ;
+    border-color : red ;
+    border-left-style : double ;
+    border-left-width : 4px ;
+    border-bottom-style : double ;
+    border-bottom-width : 4px ;
+    background-color : LavenderBlush ;
+  }
+
+  h4 {
+    border-color : red ;
+    text-indent : 5ex ;
+    border-bottom-style : solid ;
+    border-bottom-width : thin ;
+    border-left-style : solid ;
+    border-left-width : 3px ;
+    color : Black ;
+    background-color : LightCyan ;
+  }
+
+  h5 {
+    border-color : red ;
+    text-indent : 5ex ;
+    border-left-style : solid ;
+    border-left-width : 3px ;
+    background-color : LightSteelBlue ;
+  }
+
+  td {
+    padding-right : 0.5em ;
+    padding-left : 0.5em ;
+  }
+
+  dd {
+    padding-left : 1em ;
+  }
+
+  .attention1 {
+    color : red ;
+  }
+
+
+  .attention2 {
+    color : red ;
+    font-weight : bold ;
+  }
+
+  .attention3 {
+    color : red ;
+    background : yellow ;
+    padding-right : 0.25em ;
+    padding-left : 0.25em ;
+  }
+
+  .attention4 {
+    color : red ;
+    font-weight : bold ;
+    background : yellow ;
+  }
+
+  .macro {
+    background-color : Ivory ;
+    color : Black ;
+    border-style : solid ;
+    border-width : 1px 3px 3px 1px ;
+    padding : 1px ;
+    margin : 0.5em ;
+    max-width     : 80em;
+    overflow      : auto;
+    margin-top    : 2px;
+    margin-bottom : 2px;
+  }
+
+  pre {
+    background-color : Ivory ;
+    color : Black ;
+    border-style : solid ;
+    border-width : 1px 3px 3px 1px ;
+    padding : 2px ;
+    max-width     : 80em;
+    overflow      : auto;
+    margin-top    : 2px;
+    margin-bottom : 2px;
+  }
+
+  -->
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ht_tools.dll Version 1.26.01 Copyright(C) 2002-2021 h-tom</h1>
+</header>
+<h2 id="contents">目次</h2>
+<ul>
+<li><a href="#start">はじめに</a></li>
+<li><a href="#environment">動作環境</a></li>
+<li><a href="#instruction">ファイルの説明</a></li>
+<li><a href="#Install_uninstall">インストール・アンインストール</a></li>
+<li><a href="#function_summary">機能概要</a></li>
+<li><a href="#function">関数の説明</a></li>
+<li><a href="#attention">使用上の注意</a></li>
+<li><a href="#memo">メモ</a></li>
+<li><a href="#history">履　歴</a></li>
+<li><a href="#exemption">その他・免責事項</a></li>
+<li><a href="#thanks">謝　辞</a></li>
+<li><a href="#copyright">著作権・配布規定等</a></li>
+</ul>
+<h2 id="start">はじめに</h2>
+<p>秀丸エディタ/秀丸メールで使用するマクロ拡張用DLLです。 マクロで（簡単には）実現できない（事もない？）各種機能(?)を提供します。<br />
+(まぁ、大半は単なるWindows APIのラッパー(?)ですが・・・)</p>
+<p>無保証です。</p>
+<h3 id="environment">動作環境</h3>
+<p>秀丸エディタが必要です。秀丸メールでも動作します。 秀丸エディタはDLLをサポートしたVersion3.02以降、なるべく最新版を使用してください。 unicode版の関数を呼び出す(dllfuncw、dllfuncstrwを使用する)には、秀丸エディタVer.8以降が必要です。</p>
+<p>以下の環境で動作確認しています。</p>
+<ul>
+<li>32bit版は、Windows 10</li>
+<li>64bit版は、Windows 10</li>
+</ul>
+<p>nkf関連のコマンドを使用する場合はnkf32.dllが必要です。 nkd32.dllは<a href="http://hp.vector.co.jp/authors/VA002133/">Ver.1系</a>、 <a href="http://hp.vector.co.jp/authors/VA007219/">Ver.2.0.5以降</a> があります。</p>
+<p>mecab関連のコマンドを使用する場合は、mecabのインストールが必要です。 <a href="http://taku910.github.io/mecab/">MeCab: Yet Another Part-of-Speech and Morphological Analyzer</a>から入手して下さい。</p>
+<p>64bit版は公式なものではありませんが、以下にあります。<br />
+<a href="https://github.com/ikegami-yukino/mecab">GitHub - ikegami-yukino/mecab</a></p>
+<p>hunspell関連のコマンドを使用する場合は、libhunspell.dll と 辞書ファイルが必要です。 (Version 1.24.00β4 から、libhunspell.dll は Ver.1.7.0 が必要です)</p>
+<ul>
+<li>辞書ファイルの入手先
+<ul>
+<li><a href="https://addons.mozilla.org/en-US/firefox/language-tools/">Dictionaries and Language Packs - Add-ons for Firefox</a></li>
+<li><a href="https://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">Apache OpenOffice Extensions</a></li>
+</ul></li>
+</ul>
+<p>64bit版の場合、64bit版の、nkf、mecabが必要になります。 libhunspell.dllは、改造版に64bit版が含まれます。</p>
+<p>EditorConfig に関しては<a href="https://editorconfig.org/">EditorConfig</a>を参照してください。</p>
+<p><a href="#contents">page top</a></p>
+<h3 id="instruction">ファイルの説明</h3>
+<p>圧縮ファイル内に以下のファイルが格納されています。 (フォルダ構造を保ったまま展開してください。)</p>
+<pre><code>ht_tools.dll              ：32bit DLL
+ht_tools.html             ：説明ファイル
+ht_tools_dictionary.txt   ：hmonig.dllマクロ用関数の単語補完用辞書ファイル
+HidemaruMacroInstaller.lst：HidemaruMacroInstaller用スクリプト
+x64                       ：フォルダ
+└ht_tools.dll            ：64bit DLL</code></pre>
+<p><a href="#contents">page top</a></p>
+<h3 id="Install_uninstall">インストール・アンインストール</h3>
+<h4 id="Install">インストール</h4>
+<ul>
+<li><p>秀丸エディタで使う場合（秀丸メールをインストールしている場合も含む）</p>
+<p>“ht_tools.dll”を”hidemaru.exe”と同じ場所に置いてください。</p></li>
+<li><p>秀丸メールで使う場合（秀丸エディタをインストールしていない場合）</p>
+<p>“ht_tools.dll”を”turukame.exe”と同じ場所に置いてください。</p></li>
+</ul>
+<h4 id="uninstall">アンストール</h4>
+<p>“ht_tools.dll”と添付の文書(ht_tools.html)を削除するだけです。 レジストリ等は使用していません。</p>
+<p><a href="#contents">page top</a></p>
+<h3 id="function_summary">機能概要</h3>
+<p>以下の関数が実装されています。詳細は各関数の解説を参照。</p>
+<p><a href="#window">Window関連</a></p>
+<ul>
+<li><p><a href="#topwindow">TopWindow</a><br />
+任意のウィンドウを最前面ウィンドウに設定・解除 。</p></li>
+<li><p><a href="#istopwindow">IsTopWindow</a><br />
+最前面ウィンドウかどうかのチェック。</p></li>
+<li><p><a href="#bottomwindow">BottomWindow</a><br />
+最背面に移動。</p></li>
+<li><p><a href="#searchwindow">SearchWindow</a><br />
+指定されたクラス名、キャプションを持つウィンドウを検索する。</p></li>
+<li><p><a href="#nextwindowhandle">NextWindowHandle</a><br />
+検索したウィンドウハンドルを返す。</p></li>
+<li><p><a href="#getwindowcount">GetWindowCount</a><br />
+検索したウィンドウハンドルを読み出していない数を返す。</p></li>
+<li><p><a href="#getsearchwindowcount">GetSearchWindowCount</a><br />
+検索したウィンドウの数を返す。</p></li>
+<li><p><a href="#activewindow">ActiveWindow</a><br />
+指定されたWindowをアクティブにする。</p></li>
+<li><p><a href="#getactivewindowhandle">GetActiveWindowHandle</a><br />
+アクティブなウィンドウのハンドルを取得。</p></li>
+<li><p><a href="#getwindowclass">GetWindowClass</a><br />
+指定されたWindowのクラス名を取得する。</p></li>
+<li><p><a href="#getwindowcaption">GetWindowCaption</a><br />
+指定されたWindowのキャプションを取得する。</p></li>
+<li><p><a href="#getwindowstate">GetWindowState</a><br />
+指定されたWindowの表示状態を取得</p></li>
+<li><p><a href="#setwindowstate">SetWindowState</a><br />
+指定されたWindowの表示状態を設定</p></li>
+<li><p><a href="#nextwindow">NextWindow</a><br />
+一つ下のWindowハンドルを取得。</p></li>
+<li><p><a href="#nextactivewindow">NextActiveWindow</a><br />
+一つ下のWindowをアクティブにする。</p></li>
+<li><p><a href="#findwindow">FINDWINDOW</a><br />
+指定されたクラス名、キャプションを持つWindowの検索</p></li>
+<li><p><a href="#getancestorwindow">GetAncestorWindow</a><br />
+指定されたウィンドウの、親ウィドウのウィンドウハンドルを取得する。</p></li>
+<li><p><a href="#getwindowrect_top">GetWindowRect_Top</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Top)</p></li>
+<li><p><a href="#getwindowrect_bottom">GetWindowRect_Bottom</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Bottom)</p></li>
+<li><p><a href="#getwindowrect_left">GetWindowRect_Left</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Left)</p></li>
+<li><p><a href="#getwindowrect_right">GetWindowRect_Right</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Right)</p></li>
+<li><p><a href="#screentoclient_x">ScreenToClient_X</a><br />
+スクリーン座標から、指定されたウィンドウのクライアント座標に変換(X)</p></li>
+<li><p><a href="#screentoclient_y">ScreenToClient_Y</a><br />
+スクリーン座標から、指定されたウィンドウのクライアント座標に変換(Y)</p></li>
+<li><p><a href="#movewindow">MOVEWINDOW</a><br />
+指定されたウィンドウの位置とサイズを指定する。</p></li>
+<li><p><a href="#dwmgetwindowrect_top">DwmGetWindowRect_Top</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Top)<br />
+DWM(Desktop Window Manager)対応版</p></li>
+<li><p><a href="#dwmgetwindowrect_bottom">DwmGetWindowRect_Bottom</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Bottom) DWM(Desktop Window Manager)対応版</p></li>
+<li><p><a href="#dwmgetwindowrect_left">DwmGetWindowRect_Left</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Left) DWM(Desktop Window Manager)対応版</p></li>
+<li><p><a href="#dwmgetwindowrect_right">DwmGetWindowRect_Right</a><br />
+指定されたウィンドウの、スクリーン座標を返す。(Right) DWM(Desktop Window Manager)対応版</p></li>
+<li><p><a href="#dwmgetwindowrectall">DwmGetWindowRectAll</a>　<em>Unicode関数</em><br />
+指定されたウィンドウの、スクリーン座標を返す。 DWM(Desktop Window Manager)対応版</p></li>
+<li><p><a href="#getwindowrectall">GetWindowRectAll</a>　<em>Unicode関数</em><br />
+指定されたウィンドウの、スクリーン座標を返す。</p></li>
+<li><p><a href="#dwmmovewindow">DwmMoveWindow</a><br />
+指定されたウィンドウの位置とサイズを指定する。</p></li>
+</ul>
+<p><a href="#etc">その他</a></p>
+<ul>
+<li><p><a href="#getdllversion">GetDllVersion</a><br />
+バージョン情報の取得(数字)。</p></li>
+<li><p><a href="#getdllversionstr">GetDllVersionStr</a><br />
+バージョン情報の取得(文字列)。</p></li>
+<li><p><a href="#wait">Wait</a><br />
+指定された時間待機する。</p></li>
+<li><p><a href="#urlexchange">URLExchange</a><br />
+URL文字列の変換。</p></li>
+<li><p><a href="#urlencode">UrlEncode</a><br />
+文字列をURLに渡せる形式でエンコードして返す。</p></li>
+<li><p><a href="#urlencodew">UrlEncodeW</a>　<em>Unicode関数</em><br />
+文字列をUTF-8に変換し、URLに渡せる形式でエンコードして返す。</p></li>
+<li><p><a href="#urldecode">UrlDecode</a><br />
+URL向けにエンコードされた文字列をデコードして返す。</p></li>
+<li><p><a href="#timeformat">TimeFormat</a><br />
+書式に従って時刻を文字列で返す。</p></li>
+<li><p><a href="#settime">SetTime</a><br />
+TimeFormatで使用する日時をセットする。</p></li>
+<li><p><a href="#resettime">ResetTime</a><br />
+TimeFormatで使用する日時をりセットする。</p></li>
+<li><p><a href="#numstringtokanji">NumStringToKanji</a><br />
+数字（文字列）を漢数字または漢字表記に変換。</p></li>
+<li><p><a href="#numtokanji">NumToKanji</a><br />
+数字を漢数字または漢字表記に変換。</p></li>
+<li><p><a href="#getstdout">GetStdout</a><br />
+標準出力を取り込む。</p></li>
+<li><p><a href="#getexitcode">GetExitCode</a><br />
+GetStdout関数で実行したプログラムのリターンコードを取得。</p></li>
+<li><p><a href="#openhtmlhelp">OpenHtmlHelp</a><br />
+htmlhelp(*.chm)ファイルを開く</p></li>
+<li><p><a href="#runsync">RUNSYNC</a><br />
+指定したプログラムの実行。</p></li>
+<li><p><a href="#sendkeypress">SendKeyPress</a><br />
+キーの送信</p></li>
+<li><p><a href="#getclipboardownerhandle">GetClipboardOwnerHandle</a><br />
+現在クリップボードを所有しているウィンドウのハンドルを取得。</p></li>
+<li><p><a href="#getclipboarddsptext">GetClipboardDSPTEXT</a><br />
+現在クリップボードから”CF_DSPTEXT”形式のデータを取り出す。</p></li>
+</ul>
+<p><a href="#filename">ファイル名操作・ファイル関連</a></p>
+<ul>
+<li><p><a href="#getchangefileext">GetChangeFileExt</a><br />
+拡張子を変更したファイル名を返す。</p></li>
+<li><p><a href="#getfilename">GetFileName</a><br />
+ファイルパスからファイル名を返す。</p></li>
+<li><p><a href="#getparentfolder">GetParentFolder</a><br />
+ファイルパスからフォルダ名を返す。</p></li>
+<li><p><a href="#ismatchfilename">IsMatchFileName</a><br />
+ファイル名がワイルドカードとマッチするかどうかを返す。</p></li>
+<li><p><a href="#getfileextention">GetFileExtention</a><br />
+ファイルパスから拡張子を返す。</p></li>
+<li><p><a href="#getfilebasename">GetFileBaseName</a><br />
+ファイルパスからファイル名（拡張子なし）を返す。</p></li>
+<li><p><a href="#getshortname">GetShortName</a><br />
+ファイルパスを短い名前にして返す。</p></li>
+<li><p><a href="#getlongname">GetLongName</a><br />
+短いファイルパスを長いファイルパスにして返す。</p></li>
+<li><p><a href="#getexpandpath">GetExpandPath</a><br />
+相対パスを展開する。</p></li>
+<li><p><a href="#getfilenamefromhwnd">GetFileNameFromHwnd</a><br />
+ウィンドウハンドルから、実行ファイル名を取得する。</p></li>
+<li><p><a href="#getcompactpath">GetCompactPath</a><br />
+ファイル名を指定の文字数に収まるように省略して返す。</p></li>
+<li><p><a href="#getspecialfolder">GetSpecialFolder</a><br />
+特殊なフォルダーの位置を返す。</p></li>
+<li><p><a href="#getfilesizebyte">GetFileSizeByte</a><br />
+ファイルサイズを取得。</p></li>
+<li><p><a href="#getfilesizestr">GetFileSizeStr</a><br />
+ファイルサイズを文字列で取得。</p></li>
+<li><p><a href="#getunitstr">GetUnitStr</a><br />
+ファイルサイズの単位を取得。</p></li>
+<li><p><a href="#getsizestr">GetSizeStr</a><br />
+ファイルサイズを文字列で取得。</p></li>
+<li><p><a href="#getfileattr">GetFileAttr</a><br />
+ファイルの属性を取得</p></li>
+<li><p><a href="#isdirectory">IsDirectory</a><br />
+ディレクトリかどうかのチェック</p></li>
+<li><p><a href="#isfile">IsFile</a><br />
+ファイルかどうかのチェック</p></li>
+<li><p><a href="#isrelativepath">IsRelativePath</a><br />
+相対パスかどうかのチェック</p></li>
+<li><p><a href="#getrelativepathto">GetRelativePathTo</a><br />
+相対パスを作成する。</p></li>
+<li><p><a href="#isutf16le">IsUTF16LE</a>　<em>Unicode関数</em><br />
+指定されたファイルのエンコードがUTF-16LEかチェックする。(BOMの確認のみ)</p></li>
+</ul>
+<p><a href="#inifile">iniファイル関連</a></p>
+<ul>
+<li><p><a href="#readsectionkeys">ReadSectionKeys</a>、<a href="#readsectionkeysw">ReadSectionKeysW</a><br />
+iniファイルからセクションの全データを読み込む</p></li>
+<li><p><a href="#existkey">ExistKey</a>、<a href="#existkeyw">ExistKeyW</a><br />
+読み込んだデータ内にキーが存在するかどうか。</p></li>
+<li><p><a href="#getkeyvalue">GetKeyValue</a>、<a href="#getkeyvaluew">GetKeyValueW</a><br />
+読み込んだデータから指定されたキーの値を取り出す。</p></li>
+<li><p><a href="#getinikeydata">GetIniKeyData</a>、<a href="#getinikeydataw">GetIniKeyDataW</a><br />
+読み込まれたセクションからキーと値を取り出す。</p></li>
+<li><p><a href="#getinikey">GetIniKey</a>、<a href="#getinikeyw">GetIniKeyW</a><br />
+読み込まれたセクションからキーを取り出す。</p></li>
+<li><p><a href="#getinikeyvalue">GetIniKeyValue</a>、<a href="#getinikeyvaluew">GetIniKeyValueW</a><br />
+読み込まれたセクションから値を取り出す。</p></li>
+<li><p><a href="#nextkey">NextKey</a>、<a href="#nextkeyw">NextKeyW</a><br />
+セクションから取り出すキーを変更する。</p></li>
+<li><p><a href="#readsectionnames">ReadSectionNames</a>、<a href="#readsectionnamesw">ReadSectionNamesW</a><br />
+iniファイルからセクション名を読み込む</p></li>
+<li><p><a href="#existsection">ExistSection</a>、<a href="#existsectionw">ExistSectionW</a><br />
+読み込んだデータ内にセクションが存在するかどうか。</p></li>
+<li><p><a href="#getsectionname">GetSectionName</a>、<a href="#getsectionnamew">GetSectionNameW</a><br />
+読み込んだデータから指定されたセクションの値を取り出す。</p></li>
+<li><p><a href="#getsection">GetSection</a>、<a href="#getsectionw">GetSectionW</a><br />
+読み込んだデータからセクションの値を取り出す。</p></li>
+<li><p><a href="#nextsection">NextSection</a>、<a href="#nextsectionw">NextSectionW</a><br />
+セクション名を取り出す位置を変更する。</p></li>
+<li><p><a href="#writeinistrw">WriteIniStrW</a>　<em>Unicode関数</em><br />
+iniファイルへデータを書き込む(文字列)</p></li>
+<li><p><a href="#getinistrw">GetIniStrW</a>　<em>Unicode関数</em><br />
+iniファイルからデータを読み込む(文字列)</p></li>
+<li><p><a href="#writeininumw">WriteIniNumW</a>　<em>Unicode関数</em><br />
+iniファイルへデータを書き込む(数値)</p></li>
+<li><p><a href="#getininumw">GetIniNumW</a>　<em>Unicode関数</em><br />
+iniファイルからデータを読み込む(数値)</p></li>
+</ul>
+<p><a href="#file">ファイル操作</a></p>
+<ul>
+<li><p><a href="#fileopen">FileOpen</a><br />
+ファイルを指定されたモードで開きファイル番号を返す。</p></li>
+<li><p><a href="#wrfile">WrFile</a><br />
+ファイルに文字列を書き込む。</p></li>
+<li><p><a href="#wrfileline">WrFileLine</a><br />
+ファイルに文字列を書き込む。</p></li>
+<li><p><a href="#rdfile">RdFile</a><br />
+ファイルパスから１行読み込む。</p></li>
+<li><p><a href="#rdfile2">RdFile2</a><br />
+ファイルパスから１行読み込む。</p></li>
+<li><p><a href="#rdfilebyte">RdFileByte</a><br />
+ファイルパスから指定バイト数読み込む。</p></li>
+<li><p><a href="#fileerror">FileError</a><br />
+ファイル操作時のエラーの有無を返す。</p></li>
+<li><p><a href="#isopen">IsOpen</a><br />
+指定されたファイル番号が開かれているかを返す。</p></li>
+<li><p><a href="#isferror">IsFerror</a><br />
+指定されたファイル番号でエラーが起きているかを返す。</p></li>
+<li><p><a href="#iseof">IsEof</a><br />
+指定されたファイル番号でEOFが起きているかを返す。</p></li>
+<li><p><a href="#fileclose">FileClose</a><br />
+指定されたファイル番号を閉じる。</p></li>
+<li><p><a href="#filedelete">FileDelete</a><br />
+指定されたファイルを削除する。</p></li>
+</ul>
+<p><a href="#string">文字列関連</a></p>
+<ul>
+<li><p><a href="#instr">InStr</a><br />
+開始位置指定付きの文字列検索。</p></li>
+<li><p><a href="#instrex">InStrEx</a><br />
+開始位置指定付きの文字列検索(全角、半角大文字無視の指定可能)。</p></li>
+<li><p><a href="#instrrev">InStrRev</a><br />
+最期に発見した位置を返す文字列検索。</p></li>
+<li><p><a href="#instrrevex">InStrRevEx</a><br />
+最期に発見した位置を返す文字列検索(全角、半角大文字無視の指定可能)。</p></li>
+<li><p><a href="#trimstr">TrimStr</a><br />
+両端にある文字列の削除。</p></li>
+<li><p><a href="#getstrcspn">GetStrCSpn</a><br />
+指定された文字列に一致する最初の位置を返す。</p></li>
+<li><p><a href="#getstrspn">GetStrSpn</a><br />
+指定された文字列に一致しない最初の位置を返す。</p></li>
+<li><p><a href="#insertstr">InsertStr</a><br />
+指定された位置に文字列を挿入。</p></li>
+<li><p><a href="#deletestr">DeleteStr</a><br />
+指定された位置から指定された長さの文字を削除。</p></li>
+<li><p><a href="#centor">Centor</a><br />
+指定した幅で左によせる。</p></li>
+<li><p><a href="#leftjust">LeftJust</a><br />
+指定した幅で左によせる。</p></li>
+<li><p><a href="#rightjust">RightJust</a><br />
+指定した幅で右によせる。</p></li>
+<li><p><a href="#upperstr">UpperStr</a><br />
+大文字へ変換。</p></li>
+<li><p><a href="#lowerstr">LowerStr</a><br />
+小文字へ変換。</p></li>
+<li><p><a href="#ltrim">LTrim</a><br />
+左側にある空白を削除。</p></li>
+<li><p><a href="#rtrim">RTrim</a><br />
+右側にある空白を削除。</p></li>
+<li><p><a href="#trim">Trim</a><br />
+両端にある空白を削除。</p></li>
+<li><p><a href="#string-1">String</a><br />
+連続した文字を作成。</p></li>
+<li><p><a href="#strings">Strings</a><br />
+連続した文字列を作成。</p></li>
+<li><p><a href="#replace">Replace</a><br />
+文字列の置き換え。</p></li>
+<li><p><a href="#setutf8convertstring">SetUTF8ConvertString</a>　<em>Unicode関数</em>　<br />
+UTF-16LEからUTF-8へ変換する</p></li>
+<li><p><a href="#setutf16convertstring">SetUTF16ConvertString</a><br />
+UTF-8からUTF-16LEへ変換する</p></li>
+<li><p><a href="#getresult">GetResult</a><br />
+SetUTF8ConvertStringの結果を取得</p></li>
+<li><p><a href="#getresultw">GetResultW</a>　<em>Unicode関数</em>　<br />
+SetUTF16ConvertStringの結果を取得</p></li>
+</ul>
+<p><a href="#nkf">nkf関連</a></p>
+<ul>
+<li><p><a href="#nkf_load">nkf_load</a><br />
+nkf32.dllをロード。</p></li>
+<li><p><a href="#nkf_free">nkf_free</a><br />
+nkf32.dllをアンロード。</p></li>
+<li><p><a href="#nkf_version">nkf_version</a><br />
+nkf32.dllのバージョン情報の取得。</p></li>
+<li><p><a href="#nkf_exec">nkf_exec</a><br />
+nkfコマンドの実行。</p></li>
+<li><p><a href="#nkf_tohankaku">nkf_tohankaku</a><br />
+半角英数字への変換。</p></li>
+<li><p><a href="#nkf_tozenkakukana">nkf_tozenkakukana</a><br />
+全角カナへの変換。</p></li>
+<li><p><a href="#nkf_tomime">nkf_tomime</a><br />
+mime形式への変換。</p></li>
+<li><p><a href="#nkf_error">nkf_error</a><br />
+nkf32コマンド実行時のエラーコードの取得。</p></li>
+<li><p><a href="#nkf_errormessage">nkf_errormessage</a><br />
+nkf32コマンド実行時のエラーメッセージの取得。</p></li>
+<li><p><a href="#nkf_getkanjicode">nkf_getkanjicode</a><br />
+変換対象の漢字コードを取得。 nkf32.dll Ver.2以降が必要</p></li>
+<li><p><a href="#nkf_fileconvert1">nkf_fileconvert1</a><br />
+ファイルの対象にしたnkfコマンドの実行。（ファイルを書き換える） nkf32.dll Ver.2以降が必要</p></li>
+<li><p><a href="#nkf_fileconvert2">nkf_fileconvert2</a><br />
+ファイルの対象にしたnkfコマンドの実行。（出力ファイルを指定） nkf32.dll Ver.2以降が必要</p></li>
+<li><p><a href="#nkf_getguess">nkf_getguess</a><br />
+変換対象の漢字コードを文字列で取得。 nkf32.dll Ver.2.0.5以降が必要</p></li>
+<li><p><a href="#nkf_getmodulefilename">nkf_getmodulefilename</a><br />
+ロードしたnkf32.dllのフルパスを返す。</p></li>
+</ul>
+<p><a href="#hmjre">hmjre関連</a></p>
+<ul>
+<li><p><a href="#hmjre_version">hmjre_version</a><br />
+hmjre.dllのバージョン情報を取得(文字列)。</p></li>
+<li><p><a href="#hmjre_load">hmjre_load</a><br />
+hmjre.dllをロードする。</p></li>
+<li><p><a href="#hmjre_free">hmjre_free</a><br />
+hmjre.dllを解放する。</p></li>
+<li><p><a href="#hmjre_match">hmjre_match</a><br />
+正規表現を使った検索。</p></li>
+<li><p><a href="#hmjre_match_string">hmjre_match_string</a><br />
+検索でマッチした文字列を取得。</p></li>
+<li><p><a href="#hmjre_match_tag_string">hmjre_match_tag_string</a><br />
+検索でタグにマッチした文字列を取得。</p></li>
+<li><p><a href="#hmjre_match_info">hmjre_match_info</a><br />
+検索でマッチした、位置/長さを返す。</p></li>
+</ul>
+<p><a href="#mecab">mecab関連</a></p>
+<ul>
+<li><p><a href="#mecab_load">mecab_load</a><br />
+mecab(libmecab.dll)をロード。</p></li>
+<li><p><a href="#mecab_free">mecab_free</a><br />
+mecab(libmecab.dll)をアンロード。</p></li>
+<li><p><a href="#mecab_version">mecab_version</a><br />
+mecabのバージョン情報の取得。</p></li>
+<li><p><a href="#mecab-1">mecab</a><br />
+mecabコマンドの実行。</p></li>
+<li><p><a href="#mecab_getyomi">mecab_getyomi</a><br />
+“読み”を取得</p></li>
+<li><p><a href="#mecab_wakati">mecab_wakati</a><br />
+わかち書きの実行</p></li>
+<li><p><a href="#mecab_error">mecab_error</a><br />
+mecabコマンド実行時のエラーコードの取得。</p></li>
+<li><p><a href="#mecab_errormessage">mecab_errormessage</a><br />
+mecabコマンド実行時のエラーメッセージの取得。 (ht_toold.dllのメッセージ)</p></li>
+<li><p><a href="#mecab_getstrerror">mecab_getstrerror</a><br />
+mecabコマンド実行時のエラーメッセージの取得。 (mecabのメッセージ)</p></li>
+<li><p><a href="#mecab_getmodulefilename">mecab_getmodulefilename</a><br />
+ロードしたlibmecab.dllのフルパスを返す。</p></li>
+</ul>
+<p><a href="#hunspell">hunspell関連</a></p>
+<ul>
+<li><p><a href="#hunspell_load">hunspell_load</a><br />
+libhumspell.dllをロード。</p></li>
+<li><p><a href="#hunspell_free">hunspell_free</a><br />
+libhumspell.dllをアンロード。</p></li>
+<li><p><a href="#hunspell_create">hunspell_Create</a><br />
+辞書を指定して、スペルチェッククラスの生成</p></li>
+<li><p><a href="#hunspell_get_dic_encoding">hunspell_Get_Dic_Encoding</a><br />
+読み込んだ辞書のエンコードを返す。</p></li>
+<li><p><a href="#hunspell_spell">hunspell_Spell</a><br />
+スペルチェックを実施。</p></li>
+<li><p><a href="#hunspell_suggest">hunspell_Suggest</a><br />
+Suggestを実行し、候補数を取得。</p></li>
+<li><p><a href="#hunspell_suggestlist">hunspell_SuggestList</a><br />
+Suggestの結果を取得。</p></li>
+<li><p><a href="#hunspell_add">hunspell_Add</a><br />
+語句を辞書に追加する。</p></li>
+<li><p><a href="#hunspell_remove">hunspell_Remove</a><br />
+語句を辞書から削除する。</p></li>
+<li><p><a href="#hunspell_adddictionary">hunspell_AddDictionary</a><br />
+辞書ファイルを追加する。</p></li>
+<li><p><a href="#hunspell_getmodulefilename">hunspell_getmodulefilename</a><br />
+ロードしたlibhumspell.dllのフルパスを返す。</p></li>
+<li><p><a href="#hunspell_errormessage">hunspell_errormessage</a><br />
+hunspellコマンド実行時のエラーメッセージの取得。</p></li>
+<li><p><a href="#hunspell_spellw">hunspell_SpellW</a>　<em>Unicode関数</em>　<br />
+スペルチェックを実施。</p></li>
+<li><p><a href="#hunspell_suggestw">hunspell_SuggestW</a>　<em>Unicode関数</em>　<br />
+Suggestを実行し、候補数を取得。</p></li>
+<li><p><a href="#hunspell_suggestlistw">hunspell_SuggestListW</a>　<em>Unicode関数</em>　<br />
+Suggestの結果を取得。</p></li>
+<li><p><a href="#hunspell_addw">hunspell_AddW</a>　<em>Unicode関数</em>　<br />
+語句を辞書に追加する。</p></li>
+<li><p><a href="#hunspell_removew">hunspell_RemoveW</a>　<em>Unicode関数</em>　<br />
+語句を辞書から削除する。</p></li>
+<li><p><a href="#hunspell_getversion">hunspell_GetVersion</a><br />
+ロードしたlibhumspell.dllのバージョンを文字列で返す。</p></li>
+</ul>
+<p><a href="#editorconfig">EditorConfig関連</a></p>
+<ul>
+<li><p><a href="#editorconfigexecute">EditorConfigExecute</a><br />
+.editorconfigを検索し、適応するプロパティを取得する。</p></li>
+<li><p><a href="#editorconfigexecutew">EditorConfigExecuteW</a>　<em>Unicode関数</em>　<br />
+.editorconfigを検索し、適応するプロパティを取得する。</p></li>
+<li><p><a href="#editorconfigerrormessage">EditorConfigErrorMessage</a><br />
+EditorConfigのエラーメッセージを返す。</p></li>
+<li><p><a href="#editorconfiggetkey">EditorConfigGetKey</a><br />
+EditorConfigExecuteで取得したプロパティの、キー名を返す。</p></li>
+<li><p><a href="#editorconfiggetvalue">EditorConfigGetValue</a><br />
+EditorConfigExecuteで取得したプロパティの、値を返す。</p></li>
+<li><p><a href="#editorconfigclear">EditorConfigClear</a><br />
+EditorConfigExecuteで取得したプロパティの、キー、値を破棄する。</p></li>
+<li><p><a href="#editorconfiggetversionstr">EditorConfigGetVersionStr</a><br />
+使用している”EditorConfig C Core”のバージョン情報を返す。</p></li>
+<li><p><a href="#editorconfiggetpcreversionstr">EditorConfigGetPcreVersionStr</a><br />
+“EditorConfig C Core”で使用しているPCREのバージョン情報を返す。</p></li>
+</ul>
+<p><a href="#contents">page top</a></p>
+<h2 id="function">関数の説明</h2>
+<h3 id="window">Window関連</h3>
+<h4 id="topwindow">TopWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>TopWindow
+</dd>
+<dt>機　能</dt>
+<dd>最前面に設定・解除
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("TopWindow", #handle, #set, #active)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+<dt>#set</dt>
+<dd><p>設定</p>
+<pre><code>1:最前面
+0:最前面解除</code></pre>
+</dd>
+<dt>#active</dt>
+<dd><p>アクティブ設定</p>
+<pre><code>1:アクティブ状態にする
+0:非アクティブ状態する</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功で1、失敗で0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="istopwindow">IsTopWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsTopWindow
+</dd>
+<dt>機　能</dt>
+<dd>最前面ウィンドウのチェック
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsTopWindow", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>最前面ウィンドウなら1、そうでないなら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="bottomwindow">BottomWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>BottomWindow
+</dd>
+<dt>機　能</dt>
+<dd>最背面に移動
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("BottomWindow", #handle, #active)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+<dt>#active</dt>
+<dd><p>ウィンドウの状態</p>
+<pre><code>1:アクティブ状態にする
+0:非アクティブ状態する</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功なら1、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="searchwindow">SearchWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>SearchWindow
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウクラス、キャプションをもつウィンドウを検索する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("SearchWindow", $ClassName, $Caption, #Flag)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$ClassName</dt>
+<dd>ウィンドウクラス名、“” or “*“を指定するとすべてのウィンドウが対象になる。
+</dd>
+<dt>$Caption</dt>
+<dd>ウィンドウに表示されているキャプション。““だと、キャプション検索関連のフラグは無視されます。
+</dd>
+<dt>#Flag</dt>
+<dd><p>検索時のフラグ</p>
+<p>ビット割り付け</p>
+<pre><code>bit 00 　キャプションチェック有無。0：なし　1：あり
+これ以降、bit 00が&quot;1&quot;でなければ無効
+bit 01 　0：完全一致　1：含まれる
+bit 02 　0：大文字小文字を認識　1：大文字小文字を無視
+
+非表示のウィンドウも対象にする場合は、1をセットする事。
+bit 04 　0：表示されているウィンドウのみ　1：非表示のウィンドウも対象にする
+
+FEDC BA98 7654 3210
+xxxx xxxx xxxx xxx0 : XXX0 :チェックしない
+xxxx xxxx xxxx 0001 : XXX1 :一致
+xxxx xxxx xxxx 0011 : XXX3 :含まれる
+xxxx xxxx xxxx 0101 : XXX5 : 一致、大文字小文字無視
+xxxx xxxx xxxx 0111 : XXX7 :含まれる、大文字小文字無視
+xxxx xxxx xxx1 xxxx : XX1X :非表示のウィンドウも対象にする</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>見つかった場合はウィンドウハンドル、見つからない場合は0を返します。 複数のウィンドウがある場合、NextWindowHandle関数で残りのウィンドウハンドル を取得することができます。</p>
+<p>手順としては、</p>
+<ol type="1">
+<li>SearchWindow で検索</li>
+<li>NextWindowHandle で検索結果取得</li>
+</ol>
+<p>となります。 “GetSearchWindowCount”は検索で見つけたハンドル数を、 “GetWindowCount”は”NextWindowHandle”で取得できるハンドル数を返します。</p>
+</dd>
+<dt>注　意</dt>
+<dd>検索フラグで最下位ビットが”0”の場合はキャプションを無視します。 検索対象となるウィンドウは <em>トップレベルウィンドウ</em> のみです。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nextwindowhandle">NextWindowHandle</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NextWindowHandle
+</dd>
+<dt>機　能</dt>
+<dd>SearchWindow関数で検索されたウィンドウハンドルをかえします。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("NextWindowHandle")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>複数のウィンドウが検索された場合はウィンドウハンドルを、 検索された全てのウィンドウハンドルを取り出した場合は0を返します。
+</dd>
+<dt>注　意</dt>
+<dd><a href="#searchwindow">SearchWindow</a>関数が実行されていない場合は常に0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getsearchwindowcount">GetSearchWindowCount</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetSearchWindowCount
+</dd>
+<dt>機　能</dt>
+<dd>SearchWindowで検索したウィンドウハンドルの数を返します。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetSearchWindowCount")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>検索したウィンドウハンドルの数。
+</dd>
+<dt>注　意</dt>
+<dd><a href="#searchwindow">SearchWindow</a>関数が実行されていない場合は常に0を返します。 戻り値は<a href="#searchwindow">SearchWindow</a>関数が実行された時の値です。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowcount">GetWindowCount</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowCount
+</dd>
+<dt>機　能</dt>
+<dd>SearchWindowで検索したウィンドウハンドルで取り出していないハンドルの数を返します。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetWindowCount")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>取り出していないハンドルの数。
+</dd>
+<dt>注　意</dt>
+<dd><a href="#searchwindow">SearchWindow</a>関数が実行されていない場合は常に0を返します。 戻り値は<a href="#nextwindowhandle">NextWindowHandle</a>関数で取り出せるウィンドウハンドル数です。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="activewindow">ActiveWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ActiveWindow
+</dd>
+<dt>機　能</dt>
+<dd>指定されたWindowをアクティブにする
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ActiveWindow", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>アクティブにするウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功なら1、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getactivewindowhandle">GetActiveWindowHandle</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetActiveWindowHandle
+</dd>
+<dt>機　能</dt>
+<dd>アクティブなウィンドウのハンドルを取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetActiveWindowHandle")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>ウィンドウハンドル。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowclass">GetWindowClass</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowClass
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウのクラス名を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetWindowClass", #Handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>ウィンドウのクラス名
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowcaption">GetWindowCaption</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowCaption
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウのキャプションを取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetWindowCaption", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功した場合は取得した文字列、失敗した場合は”“を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowstate">GetWindowState</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowState
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの表示状態を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetWindowState", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>成功した場合</p>
+<ul>
+<li>0:非表示</li>
+<li>1:通常表示</li>
+<li>2:最小化</li>
+<li>3:最大化</li>
+</ul>
+<p>失敗した場合は-1を返します。</p>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="setwindowstate">SetWindowState</h4>
+<dl>
+<dt>関数名</dt>
+<dd>SetWindowState
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの表示状態を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("SetWindowState", #handle, #state)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+<dt>#state</dt>
+<dd><p>表示状態</p>
+<ul>
+<li>0:非表示</li>
+<li>1:通常表示</li>
+<li>2:最小化</li>
+<li>3:最大化</li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功なら1、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nextwindow">NextWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NextWindow
+</dd>
+<dt>機　能</dt>
+<dd>１つ下のWindowハンドルを返す
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("NextWindow", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>ウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>数字を返します。 成功なら1、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nextactivewindow">NextActiveWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NextActiveWindow
+</dd>
+<dt>機　能</dt>
+<dd>一つ下のWindowをアクティブにする
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("NextActiveWindow", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>アクティブにするウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>数字を返します。 成功なら1、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="findwindow">FINDWINDOW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>FINDWINDOW
+</dd>
+<dt>機　能</dt>
+<dd>指定されたクラス名、キャプションを持つWindowの検索
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("FINDWINDOW", #handle, $WindowClassName, $WindowCaption)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>検索する対象のウィンドウハンドル。 ウィンドウハンドルが指定された場合、そのウィンドウの子ウィンドウを検索します。 0(ZERO)なら、デスクトップを対象。
+</dd>
+<dt>$WindowClassName</dt>
+<dd>検索するウィンドウのクラス名。(省略可能)
+</dd>
+<dt>$WindowCaption</dt>
+<dd>検索するウィンドウのキャプション。(省略可能)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドウハンドル、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getancestorwindow">GetAncestorWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetAncestorWindow
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、親ウィドウのウィンドウハンドルを取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetAncestorWindow", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドウハンドル、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowrect_top">GetWindowRect_Top</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowRect_Top
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標を返す。(Top)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetWindowRect_Top", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Top)を、失敗なら-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowrect_bottom">GetWindowRect_Bottom</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowRect_Bottom
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標を返す。(Top)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetWindowRect_Bottom", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Bottom)を、失敗なら-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowrect_left">GetWindowRect_Left</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowRect_Left
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標を返す。(Left)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetWindowRect_Left", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Left)を、失敗なら-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowrect_right">GetWindowRect_Right</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowRect_Right
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標を返す。(Right)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetWindowRect_Right", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Right)を、失敗なら-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="screentoclient_x">ScreenToClient_X</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ScreenToClient_X
+</dd>
+<dt>機　能</dt>
+<dd>スクリーン座標から、指定されたウィンドウのクライアント座標に変換(X)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ScreenToClient_X", #handle, #X, #Y)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>座標変換したいクライアント領域をもつ、ウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功なら指定したウィンドウのクライアント座標(X)を、失敗なら-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="screentoclient_y">ScreenToClient_Y</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ScreenToClient_Y
+</dd>
+<dt>機　能</dt>
+<dd>スクリーン座標から、指定されたウィンドウのクライアント座標に変換(Y)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ScreenToClient_Y", #handle, #X, #Y)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>座標変換したいクライアント領域をもつ、ウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功なら指定したウィンドウのクライアント座標(Y)を、失敗なら-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="movewindow">MOVEWINDOW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>MOVEWINDOW
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウを、指定された位置とサイズに設定する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("MOVEWINDOW", #handle, #X, #Y, #WIDTH, #HEIGHT)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象となるウィンドウハンドル。
+</dd>
+<dt>#X</dt>
+<dd>ウィンドウのX座標
+</dd>
+<dt>#Y</dt>
+<dd>ウィンドウのY座標
+</dd>
+<dt>#WIDTH</dt>
+<dd>ウィンドウの幅
+</dd>
+<dt>#HEIGHT</dt>
+<dd>ウィンドウの高さ
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功なら1、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="dwmgetwindowrect_top">DwmGetWindowRect_Top</h4>
+<dl>
+<dt>関数名</dt>
+<dd>DwmGetWindowRect_Top
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウのスクリーン座標(Top)を返す。 DWM(Desktop Window Manager)対応版で、ウィンドウ表示範囲の座標を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("DwmGetWindowRect_Top", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Top)を、失敗なら-1を返します。
+</dd>
+<dt>注　意</dt>
+<dd>対応していないWindowsで呼び出した場合は、失敗します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="dwmgetwindowrect_bottom">DwmGetWindowRect_Bottom</h4>
+<dl>
+<dt>関数名</dt>
+<dd>DwmGetWindowRect_Bottom
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標(Bottom)を返す。 DWM(Desktop Window Manager)対応版で、ウィンドウ表示範囲の座標を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("DwmGetWindowRect_Bottom", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Bottom)を、失敗なら-1を返します。
+</dd>
+<dt>注　意</dt>
+<dd>対応していないWindowsで呼び出した場合は、失敗します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="dwmgetwindowrect_left">DwmGetWindowRect_Left</h4>
+<dl>
+<dt>関数名</dt>
+<dd>DwmGetWindowRect_Left
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標(Left)を返す。 DWM(Desktop Window Manager)対応版で、ウィンドウ表示範囲の座標を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("DwmGetWindowRect_Left", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Left)を、失敗なら-1を返します。
+</dd>
+<dt>注　意</dt>
+<dd>対応していないWindowsで呼び出した場合は、失敗します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="dwmgetwindowrect_right">DwmGetWindowRect_Right</h4>
+<dl>
+<dt>関数名</dt>
+<dd>DwmGetWindowRect_Right
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標(Right)を返す。 DWM(Desktop Window Manager)対応版で、ウィンドウ表示範囲の座標を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("DwmGetWindowRect_Right", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功ならウィンドのスクリーン座標(Right)を、失敗なら-1を返します。
+</dd>
+<dt>注　意</dt>
+<dd>対応していないWindowsで呼び出した場合は、失敗します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="dwmgetwindowrectall">DwmGetWindowRectAll</h4>
+<dl>
+<dt>関数名</dt>
+<dd>DwmGetWindowRectAll
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標を返す。 DWM(Desktop Window Manager)対応版で、ウィンドウ表示範囲の座標を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("DwmGetWindowRectAll", #handle, $ValName)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dd><dl>
+<dt>$ValName</dt>
+<dd><p>結果を格納する数値変数名(配列の名前)</p>
+<pre><code>例1) &quot;#Window_pos&quot; //数値変数なので&quot;#&quot; or &quot;##&quot; が先頭に着く
+例2) &quot;Window_pos&quot;  //&quot;#&quot; or &quot;##&quot; がない場合は、&quot;#&quot;が指定されたと見なす</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>成功なら 1 を、失敗なら 0 を返す。</p>
+<p>成功した場合は、指定された変数の配列に、top、left、right、bottom の順で格納される。</p>
+<pre><code>#num = dllfuncw(&quot;DwmGetWindowRectAll&quot;, #handle, &quot;pos&quot;);
+//#pos[0] --&gt; top
+//#pos[1] --&gt; left
+//#pos[2] --&gt; right
+//#pos[3] --&gt; bottom</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>対応していないWindowsで呼び出した場合は、失敗します。<br />
+<em>dllfuncw</em> を使用して呼び出してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getwindowrectall">GetWindowRectAll</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetWindowRectAll
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウの、スクリーン座標を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("GetWindowRectAll", #handle, $ValName)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象のウィンドウハンドル。
+</dd>
+</dl>
+</dd>
+<dd><dl>
+<dt>$ValName</dt>
+<dd><p>結果を格納する数値変数名(配列の名前)</p>
+<pre><code>例1) &quot;#Window_pos&quot; //数値変数なので&quot;#&quot; or &quot;##&quot; が先頭に着く
+例2) &quot;Window_pos&quot;  //&quot;#&quot; or &quot;##&quot; がない場合は、&quot;#&quot;が指定されたと見なす</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>成功なら 1 を、失敗なら 0 を返す。</p>
+<p>成功した場合は、指定された変数の配列に、top、left、right、bottom の順で格納される。</p>
+<pre><code>#num = dllfuncw(&quot;DwmGetWindowRectAll&quot;, #handle, &quot;pos&quot;);
+//#pos[0] --&gt; top
+//#pos[1] --&gt; left
+//#pos[2] --&gt; right
+//#pos[3] --&gt; bottom</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>対応していないWindowsで呼び出した場合は、失敗します。<br />
+<em>dllfuncw</em> を使用して呼び出してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="dwmmovewindow">DwmMoveWindow</h4>
+<dl>
+<dt>関数名</dt>
+<dd>DwmMoveWindow
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウを、指定された位置とサイズに設定する。 ウィンドウ表示範囲を指定した座標と大きさに設定します。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("DwmMoveWindow", #handle, #X, #Y, #WIDTH, #HEIGHT)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>対象となるウィンドウハンドル。
+</dd>
+<dt>#X</dt>
+<dd>ウィンドウのX座標
+</dd>
+<dt>#Y</dt>
+<dd>ウィンドウのY座標
+</dd>
+<dt>#WIDTH</dt>
+<dd>ウィンドウの幅
+</dd>
+<dt>#HEIGHT</dt>
+<dd>ウィンドウの高さ
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功なら1、失敗なら0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="etc">その他</h3>
+<h4 id="getdllversion">GetDllVersion</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetDllVersion
+</dd>
+<dt>機　能</dt>
+<dd>バージョン情報の取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetDllVersion")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>バージョン情報を数字で返します。 「Major.Minor.Revision」各項目は2桁の10進数なので、最低でも５桁の数字になります。 Version 1.02.05なら10205を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getdllversionstr">GetDllVersionStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetDllVersionStr
+</dd>
+<dt>機　能</dt>
+<dd>バージョン情報の取得
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetDllVersionStr")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>バージョン情報を文字列で返します。 Version 1.02.05なら”1.02.05”を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="wait">Wait</h4>
+<dl>
+<dt>関数名</dt>
+<dd>Wait
+</dd>
+<dt>機　能</dt>
+<dd>指定された時間停止する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("Wait", #MilliSecond)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#MilliSecond</dt>
+<dd>停止する時間。ミリ秒で指定。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>正常終了時は”0”を返します。 引数に不正な値が指定されると-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="urlexchange">URLExchange</h4>
+<dl>
+<dt>関数名</dt>
+<dd>URLExchange
+</dd>
+<dt>機　能</dt>
+<dd>URL向けにエンコードした文字列を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("URLExchange", $Str, #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Str</dt>
+<dd>変換文字列
+</dd>
+<dt>#num</dt>
+<dd><p>設定フラグ</p>
+<pre><code>0:全てエンコードする
+1:スペースのみエンコード
+2:ブラウザと同じく&quot;#&quot;、&quot;?&quot; 以降はエンコードしない
+4:メタ文字を削除しない
+8:エンコードしない
+16:%XX をデコードする</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換した文字列
+</dd>
+<dt>注　意</dt>
+<dd>エンコードとデコードもできるらしいが、どうもいまいち・・・。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="urlencode">UrlEncode</h4>
+<dl>
+<dt>関数名</dt>
+<dd>UrlEncode
+</dd>
+<dt>機　能</dt>
+<dd>URL向けにエンコードした文字列を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("UrlEncode", $Str, #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Str</dt>
+<dd>変換文字列
+</dd>
+<dt>#num</dt>
+<dd><p>設定フラグ</p>
+<pre><code>0:漢字（SJIS）のみ
+1:漢字（SJIS）と&quot; &quot;(空白)
+2:漢字（SJIS）、&quot; &quot;(空白)、「&lt;&gt;&quot;#%{}|^~[]`」を変換。</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換した文字列
+</dd>
+<dt>注　意</dt>
+<dd><p>URL全体を指定すると不必要な文字までエンコードしてしまうかもしれません。</p>
+<pre><code>デコードした文字をrun命令で他のプログラムの引数に使う場合は注意が必要です。
+マクロのrun命令では &quot;%d&quot;、&quot;%f&quot;、&quot;%b&quot;が以下のように特殊な意味を持ちます。
+　%f ：フルパスのファイル名
+　%d ：フォルダ名
+　%b ：フォルダを除いたファイル名
+　(UrlEncodeでは常に大文字で返すが、大文字でも同様です。)
+漢字をデコードした場合、これらの文字が含まれる場合があります。
+引数に使用する場合はこれらの文字が含まれていないかチェックし、含まれる場合は
+&quot;%%f&quot;のように&quot;%&quot;を２重にする必要があります</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="urlencodew">UrlEncodeW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>UrlEncodeW
+</dd>
+<dt>機　能</dt>
+<dd>文字列をUTF-8に変換しURL向けにエンコードした文字列を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("UrlEncodeW", $Str, #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Str</dt>
+<dd>変換文字列
+</dd>
+<dt>#num</dt>
+<dd><p>設定フラグ</p>
+<pre><code>0:数字(0～9)、アルファベット(A～Z、a～z)、&quot;-&quot;、&quot;.&quot;、&quot;_&quot; 、&quot;~&quot; 以外を変換
+1:すべて変換</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換した文字列
+</dd>
+<dt>注　意</dt>
+<dd><p>URL全体を指定すると不必要な文字までエンコードしてしまうかもしれません。</p>
+<pre><code>デコードした文字をrun命令で他のプログラムの引数に使う場合は注意が必要です。
+マクロのrun命令では &quot;%d&quot;、&quot;%f&quot;、&quot;%b&quot;が以下のように特殊な意味を持ちます。
+　%f ：フルパスのファイル名
+　%d ：フォルダ名
+　%b ：フォルダを除いたファイル名
+　(UrlEncodeでは常に大文字で返すが、大文字でも同様です。)
+漢字をデコードした場合、これらの文字が含まれる場合があります。
+引数に使用する場合はこれらの文字が含まれていないかチェックし、含まれる場合は
+&quot;%%f&quot;のように&quot;%&quot;を２重にする必要があります</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="urldecode">UrlDecode</h4>
+<dl>
+<dt>関数名</dt>
+<dd>UrlDecode
+</dd>
+<dt>機　能</dt>
+<dd>URL向けにエンコードされた文字列をデコードする。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("UrlDecode", $Str)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Str</dt>
+<dd>変換文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換した文字列
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="timeformat">TimeFormat</h4>
+<dl>
+<dt>関数名</dt>
+<dd>TimeFormat
+</dd>
+<dt>機　能</dt>
+<dd>時刻を指定された書式で返す。SetTime関数で日時を指定されていなければ現在時刻を使用する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("TimeFormat", $format)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$format</dt>
+<dd>書式指定文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>書式に従って文字列化した時間
+</dd>
+<dt>注意</dt>
+<dd><p>書式に指定できる文字列はＣ言語の”strftime”と同じですが、多少拡張(?)してあります。 “%”の後に”#“があると、数字を返す場合は先頭の”0”を省略します。 もともと文字列を返す書式に”#“を追加しても無視します。 %k・・・の場合、”#“があると漢字表記になります。</p>
+<dl>
+<dt>%a</dt>
+<dd>曜日の省略名（Sun・・・）
+</dd>
+<dt>%A</dt>
+<dd>曜日の正式名(Sunday・・・)
+</dd>
+<dt>%b</dt>
+<dd>月の省略名(Jan、・・・)
+</dd>
+<dt>%B</dt>
+<dd>月の正式名(January、・・・)
+</dd>
+<dt>%c</dt>
+<dd>ロケールに応じた日付と時間の表現
+</dd>
+<dt>%d</dt>
+<dd>10進数で表す月の日付 (01～31)
+</dd>
+<dt>%H</dt>
+<dd>24時間表記の時間 (00～23)
+</dd>
+<dt>%h,%I</dt>
+<dd>12時間表記の時間 (01～12)
+</dd>
+<dt>%j</dt>
+<dd>10進数で表す年頭からの日数 (001～366)
+</dd>
+<dt>%m</dt>
+<dd>10進数で表す月 (01～12)
+</dd>
+<dt>%M</dt>
+<dd>10進数で表す分 (00～59)
+</dd>
+<dt>%p</dt>
+<dd>現在のロケールの AM/PM
+</dd>
+<dt>%S</dt>
+<dd>10進数で表す秒 (00～59)
+</dd>
+<dt>%U</dt>
+<dd>10進数で表す週の通し番号。日曜日を週の最初の日とする (00～53)。
+</dd>
+<dt>%w</dt>
+<dd>10進数で表す曜日。日曜日を 0 とする (0～6)。
+</dd>
+<dt>%W</dt>
+<dd>10進数で表す週の通し番号。月曜日を週の最初の日とする (00～53)。
+</dd>
+<dt>%x</dt>
+<dd>現在のロケールの日付表示
+</dd>
+<dt>%X</dt>
+<dd>現在のロケールの時刻表示
+</dd>
+<dt>%y</dt>
+<dd>10進数で表す西暦の下 2 桁 (00～99)
+</dd>
+<dt>%Y</dt>
+<dd>10進数で表す4桁の西暦
+</dd>
+<dt>%z、%Z</dt>
+<dd>時間帯の名前またはその省略名。時間帯がわからない場合には文字を入れない。
+</dd>
+<dt>%%</dt>
+<dd>パーセント記号
+</dd>
+<dt>%ka</dt>
+<dd>曜日の省略名(日、月、火、水、木、金、土)
+</dd>
+<dt>%kA</dt>
+<dd>曜日の正式名(日曜日、・・・、土曜日)
+</dd>
+<dt>%kB</dt>
+<dd>月の和名(睦月、・・・、師走)
+</dd>
+<dt>%kd</dt>
+<dd>漢数字で表す月の日付 (一～三一) #があると(%#kd)漢字表記になります。 （一～三十一）
+</dd>
+<dt>%kH</dt>
+<dd>漢数字で表す24時間表記の時間 (〇～二三) #があると(%#kh)漢字表記になります。 （零～二十三）
+</dd>
+<dt>%kI</dt>
+<dd>漢数字で表す12時間表記の時間 (一～一二) #があると(%#ki)漢字表記になります。 （一～十二）
+</dd>
+<dt>%kh</dt>
+<dd>漢数字で表す12時間表記の時間 (〇～一一) #があると(%#kh)漢字表記になります。 （零～十一）
+</dd>
+<dt>%km</dt>
+<dd>漢数字で表す月 (一～一二) #があると(%#km)漢字表記になります。 （一～十二）
+</dd>
+<dt>%kM</dt>
+<dd>漢数字で表す分 (〇～五九) #があると(%#km)漢字表記になります。 （零～五十九）
+</dd>
+<dt>%kp</dt>
+<dd>午前・午後
+</dd>
+<dt>%kS</dt>
+<dd>漢数字で表す秒 (〇～五九) #があると(%#kS)漢字表記になります。 （零～五十九）
+</dd>
+<dt>%ky</dt>
+<dd>漢数字で表す西暦の下 2 桁 (〇〇～九九)
+</dd>
+<dt>%kY</dt>
+<dd>漢数字で表す4桁の西暦 #があると(%#kY)漢字表記になります。
+</dd>
+</dl>
+<p><a href="#numbers1">漢数字</a>と<a href="#numbers2">漢字表記</a>に関してはメモを参照。</p>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="settime">SetTime</h4>
+<dl>
+<dt>関数名</dt>
+<dd>SetTime
+</dd>
+<dt>機　能</dt>
+<dd>TimeFormatで変換する日時をセットする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("SetTime", #year, #month, #day #hour, #min, #sec)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#year</dt>
+<dd>4桁の西暦
+</dd>
+<dt>#month</dt>
+<dd>月
+</dd>
+<dt>#day</dt>
+<dd>日
+</dd>
+<dt>#hour</dt>
+<dd>24時間制の時刻(0～23)
+</dd>
+<dt>#min</dt>
+<dd>分(0～59)
+</dd>
+<dt>#sec</dt>
+<dd>秒(0～59)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>常に”1”を返します。
+</dd>
+<dt>注　意</dt>
+<dd>一度設定するとResetTimeを実行するまで解除されません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="resettime">ResetTime</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ResetTime
+</dd>
+<dt>機　能</dt>
+<dd>TimeFormatで変換する日時をリセットする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ResetTime")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>常に”1”を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="numstringtokanji">NumStringToKanji</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NumStringToKanji
+</dd>
+<dt>機　能</dt>
+<dd>数字（文字列）を漢数字または漢字表記に変換します。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("NumStringToKanji",$Numstr,#flag)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Numstr</dt>
+<dd>変換対象文字列
+</dd>
+<dt>#flag</dt>
+<dd><p>変換用フラグ</p>
+<pre><code>0:漢数字
+1:漢字表記</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換した文字列を返します。異常時は”“を返します。
+</dd>
+<dt>注　意</dt>
+<dd>数字のみで構成された文字列しか受け付けません。 負の値や、小数点があると”“を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="numtokanji">NumToKanji</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NumToKanji
+</dd>
+<dt>機　能</dt>
+<dd>数字を漢数字または漢字表記に変換します。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("NumToKanji",#Num,#flag)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#Num</dt>
+<dd>変換対象数列
+</dd>
+<dt>#flag</dt>
+<dd><p>変換用フラグ</p>
+<pre><code>0:漢数字
+1:漢字表記</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換した文字列を返します。異常時は”“を返します。
+</dd>
+<dt>注　意</dt>
+<dd>負の値や、小数点があると”“を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getstdout">GetStdout</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetStdout
+</dd>
+<dt>機　能</dt>
+<dd>コンソールプログラムを実行し、標準出力と標準エラー出力を取り込みます。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetStdout",$Cmdline, $Stdin)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Cmdline</dt>
+<dd>実行するファイルと起動オプションを指定する。
+</dd>
+<dt>$Stdin</dt>
+<dd>プログラムに送る文字列。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>実行ファイルが出力した文字列。
+</dd>
+<dt>注　意</dt>
+<dd>標準入力を使う場合は注意してください。 送るデータがおかしいと、入力待ちになりそのまま制御を返さない場合もあります。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getexitcode">GetExitCode</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetExitCode
+</dd>
+<dt>機　能</dt>
+<dd>GetStdout関数で実行したファイルのリターンコードを取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetExitCode")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>実行ファイルが返したリターンコード GetStdout関数を実行していない場合は”-1”が返ります。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="openhtmlhelp">OpenHtmlHelp</h4>
+<dl>
+<dt>関数名</dt>
+<dd>OpenHtmlHelp
+</dd>
+<dt>機　能</dt>
+<dd>htmlhelp(*.chm)を開き、キーワードが指定されていれば検索し表示する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("OpenHtmlHelp",$helpfile, $keyword)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$helpfile</dt>
+<dd>開くヘルプファイルのフルパス
+</dd>
+<dt>$keyword</dt>
+<dd>検索する文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>検索に成功すると1、失敗すると0 を返します。
+</dd>
+<dt>注　意</dt>
+<dd>$keyword に”” を指定すると単純にヘルプファイルを起動するだけです。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="runsync">RUNSYNC</h4>
+<dl>
+<dt>関数名</dt>
+<dd>RUNSYNC
+</dd>
+<dt>機　能</dt>
+<dd>指定したプログラムを任意の状態で実行し、リターンコードを取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("RUNSYNC",$program, #Error_code, #WindowMode)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$program</dt>
+<dd>実行するプログラム名と引数。
+</dd>
+<dt>#Error_code</dt>
+<dd>関数が失敗した場合に返すコード。 実行するプログラムの戻り値と <em>一致しない数字</em> を指定して下さい。
+</dd>
+<dt>#WindowMode</dt>
+<dd><p>プログラム実行時の状態。以下の値が使用可能。</p>
+<pre><code>#SW_HIDE = 0
+　ウィンドウを非表示にし、別のウィンドウをアクティブにする。
+#SW_NORMAL = 1
+　ウィンドウをアクティブにして表示。
+#SW_SHOWMINIMIZED = 2
+　ウィンドウをアクティブにし、最小化ウィンドウとして表示。
+#SW_SHOWMAXIMIZED = 3
+　ウィンドウをアクティブにし、最大化ウィンドウとして表示。
+#SW_SHOWNOACTIVATE = 4
+　ウィンドウを最新のサイズと位置で表示。
+　アクティブなウィンドウは切り替わらない。
+#SW_SHOW = 5
+　ウィンドウをアクティブにし、現在のサイズと位置で表示。
+#SW_MINIMIZE = 6
+　指定したウィンドウを最小化し、Z オーダー上で次に上位となるウィンドウをアクティブにする。
+#SW_SHOWMINNOACTIVE = 7
+　ウィンドウを最小化ウィンドウとして表示。アクティブなウィンドウは切り替わらない。
+#SW_SHOWNA = 8
+　ウィンドウを現在の状態で表示。アクティブなウィンドウは切り替わらない。
+#SW_RESTORE = 9
+　ウィンドウをアクティブにして表示。
+#SW_SHOWDEFAULT = 10
+　アプリケーションを起動したプログラムの状態に基づいて、表示状態を設定。</code></pre>
+<p>通常使うのは0～4まで。</p>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>関数の実行に失敗すると”#Error_code”を、成功した場合はプログラムの戻り値となる。
+</dd>
+<dt>注　意</dt>
+<dd>プラグラムが終了するまで待機します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="sendkeypress">SendKeyPress</h4>
+<dl>
+<dt>関数名</dt>
+<dd>SendKeyPress
+</dd>
+<dt>機　能</dt>
+<dd>キーストロークをアプリケーションに送る。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("SendKeyPress",#vkey, #flag)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#vkey</dt>
+<dd>操作したいキーの仮想キーコード(VK_??)
+</dd>
+<dt>#flag</dt>
+<dd><p>Shift、Ctrl、Altキーの状態設定 以下のビットの組み合わせを指定します。</p>
+<pre><code>0bit：Shift
+1bit：Ctrl
+2bit：Alt</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>検索に成功すると1、失敗すると0 を返します。
+</dd>
+<dt>注　意</dt>
+<dd>マクロ実行すぐにキーストロークを送信した場合、マクロ起動時のキーも 秀丸側に検出される場合があります。 マクロの起動を「Ctrl+A」で「Alt+B」を送ると「Ctrl+ALT+B」が認識されます。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getclipboardownerhandle">GetClipboardOwnerHandle</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetClipboardOwnerHandle
+</dd>
+<dt>機　能</dt>
+<dd>現在クリップボードを所有しているウィンドウのハンドルを取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetClipboardOwnerHandle")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>現在クリップボードを所有しているウィンドウのハンドル。 失敗すると0 を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getclipboarddsptext">GetClipboardDSPTEXT</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetClipboardDSPTEXT
+</dd>
+<dt>機　能</dt>
+<dd>現在クリップボードから”CF_DSPTEXT”形式のデータを取り出す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetClipboardDSPTEXT")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>現在クリップボードにある、“CF_DSPTEXT”形式のデータ。 失敗すると”” を返します。
+</dd>
+<dt>注　意</dt>
+<dd>秀丸エディタで、箱形(矩形)選択をした場合、“BOX”という文字がセットされます。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="filename">ファイル名操作・ファイル関連</h3>
+<h4 id="getchangefileext">GetChangeFileExt</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetChangeFileExt
+</dd>
+<dt>機　能</dt>
+<dd>拡張子を変更したファイル名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetChangeFileExt", $filename, $ext)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+<dt>$ext</dt>
+<dd>変更する拡張子
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。 成功した場合はファイル名の拡張子を変更した文字列を、 失敗した場合は”“を返します。
+</dd>
+<dt>注　意</dt>
+<dd>ファイル名に拡張子がない場合は拡張子が追加されます。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getfilename">GetFileName</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetFileName
+</dd>
+<dt>機　能</dt>
+<dd>ファイルパスからファイル名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetFileName", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd>$filename ファイル名
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>基本的に最期の”\“または”:“以降を返します。 ただし”C:\TEMP\“と指定した場合は”TEMP\“を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getparentfolder">GetParentFolder</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetParentFolder
+</dd>
+<dt>機　能</dt>
+<dd>ファイルパスからフォルダ名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetParentFolder", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>基本的に最期の”"より前の文字を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="ismatchfilename">IsMatchFileName</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsMatchFileName
+</dd>
+<dt>機　能</dt>
+<dd>ファイル名がワイルドカードとマッチするか。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsMatchFileName", $filename, $wildcard)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>対象のファイル名
+</dd>
+<dt>$wildcard</dt>
+<dd>ワイルドカード
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>数字を返します。 マッチするなら”1”、しないなら”0”を返す。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getfileextention">GetFileExtention</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetFileExtention
+</dd>
+<dt>機　能</dt>
+<dd>ファイルパスから拡張子を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetFileExtention", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>基本的に最期の”.”から後の文字を返します。 “.”が必ず付きます。C:\TEMP\TEST.TXT”　-&gt;　“.TXT”
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getfilebasename">GetFileBaseName</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetFileBaseName
+</dd>
+<dt>機　能</dt>
+<dd>ファイルパスからファイル名（拡張子なし）を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetFileBaseName", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>C:\TEMP\TEST.TXT”　-&gt;　“TEST” を返す。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getshortname">GetShortName</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetShortName
+</dd>
+<dt>機　能</dt>
+<dd>ファイルパスを短い形式にして返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetShortName", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>存在しないファイル名を指定した場合は”“を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getlongname">GetLongName</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetLongName
+</dd>
+<dt>機　能</dt>
+<dd>ファイルパスを長い形式にして返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetLongName", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>存在しないファイル名、途中に存在しないフォルダを指定した場合は”“を返します。 ネットワークパスを使用したファイルの変換はできません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getspecialfolder">GetSpecialFolder</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetSpecialFolder
+</dd>
+<dt>機　能</dt>
+<dd>特殊なフォルダーの位置を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetSpecialFolder", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd><p>フラグ</p>
+<pre><code>0:デスクトップ
+1:お気に入り、
+2:マイドキュメント、
+3:アプリケーションデータ</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getexpandpath">GetExpandPath</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetExpandPath
+</dd>
+<dt>機　能</dt>
+<dd>相対指定のパスを展開する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetExpandPath", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>文字列を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getfilenamefromhwnd">GetFileNameFromHwnd</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetFileNameFromHwnd
+</dd>
+<dt>機　能</dt>
+<dd>指定されたウィンドウハンドルから実行ファイル名を取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetFileNameFromHwnd", #Hwnd)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#Hwnd</dt>
+<dd>ウィンドウハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功すれば、実行ファイル名を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getcompactpath">GetCompactPath</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetCompactPath
+</dd>
+<dt>機　能</dt>
+<dd>ファイル名を指定された文字数内に収まるように省略して返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetCompactPath", $filename, #length)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+<dt>#length</dt>
+<dd>文字数
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功すれば、省略されたファイル名を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getfilesizebyte">GetFileSizeByte</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetFileSizeByte
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルのサイズを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetFileSizeByte", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>ファイルサイズをバイトで返します。
+</dd>
+<dt>注　意</dt>
+<dd><p>失敗すると-1を返します。</p>
+<p>プログラム的には64ビットまで対応していますが、マクロが符号付４バイト(32ビット) までなのであまり大きいサイズのファイルを指定するとどうなるかわかりません。 ファイルサイズが大きくなる場合は”GetFileSizeStr”を使ってください。 （ほぼ問題ないと思いますが。）</p>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getfilesizestr">GetFileSizeStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetFileSizeStr
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルのサイズを文字列で返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetFileSizeStr", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd><p>ファイル名</p>
+<p>省略も可能。 省略した場合、直前に実行した以下の関数の結果を返す。</p>
+<pre><code>&quot;GetFileSizeByte&quot;
+&quot;GetUnitStr&quot;
+&quot;GetSizeStr&quot;</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>ファイルサイズを文字列で返します。 ファイルサイズに合わせた単位で返します。</p>
+<pre><code>例)
+　    512 -&gt; 512 bytes
+　   1024 -&gt; 1.0 KB
+　2500000 -&gt; 2.5 MB</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>失敗すると”“を返します。 他のファイルサイズ取得関数を未実行時にファイル名を省略した場合は”“を返します。 小数点以下は第一位で固定。”%5.1f”または”%5d”の書式で出力します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getunitstr">GetUnitStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetUnitStr
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルのサイズ単位を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetUnitStr", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd><p>ファイル名</p>
+<p>省略も可能。 省略した場合、直前に実行した以下の関数の結果を返す。</p>
+<pre><code>&quot;GetFileSizeByte&quot;
+&quot;GetUnitStr&quot;
+&quot;GetSizeStr&quot;</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>ファイルサイズに合わせた単位を返します。</p>
+<pre><code>例)
+　    512 -&gt; bytes
+　   1024 -&gt; KB
+　2500000 -&gt; MB</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>失敗すると”“を返します。 他のファイルサイズ取得関数を未実行時にファイル名を省略した場合は”“を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getsizestr">GetSizeStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetSizeStr
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルのサイズを文字列で返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetSizeStr", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd><p>ファイル名</p>
+<p>省略も可能。 省略した場合、直前に実行した以下の関数の結果を返す。</p>
+<pre><code>&quot;GetFileSizeByte&quot;
+&quot;GetFileSizeStr&quot;
+&quot;GetUnitStr&quot;</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>ファイルサイズを返します。</p>
+<pre><code>例)
+　    512 -&gt; 512
+　   1024 -&gt; 1.0
+　2500000 -&gt; 2.5</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>失敗すると”“を返します。 他のファイルサイズ取得関数を未実行時にファイル名を省略した場合は”“を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="isdirectory">IsDirectory</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsDirectory
+</dd>
+<dt>機　能</dt>
+<dd>ディレクトリかどうか調べる
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsDirectory", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>調べたいファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>0:ディレクトリではない。 1:ディレクトリである。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getfileattr">GetFileAttr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetFileAttr
+</dd>
+<dt>機　能</dt>
+<dd>ファイルの属性を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("GetFileAttr", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>調べたいファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>失敗した場合は-1、成功した場合は各属性がORされた値。Windows APIの戻り値そのまま。</p>
+<dl>
+<dt>#FILE_ATTR_ARCHIVE = 0x020</dt>
+<dd>アーカイブファイル
+</dd>
+<dt>#FILE_ATTR_COMPRESSED = 0x800</dt>
+<dd>圧縮されているファイル・ディレクトリ
+</dd>
+<dt>#FILE_ATTR_DIRECTORY = 0x010</dt>
+<dd>ディレクトリ
+</dd>
+<dt>#File_ATTR_HIDEN = 0x002</dt>
+<dd>隠し属性
+</dd>
+<dt>#FILE_ATTR_NORMAL = 0x080</dt>
+<dd>特に属性なし
+</dd>
+<dt>#FILE_ATTR_READONLY = 0x001</dt>
+<dd>リードオンリー
+</dd>
+<dt>#FILE_ATTR_SYSTEM = 0x004</dt>
+<dd>システム属性
+</dd>
+<dt>#FILE_ATTR_TEMPORARY = 0x100</dt>
+<dd>テンポラリファイル
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="isfile">IsFile</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsFile
+</dd>
+<dt>機　能</dt>
+<dd>ファイルかどうか調べる
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsFile", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>調べたいファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>0:ファイルではない。 1:ファイルである。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="isrelativepath">IsRelativePath</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsRelativePath
+</dd>
+<dt>機　能</dt>
+<dd>相対パスかどうか調べる
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsRelativePath", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>調べたいファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>0:相対ファイル名ではない。 1:相対ファイル名である。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getrelativepathto">GetRelativePathTo</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetRelativePathTo
+</dd>
+<dt>機　能</dt>
+<dd>相対パスを作成する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetRelativePathTo", $basename, $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$basename</dt>
+<dd>基準にするファイル・フォルダ
+</dd>
+<dt>$filename</dt>
+<dd>相対パスにする対象
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>$basenameを基準にした相対ファイル名
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="isutf16le">IsUTF16LE</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsUTF16LE
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルがUTF-16LEかチェックする。(BOMの確認のみ)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("IsUTF16LE", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>チェックするファイル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>UTF-16LEなら 1 を、違うなら 0 を返す。
+</dd>
+<dt>注　意</dt>
+<dd>ファイルの先頭にある、BOMを確認しているだけです。ファイルの内容から判断している訳ではありません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="inifile">iniファイル関連</h3>
+<h4 id="readsectionkeys">ReadSectionKeys</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ReadSectionKeys
+</dd>
+<dt>機　能</dt>
+<dd>指定されたiniファイル(iniファイル形式のファイル)からセクションの全データを読み込む
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ReadSectionKeys", $filename, $section)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>設定を読み込むファイル名
+</dd>
+<dt>$section</dt>
+<dd>読み込むセクション名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><dl>
+<dt>0以上</dt>
+<dd>読み込んだキーの数
+</dd>
+<dt>-1</dt>
+<dd><p>関数の実行に失敗</p>
+<ul>
+<li>引数のエラー</li>
+<li>メモリ確保に失敗</li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>全データをメモリに読み込むのでリアルタイムに変更されると値が一致しない場合があります。 32kまで読み込み可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="existkey">ExistKey</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ExistKey
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysで読み込んだデータに指定されたキーが存在するかどうかを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ExistKey", $key)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$key</dt>
+<dd>チェックしたいキー
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>0以上ならキーは存在し、その位置を示す。（0(zero)ベースの配列に格納されている）</p>
+<pre><code>-1：存在していない。
+-2：ReadSectionKeysが実行されていない。</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>値を取得するには<a href="#getkeyvalue">GetKeyValue</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getkeyvalue">GetKeyValue</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetKeyValue
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysで読み込んだデータから指定されたキーの値を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetKeyValue", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>取得するキーの位置。基本的には<a href="#existkey">ExistKey</a>関数の戻り値を使う。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>キーの値。存在していない位置を指定した場合は”“を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getinikeydata">GetIniKeyData</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniKeyData
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysで読み込んだデータから”key=Value”という形式でデータを取り出す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetIniKeyData")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>“key=Value”という形式のデータ
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置をずらすには<a href="#nextkey">NextKey</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getinikey">GetIniKey</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniKey
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysで読み込んだデータからキーを取り出す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetIniKey")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>セクションに含まれるキー
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置をずらすには<a href="#nextkey">NextKey</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getinikeyvalue">GetIniKeyValue</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniKeyValue
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysで読み込んだデータから値を取り出す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetIniKeyValue")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>セクションに含まれる値
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置をずらすには<a href="#nextkey">NextKey</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nextkey">NextKey</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NextKey
+</dd>
+<dt>機　能</dt>
+<dd>GetIniKeyData、GetIniKey、GetIniKeyValueで取得するキー位置を+1する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("NextKey")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>1：取得データあり 0：取得データなし
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="readsectionnames">ReadSectionNames</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ReadSectionNames
+</dd>
+<dt>機　能</dt>
+<dd>指定されたiniファイル(iniファイル形式のファイル)から、全セクション名を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ReadSectionNames", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>設定を読み込むファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>取得したセクション数。関数が失敗した場合は-1。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="existsection">ExistSection</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ExistSection
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionNamesで読み込んだデータに、指定されたセクションが存在するかどうかを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("ExistSection", $section)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$section</dt>
+<dd>チェックしたいセクション名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>0以上なら存在し、その位置を示す。（0(zero)ベースの配列に格納されている）</p>
+<pre><code>-1：存在していない。
+-2：ReadSectionNamesが実行されていない。</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>値を取得するには<a href="#getsectionname">GetSectionName</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getsectionname">GetSectionName</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetSectionName
+</dd>
+<dt>機　能</dt>
+<dd>GetSectionNameで読み込んだデータから、指定されたセクション名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetSectionName", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>取得するキーの位置。基本的には<a href="#existsection">ExistSection</a>関数の戻り値を使う。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>セクション名。存在していない位置を指定した場合は”“を返す。
+</dd>
+<dt>注　意</dt>
+<dd><a href="#function_summary">機能概要へ戻る</a>
+</dd>
+</dl>
+<h4 id="getsection">GetSection</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetSection
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionNamesで読み込んだデータから、セクション名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetSection")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>セクション名
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置を変更するには<a href="#nextsection">NextSection</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nextsection">NextSection</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NextSection
+</dd>
+<dt>機　能</dt>
+<dd>GetSectionで取得する位置を変更(+1)する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("NextSection")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>1：取得データあり 0：取得データなし
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="iniファイル関連unicode版">iniファイル関連(unicode版)</h3>
+<h4 id="readsectionkeysw">ReadSectionKeysW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ReadSectionKeysW
+</dd>
+<dt>機　能</dt>
+<dd>指定されたiniファイル(iniファイル形式のファイル)からセクションの全データを読み込む
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("ReadSectionKeysW", $filename, $section)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>設定を読み込むファイル名
+</dd>
+<dt>$section</dt>
+<dd>読み込むセクション名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><dl>
+<dt>0以上</dt>
+<dd>読み込んだキーの数
+</dd>
+<dt>-1</dt>
+<dd><p>関数の実行に失敗</p>
+<ul>
+<li>引数のエラー</li>
+<li>メモリ確保に失敗</li>
+<li>ファイルが存在しない。またはUTF-16LEではない。</li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>全データをメモリに読み込むのでリアルタイムに変更されると値が一致しない場合があります。 32kまで読み込み可能。 ファイルが、UTF-16LEでない場合は、-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="existkeyw">ExistKeyW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ExistKeyW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysWで読み込んだデータに指定されたキーが存在するかどうかを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("ExistKeyW", $key)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$key</dt>
+<dd>チェックしたいキー
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>0以上ならキーは存在し、その位置を示す。（0(zero)ベースの配列に格納されている）</p>
+<pre><code>-1：存在していない。
+-2：ReadSectionKeysが実行されていない。</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>値を取得するには<a href="#getkeyvaluew">GetKeyValueW</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getkeyvaluew">GetKeyValueW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetKeyValueW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysWで読み込んだデータから指定されたキーの値を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetKeyValueW", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>取得するキーの位置。基本的には<a href="#existkeyw">ExistKeyW</a>関数の戻り値を使う。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>キーの値。存在していない位置を指定した場合は”“を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getinikeydataw">GetIniKeyDataW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniKeyDataW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysWで読み込んだデータから”key=Value”という形式でデータを取り出す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetIniKeyDataW")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>“key=Value”という形式のデータ
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置をずらすには<a href="#nextkeyw">NextKeyW</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getinikeyw">GetIniKeyW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniKeyW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysWで読み込んだデータからキーを取り出す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrW("GetIniKeyW")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>セクションに含まれるキー
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置をずらすには<a href="#nextkeyw">NextKeyW</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getinikeyvaluew">GetIniKeyValueW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniKeyValueW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionKeysWで読み込んだデータから値を取り出す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetIniKeyValueW")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>セクションに含まれる値
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置をずらすには<a href="#nextkeyw">NextKeyW</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nextkeyw">NextKeyW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NextKeyW
+</dd>
+<dt>機　能</dt>
+<dd>GetIniKeyDataW、GetIniKeyW、GetIniKeyValueWで取得するキー位置を+1する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("NextKeyW")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>1：取得データあり 0：取得データなし
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="readsectionnamesw">ReadSectionNamesW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ReadSectionNamesW
+</dd>
+<dt>機　能</dt>
+<dd>指定されたiniファイル(iniファイル形式のファイル)から、全セクション名を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("ReadSectionNamesW", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>設定を読み込むファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>取得したセクション数。関数が失敗した場合は-1。
+</dd>
+<dt>注　意</dt>
+<dd>ファイルが、UTF-16LEでない場合は、-1を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="existsectionw">ExistSectionW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>ExistSectionW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionNamesWで読み込んだデータに、指定されたセクションが存在するかどうかを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("ExistSectionW", $section)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$section</dt>
+<dd>チェックしたいセクション名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>0以上なら存在し、その位置を示す。（0(zero)ベースの配列に格納されている）</p>
+<pre><code>-1：存在していない。
+-2：ReadSectionNamesWが実行されていない。</code></pre>
+</dd>
+<dt>注　意</dt>
+<dd>値を取得するには<a href="#getsectionnamew">GetSectionNameW</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getsectionnamew">GetSectionNameW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetSectionNameW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionNamesWで読み込んだデータから、指定されたセクション名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetSectionNameW", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>取得するキーの位置。基本的には<a href="#existsectionw">ExistSectionW</a>関数の戻り値を使う。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>セクション名。存在していない位置を指定した場合は”“を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getsectionw">GetSectionW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetSectionW
+</dd>
+<dt>機　能</dt>
+<dd>ReadSectionNamesWで読み込んだデータから、セクション名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetSectionW")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>セクション名
+</dd>
+<dt>注　意</dt>
+<dd>取得するデータ位置を変更するには<a href="#nextsectionw">NextSectionW</a>関数を使います。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nextsectionw">NextSectionW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>NextSectionW
+</dd>
+<dt>機　能</dt>
+<dd>GetSectionWで取得する位置を変更(+1)する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("NextSectionW")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>1：取得データあり 0：取得データなし
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="writeinistrw">WriteIniStrW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>WriteIniStrW
+</dd>
+<dt>機　能</dt>
+<dd>マクロ関数writeinistrのUnicode版。iniファイルへ文字データを書き込む
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("WriteIniStrW", $inifileW, $sectionW, $keyW, $valueW)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$inifileW</dt>
+<dd>iniファイル名(Unicode)
+</dd>
+<dt>$sectionW</dt>
+<dd>セクション(Unicode)
+</dd>
+<dt>$keyW</dt>
+<dd>キー(Unicode)
+</dd>
+<dt>$valueW</dt>
+<dd>値(Unicode)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>1：正常終了 0：異常終了
+</dd>
+<dt>注　意</dt>
+<dd>iniファイルが存在しない場合は、自動で作成します。 ファイルが、UTF-16LEでない場合は、0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getinistrw">GetIniStrW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniStrW
+</dd>
+<dt>機　能</dt>
+<dd>マクロ関数getinistrのUnicode版。iniファイルから文字データを読み込む
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetIniStrW", $inifileW, $sectionW, $keyW)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$inifileW</dt>
+<dd>iniファイル名(Unicode)
+</dd>
+<dt>$sectionW</dt>
+<dd>セクション(Unicode)
+</dd>
+<dt>$keyW</dt>
+<dd>キー(Unicode)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>キーがあれば、その文字列を、なければ”“を返す
+</dd>
+<dt>注　意</dt>
+<dd>ファイルが、UTF-16LEでない場合は、““を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="writeininumw">WriteIniNumW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>WriteIniNumW
+</dd>
+<dt>機　能</dt>
+<dd>マクロ関数writeininumのUnicode版。iniファイルへ数値データを書き込む
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("WriteIniNumW", $inifileW, $sectionW, $keyW, #value)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$inifileW</dt>
+<dd>iniファイル名(Unicode)
+</dd>
+<dt>$sectionW</dt>
+<dd>セクション(Unicode)
+</dd>
+<dt>$keyW</dt>
+<dd>キー(Unicode)
+</dd>
+<dt>#value</dt>
+<dd>値(数値)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>1：正常終了 0：異常終了
+</dd>
+<dt>注　意</dt>
+<dd>iniファイルが存在しない場合は、自動で作成します。 ファイルが、UTF-16LEでない場合は、0を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getininumw">GetIniNumW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetIniNumW
+</dd>
+<dt>機　能</dt>
+<dd>マクロ関数getininumのUnicode版。iniファイルから数値データを読み込む
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetIniNumW", $inifileW, $sectionW, $keyW)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$inifileW</dt>
+<dd>iniファイル名(Unicode)
+</dd>
+<dt>$sectionW</dt>
+<dd>セクション(Unicode)
+</dd>
+<dt>$keyW</dt>
+<dd>キー(Unicode)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>キーがあれば、その文字列を、なければ”“を返す
+</dd>
+<dt>注　意</dt>
+<dd>ファイルが、UTF-16LEでない場合は、““を返します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="file">ファイル操作</h3>
+<h4 id="fileopen">FileOpen</h4>
+<dl>
+<dt>関数名</dt>
+<dd>FileOpen
+</dd>
+<dt>機　能</dt>
+<dd>ファイルを指定されたモードで開く
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("FileOpen", $filename, $mode)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>ファイル名
+</dd>
+<dt>$mode</dt>
+<dd><p>オープンモード</p>
+<dl>
+<dt>w</dt>
+<dd>書き込み
+</dd>
+<dt>r</dt>
+<dd>読み込み
+</dd>
+<dt>a</dt>
+<dd>追加書き込み
+</dd>
+<dt>b</dt>
+<dd>バイナリモード
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>ファイルハンドルを返す。（1～10）
+</dd>
+<dt>注　意</dt>
+<dd>失敗すると0を返します。 同時にオープンするのは10ファイルまで
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="wrfile">WrFile</h4>
+<dl>
+<dt>関数名</dt>
+<dd>WrFile
+</dd>
+<dt>機　能</dt>
+<dd>文字列をファイルに書き込む
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("WrFile", #handle, $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+<dt>$Target</dt>
+<dd>書き込む文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>正常なら1、失敗すると0を返す。
+</dd>
+<dt>注　意</dt>
+<dd>FileError関数で詳細なエラー情報を取得可能
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="wrfileline">WrFileLine</h4>
+<dl>
+<dt>関数名</dt>
+<dd>WrFileLine
+</dd>
+<dt>機　能</dt>
+<dd>文字列の最後が改行文字()でない場合は、改行文字を追加しファイルに書き込む。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("WrFileLine", #handle, $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+<dt>$Target</dt>
+<dd>書き込む文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>正常なら1、失敗すると0を返す。
+</dd>
+<dt>注　意</dt>
+<dd>FileError関数で詳細なエラー情報を取得可能
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="rdfile">RdFile</h4>
+<dl>
+<dt>関数名</dt>
+<dd>RdFile
+</dd>
+<dt>機　能</dt>
+<dd>ファイルから１行文字列を取り込む
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("RdFile", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>改行までの文字列(改行を含む)
+</dd>
+<dt>注　意</dt>
+<dd>FileError関数で詳細なエラー情報を取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="rdfile2">RdFile2</h4>
+<dl>
+<dt>関数名</dt>
+<dd>RdFile2
+</dd>
+<dt>機　能</dt>
+<dd>ファイルから１行文字列を取り込む
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("RdFile2", #handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>改行までの文字列(改行を含まない)
+</dd>
+<dt>注　意</dt>
+<dd>FileError関数で詳細なエラー情報を取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="rdfilebyte">RdFileByte</h4>
+<dl>
+<dt>関数名</dt>
+<dd>RdFileByte
+</dd>
+<dt>機　能</dt>
+<dd>ファイルから指定バイト数を取り込む。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("RdFileByte", #handle, #Size)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+<dt>#Size</dt>
+<dd>取得するバイト数
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>取得した文字列
+</dd>
+<dt>注　意</dt>
+<dd>FileError関数で詳細なエラー情報を取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="fileerror">FileError</h4>
+<dl>
+<dt>関数名</dt>
+<dd>FileError
+</dd>
+<dt>機　能</dt>
+<dd>ファイル関連のエラー情報取得
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("FileError")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd><p>エラーコード</p>
+<dl>
+<dt>FIO_BUFFERR(0x01)</dt>
+<dd>バッファの取得エラー
+</dd>
+<dt>FIO_OPENERR(0x02)</dt>
+<dd>オープンエラー
+</dd>
+<dt>FIO_FILEERR(0x04)</dt>
+<dd>リードエラー
+</dd>
+<dt>FIO_EOFERR(0x08)</dt>
+<dd>EOFエラー
+</dd>
+<dt>FIO_WRERR(0x20)</dt>
+<dd>ライト時のエラー
+</dd>
+<dt>FIO_ARGVERR(0x10)</dt>
+<dd>引数のエラー
+</dd>
+<dt>FIO_CLOSEERR(0x40)</dt>
+<dd>クローズ時のエラー
+</dd>
+<dt>FIO_DELETEERR(0x80)</dt>
+<dd>削除時のエラー
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="isopen">IsOpen</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsOpen
+</dd>
+<dt>機　能</dt>
+<dd>ファイルハンドルの状態を返す
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsOpen",#handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>1：オープン 0：オープンでない
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="isferror">IsFerror</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsFerror
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルハンドルでエラーの有無を返す
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsFerror",#handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>1：エラーあり 0：エラーなし
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="iseof">IsEof</h4>
+<dl>
+<dt>関数名</dt>
+<dd>IsEof
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルハンドルでEOFの状態を返す
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("IsEof",#handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>1：EOF 0：EOFでない
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="fileclose">FileClose</h4>
+<dl>
+<dt>関数名</dt>
+<dd>FileClose
+</dd>
+<dt>機　能</dt>
+<dd>指定されたファイルハンドルを閉じる
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("FileClose",#handle)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#handle</dt>
+<dd>FileOpen関数で取得したファイルハンドル
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>常に1を返す
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="filedelete">FileDelete</h4>
+<dl>
+<dt>関数名</dt>
+<dd>FileDelete
+</dd>
+<dt>機　能</dt>
+<dd>ファイルを削除する
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("FileDelete",$filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>削除するファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>1：成功 0：失敗
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="string">文字列関連</h3>
+<h4 id="instr">InStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>InStr
+</dd>
+<dt>機　能</dt>
+<dd>文字列の検索
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("InStr", #start, $Target, $Search)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#start</dt>
+<dd>検索開始位置（先頭が0です。）
+</dd>
+<dt>$Target</dt>
+<dd>検索対象文字
+</dd>
+<dt>$Search</dt>
+<dd>検索文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>発見した位置(先頭は0)
+</dd>
+<dt>注　意</dt>
+<dd>エラーがあった場合、見つからなかった場合は-1を返す。 検索開始位置が２バイト文字の下位バイト位置だった場合、次の文字から検索します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="instrex">InStrEx</h4>
+<dl>
+<dt>関数名</dt>
+<dd>InStrEx
+</dd>
+<dt>機　能</dt>
+<dd>文字列の検索（検索オプション付き）
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("InStrEx", #start, $Target, $Search， #option)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#start</dt>
+<dd>検索開始位置（先頭が0です。）
+</dd>
+<dt>$Target</dt>
+<dd>検索対象文字
+</dd>
+<dt>$Search</dt>
+<dd>検索文字
+</dd>
+<dt>#option</dt>
+<dd><p>検索オプション</p>
+<pre><code>0:検索文字そのもの
+1:半角、全角の大文字小文字の違いを無視
+2:半角のみ大文字小文字の違いを無視
+3:全角のみ大文字小文字の違いを無視</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>発見した位置(先頭は0)
+</dd>
+<dt>注　意</dt>
+<dd>エラーがあった場合、見つからなかった場合は-1を返す。 検索開始位置が２バイト文字の下位バイト位置だった場合、次の文字から検索します。 検索オプションにより、検索対象文字列の大文字小文字を無視できます。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="instrrev">InStrRev</h4>
+<dl>
+<dt>関数名</dt>
+<dd>InStrRev
+</dd>
+<dt>機　能</dt>
+<dd>文字列の検索（最期に見つかった場所を返す）
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("InStrRev", $Target, $Search)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>検索対象文字
+</dd>
+<dt>$Search</dt>
+<dd>検索文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>発見した位置(先頭は0)
+</dd>
+<dt>注　意</dt>
+<dd>エラーがあった場合、見つからなかった場合は-1を返す。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="instrrevex">InStrRevEx</h4>
+<dl>
+<dt>関数名</dt>
+<dd>InStrRevEx
+</dd>
+<dt>機　能</dt>
+<dd>文字列の検索（最期に見つかった場所を返す。検索オプション付き）
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("InStrRevEx", $Target, $Search， #option)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>検索対象文字
+</dd>
+<dt>$Search</dt>
+<dd>検索文字
+</dd>
+<dt>#option</dt>
+<dd><p>検索オプション</p>
+<pre><code>0:検索文字そのもの
+1:半角、全角の大文字小文字の違いを無視
+2:半角のみ大文字小文字の違いを無視
+3:全角のみ大文字小文字の違いを無視</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>発見した位置(先頭は0)
+</dd>
+<dt>注　意</dt>
+<dd>エラーがあった場合、見つからなかった場合は-1を返す。 検索開始位置が２バイト文字の下位バイト位置だった場合、次の文字から検索します。 検索オプションにより、検索対象文字列の大文字小文字を無視できます。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="trimstr">TrimStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>TrimStr
+</dd>
+<dt>機　能</dt>
+<dd>対象文字列の両端にある文字を削除
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("TrimStr", $Target, $Delete)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>検索対象文字
+</dd>
+<dt>$Delete</dt>
+<dd>削除文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>削除した文字列
+</dd>
+<dt>注　意</dt>
+<dd>削除文字があれば削除して、なければ対象文字列をそのまま返す。 大文字小文字を区別します。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getstrcspn">GetStrCSpn</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetStrCSpn
+</dd>
+<dt>機　能</dt>
+<dd>対象文字列から検索文字列うちどれか１文字を見つけた位置を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#n = dllfunc("GetStrCSpn", $Target, $Search)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>検索対象文字
+</dd>
+<dt>$Search</dt>
+<dd>検索文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>一番最初に発見した位置(先頭は0)
+</dd>
+<dt>注　意</dt>
+<dd>検索文字列が”ABCD”だと、対象文字列から”A” or “B” or “C” or “D”を検索。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getstrspn">GetStrSpn</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetStrSpn
+</dd>
+<dt>機　能</dt>
+<dd>対象文字列から検索文字列うちどれか１文字に該当しない文字を見つけた位置を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#n = dllfunc("GetStrSpn", $Target, $Search)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>検索対象文字
+</dd>
+<dt>$Search</dt>
+<dd>検索文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>一番最初に発見した位置(先頭は0)
+</dd>
+<dt>注　意</dt>
+<dd>検索文字列が”ABCD”だと、対象文字列から”A” and “B” and “C” and “D” 以外を検索。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="insertstr">InsertStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>InsertStr
+</dd>
+<dt>機　能</dt>
+<dd>文字列の挿入
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("InsertStr", $Target, #Number, $Ins)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+<dt>#number</dt>
+<dd>挿入位置(先頭が0(zero))
+</dd>
+<dt>$Ins</dt>
+<dd>挿入文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変更した文字列
+</dd>
+<dt>注　意</dt>
+<dd>エラーがあった場合”“を返します。 ２バイト文字の下位バイトにあたる位置に挿入はできません。 下位バイト位置が指定された場合、次の文字が挿入位置になります。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="deletestr">DeleteStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>DeleteStr
+</dd>
+<dt>機　能</dt>
+<dd>文字列の削除
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("DeleteStr", $Target, #Number, #Length)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+<dt>#number</dt>
+<dd>削除先頭位置(先頭が0(zero))
+</dd>
+<dt>#Length</dt>
+<dd>削除する文字数
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変更した文字列
+</dd>
+<dt>注　意</dt>
+<dd>エラーがあった場合”“を返します。 ２バイト文字の下位バイトにあたる位置を削除先頭位置に指定できません。 下位バイト位置に指定された場合、削除先頭位置は次の文字になります。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="leftjust">LeftJust</h4>
+<dl>
+<dt>関数名</dt>
+<dd>LeftJust
+</dd>
+<dt>機　能</dt>
+<dd>指定した幅で左寄せ
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("LeftJust", $Target, #Length)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+<dt>#Length</dt>
+<dd>左寄せする幅の指定
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>指定した幅で左寄せした文字列
+</dd>
+<dt>注　意</dt>
+<dd>#Lengthは1024より大きい値は指定できません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="rightjust">RightJust</h4>
+<dl>
+<dt>関数名</dt>
+<dd>RightJust
+</dd>
+<dt>機　能</dt>
+<dd>指定した幅で右寄せ
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("RightJust", $Target, #Length)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+<dt>#Length</dt>
+<dd>右寄せする幅の指定
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>指定した幅で右寄せした文字列
+</dd>
+<dt>注　意</dt>
+<dd>#Lengthは1024より大きい値は指定できません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="centor">Centor</h4>
+<dl>
+<dt>関数名</dt>
+<dd>Centor
+</dd>
+<dt>機　能</dt>
+<dd>指定した幅で中央揃えにする
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("Centor", $Target, #Length)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+<dt>#Length</dt>
+<dd>中央揃えにする幅の指定
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>指定した幅で中央揃えした文字列
+</dd>
+<dt>注　意</dt>
+<dd>#Lengthは1024より大きい値は指定できません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="upperstr">UpperStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>UpperStr
+</dd>
+<dt>機　能</dt>
+<dd>指定された文字を大文字へ変換
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("UpperStr", $Target, #option)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+<dt>#option</dt>
+<dd><p>検索オプション</p>
+<pre><code>0:半角、全角を対象
+1:半角のみ
+2:全角のみ</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>大文字に変換された文字列
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="lowerstr">LowerStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>LowerStr
+</dd>
+<dt>機　能</dt>
+<dd>指定された文字を小文字へ変換
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("LowerStr", $Target, #option)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+<dt>#option</dt>
+<dd><p>検索オプション</p>
+<pre><code>0:半角、全角を対象
+1:半角のみ
+2:全角のみ</code></pre>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>小文字に変換された文字列
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="trim">Trim</h4>
+<dl>
+<dt>関数名</dt>
+<dd>Trim
+</dd>
+<dt>機　能</dt>
+<dd>両端の空白を削除。 空白とはタブ、改行、空白 全角空白（0x09～0x0d、0x21、0x8140）です。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("Trim", $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>空白を取り除いた文字列
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="ltrim">LTrim</h4>
+<dl>
+<dt>関数名</dt>
+<dd>LTrim
+</dd>
+<dt>機　能</dt>
+<dd>左側の空白を削除。 空白とはタブ、改行、空白 全角空白（0x09～0x0d、0x21、0x8140）です。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("LTrim", $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>空白を取り除いた文字列
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="rtrim">RTrim</h4>
+<dl>
+<dt>関数名</dt>
+<dd>RTrim
+</dd>
+<dt>機　能</dt>
+<dd>右側の空白を削除。 空白とはタブ、改行、空白 全角空白（0x09～0x0d、0x21、0x8140）です。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("RTrim", $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>空白を取り除いた文字列
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="string-1">String</h4>
+<dl>
+<dt>関数名</dt>
+<dd>String
+</dd>
+<dt>機　能</dt>
+<dd>指定した回数分連続した文字列を返します。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("String", #repeat, $str)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#repeat</dt>
+<dd>繰り返し数
+</dd>
+<dt>$str</dt>
+<dd>繰り返す文字
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>指定回数繰り返された文字列
+</dd>
+<dt>注　意</dt>
+<dd>先頭の１文字をしか使用しません。（全角の場合も１文字です。）
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="strings">Strings</h4>
+<dl>
+<dt>関数名</dt>
+<dd>Strings
+</dd>
+<dt>機　能</dt>
+<dd>指定した回数分連続した文字列を返します。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("Strings", #repeat, $str)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#repeat</dt>
+<dd>繰り返し数
+</dd>
+<dt>$str</dt>
+<dd>繰り返す文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>指定回数繰り返された文字列
+</dd>
+<dt>注　意</dt>
+<dd>文字列全体を繰り返しの対象にします。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="replace">Replace</h4>
+<dl>
+<dt>関数名</dt>
+<dd>Replace
+</dd>
+<dt>機　能</dt>
+<dd>文字列を置き換える
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("Replace", $Target, $Search, $Replace, #cnt)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+<dt>$Search</dt>
+<dd>検索文字列
+</dd>
+<dt>$Replace</dt>
+<dd>置き換え文字列
+</dd>
+<dt>#cnt</dt>
+<dd>置き換え回数 -1を指定すると全て、0以上は指定された回数置き換えを行う。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><p>置換された文字列</p>
+<p>検索文字列が見つからない場合は、対象文字列を返します。 何かしらのエラーがある場合は”“を返します。</p>
+</dd>
+<dt>注　意</dt>
+<dd><p>#cntに0を指定すると0回なので元の文字列をそのまま返します。</p>
+<p>$Searchに”“を指定すると元の文字列をそのまま返します。</p>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="setutf8convertstring">SetUTF8ConvertString</h4>
+<dl>
+<dt>関数名</dt>
+<dd>SetUTF8ConvertString
+</dd>
+<dt>機　能</dt>
+<dd>UTF-16LEからUTF-8へ変換する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("SetUTF8ConvertString", $WString)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$WString</dt>
+<dd>変換対象対象文字列(UTF-16LE文字列)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換に成功すれば1、失敗した場合は0
+</dd>
+<dt>注　意</dt>
+<dd><p><em>dllfuncw</em>を使用して呼び出してください。 変換結果を取得するには、<a href="#getresult">GetResult</a>を使用します。</p>
+<pre><code>#ret = dllfuncw(&quot;SetUTF8ConvertString&quot;, &quot;秀丸エディタ&quot;);
+$utf8 = dllfuncstr(&quot;GetResult&quot;);</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="setutf16convertstring">SetUTF16ConvertString</h4>
+<dl>
+<dt>関数名</dt>
+<dd>SetUTF16ConvertString
+</dd>
+<dt>機　能</dt>
+<dd>UTF-8からUTF-16LEへ変換する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("SetUTF16ConvertString", $String)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$String</dt>
+<dd>変換対象対象文字列(UTF-8文字列)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換に成功すれば1、失敗した場合は0
+</dd>
+<dt>注　意</dt>
+<dd><p>変換結果を取得するには、<a href="#getresultw">GetResultW</a>を使用します。</p>
+<pre><code>$utf8 = getinistr($inifile, $section, &quot;utf8&quot;);
+#ret = dllfunc(&quot;SetUTF16ConvertString&quot;, $utf8);
+$utf16 = dllfuncstrw(&quot;GetResultW&quot;);</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getresult">GetResult</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetResult
+</dd>
+<dt>機　能</dt>
+<dd><a href="#setutf8convertstring">SetUTF8ConvertString</a>の変換結果を取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("GetResult")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd><a href="#setutf8convertstring">SetUTF8ConvertString</a>の変換結果
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="getresultw">GetResultW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>GetResultW
+</dd>
+<dt>機　能</dt>
+<dd><a href="#setutf16convertstring">SetUTF16ConvertString</a>の変換結果を取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("GetResultW")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd><a href="#setutf16convertstring">SetUTF16ConvertString</a>の変換結果
+</dd>
+<dt>注　意</dt>
+<dd><em>dllfuncw</em>を使用して呼び出してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="nkf">nkf関連</h3>
+<h4 id="nkf_load">nkf_load</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_load
+</dd>
+<dt>機　能</dt>
+<dd>nkf32.dllをロードし、各種関数を使用できるようにする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("nkf_load", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>読み込む”nkf32.dll”をフルパスで指定する。 省略した場合、Windowsの標準動作に従い、nkf32.dll”のロード行います。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>ロードに成功すれば1、失敗だと0
+</dd>
+<dt>注　意</dt>
+<dd><p>例)</p>
+<pre><code>#num = dllfunc(&quot;nkf_load&quot;);   //nkf32.dllがパスの通った場所にある場合。
+#num = dllfunc(&quot;nkf_load&quot;,&quot;&quot;);//nkf32.dllがパスの通った場所にある場合。
+#num = dllfunc(&quot;nkf_load&quot;,hidemarudir + &quot;\\nkf32.dll&quot;);   //nkf32.dllのパスを指定する場合</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_free">nkf_free</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_free
+</dd>
+<dt>機　能</dt>
+<dd>nkf32.dllをアンロードする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("nkf_free")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>常に1を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_version">nkf_version</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_version
+</dd>
+<dt>機　能</dt>
+<dd>nkf32.dllのバージョン情報を文字列で返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_version")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>バージョン情報を文字列で返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_exec">nkf_exec</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_exec
+</dd>
+<dt>機　能</dt>
+<dd>nkfコマンドの実行
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_exec", $Option, $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Option</dt>
+<dd>nkfへのオプション文字列
+</dd>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換結果を文字列で返す。
+</dd>
+<dt>注　意</dt>
+<dd>nkf_load関数を実行していないと”“を返します。 エラーの有無と詳細はnkf_error関数で取得できる。 オプションの指定はNKF32.DLLのドキュメントを参照してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_tohankaku">nkf_tohankaku</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_tohankaku
+</dd>
+<dt>機　能</dt>
+<dd>２バイト文字の英数字と一部の記号を１バイト文字へ変換
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_tohankaku", $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換結果を文字列で返す。
+</dd>
+<dt>注　意</dt>
+<dd>nkf_load関数を実行していないと”“を返します。 エラーの有無と詳細はnkf_error関数で取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_tozenkakukana">nkf_tozenkakukana</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_tozenkakukana
+</dd>
+<dt>機　能</dt>
+<dd>１バイトカナ文字を２バイト文字へ変換
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_tozenkakukana", $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換結果を文字列で返す。
+</dd>
+<dt>注　意</dt>
+<dd>nkf_load関数を実行していないと”“を返します。 エラーの有無と詳細はnkf_error関数で取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_tomime">nkf_tomime</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_tomime
+</dd>
+<dt>機　能</dt>
+<dd>MIME(BASE64)形式の文字列に変換
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_tomime", $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>変換結果を文字列で返す。
+</dd>
+<dt>注　意</dt>
+<dd>nkf_load関数を実行していないと”“を返します。 エラーの有無と詳細はnkf_error関数で取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_error">nkf_error</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_error
+</dd>
+<dt>機　能</dt>
+<dd>nkf関連コマンドのエラー情報を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("nkf_error")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd><p>エラーコード</p>
+<dl>
+<dt>NKF_NOERROR(0x00)</dt>
+<dd>エラーなし
+</dd>
+<dt>NKF_OPTIONERROR(0x01)</dt>
+<dd>オプション文字列の設定エラー
+</dd>
+<dt>NKF_ARGVERROR(0x02)</dt>
+<dd>各種引数のエラー
+</dd>
+<dt>NKF_LOADERROR(0x03)</dt>
+<dd>DLLのロードエラー
+</dd>
+<dt>NKF_COMMANDERROR(0x04)</dt>
+<dd>各コマンドの実行エラー
+</dd>
+<dt>NKF_FUNCTIONERROR(0x05)</dt>
+<dd>DLLの関数ポインタ取得エラー
+</dd>
+<dt>NKF_VERIONERROR(0x06)</dt>
+<dd>DLLのバージョン不一致
+</dd>
+<dt>NKF_INFILEERROR(0x07)</dt>
+<dd>入力ファイルのエラー
+</dd>
+<dt>NKF_OUTFILEERROR(0x08)</dt>
+<dd>出力ファイルのエラー
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_errormessage">nkf_errormessage</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_errormessage
+</dd>
+<dt>機　能</dt>
+<dd>nkfコマンドのエラーメッセージを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_errormessage")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>エラーメッセージ
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_getkanjicode">nkf_getkanjicode</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_getkanjicode
+</dd>
+<dt>機　能</dt>
+<dd>nkfコマンド実行時、対象文字列の漢字コードを取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("nkf_getkanjicode")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd><dl>
+<dt>-1</dt>
+<dd>nkf32.dll Ver 1.03 で実行した場合か、nkd_load を行っていない場合。
+</dd>
+<dt>0</dt>
+<dd>shift-jis 1
+</dd>
+<dd>euc
+</dd>
+<dt>2</dt>
+<dd>jis
+</dd>
+<dt>3</dt>
+<dd>utf-8
+</dd>
+<dt>4</dt>
+<dd>utf-16LE
+</dd>
+<dt>5</dt>
+<dd>utf-16BE
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>nkf32.dll がVer.2以降でないと動作しません。 nkfの各コマンドを実行後に呼びだすこと。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_fileconvert1">nkf_fileconvert1</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_fileconvert1
+</dd>
+<dt>機　能</dt>
+<dd>ファイルを対象にしたnkfコマンドの実行。ファイル自体を置き換えます。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("nkf_fileconvert1", $TargetFile, $Option)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$TargetFile</dt>
+<dd>変換対象のファイル名
+</dd>
+<dt>$Option</dt>
+<dd>nkfへのオプション
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><dl>
+<dt>0</dt>
+<dd><ul>
+<li>ファイルが存在しない。</li>
+<li>オプション設定エラー。</li>
+<li>Ver.1系で実行。</li>
+<li>DLLをロードしていない。</li>
+</ul>
+</dd>
+<dt>1</dt>
+<dd>nkfコマンド実行。
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>nkf32.dll がVer.2以降でないと動作しません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_fileconvert2">nkf_fileconvert2</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_fileconvert2
+</dd>
+<dt>機　能</dt>
+<dd>ファイルを対象にしたnkfコマンドの実行。出力ファイルを指定する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("nkf_fileconvert2", $InFile, $OutFile, $Option)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$InFile</dt>
+<dd>入力ァイル名
+</dd>
+<dt>$OutFile</dt>
+<dd>出力ファイル名
+</dd>
+<dt>$Option</dt>
+<dd>nkfへのオプション
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><dl>
+<dt>0</dt>
+<dd><ul>
+<li>入力ファイルが存在しない。</li>
+<li>出力ファイルが存在している。</li>
+<li>出力ファイルが指定されていない。</li>
+<li>オプション設定エラー。</li>
+<li>Ver.1系で実行。</li>
+<li>DLLをロードしていない。</li>
+</ul>
+</dd>
+<dt>1</dt>
+<dd>nkfコマンド実行。
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>nkf32.dll がVer.2以降でないと動作しません。 出力ファイルへの上書きは行いません。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="nkf_getguess">nkf_getguess</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_getguess
+</dd>
+<dt>機　能</dt>
+<dd>nkfコマンド実行時、対象文字列の漢字コードを文字列で取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_getguess")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>自動判定した結果を文字列で返します。(“Shift-JIS”等) nkf32.dll Ver 1.03 で実行した場合か、nkd_load を行っていない場合は、““を返します。
+</dd>
+<dt>注　意</dt>
+<dd>nkf32.dll がVer.2.0.5以降でないと動作しません。 nkfの各コマンドを実行後に呼びだすこと。
+</dd>
+</dl>
+<h4 id="nkf_getmodulefilename">nkf_getmodulefilename</h4>
+<dl>
+<dt>関数名</dt>
+<dd>nkf_getmodulefilename
+</dd>
+<dt>機　能</dt>
+<dd>ロードしたnkf32.dllのフルパスを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("nkf_getmodulefilename")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>ロードしたnkf32.dllのフルパスを返します。 nkf_load を行っていない、または失敗している場合は、““を返します。
+</dd>
+<dt>注　意</dt>
+<dd><a href="#function_summary">機能概要へ戻る</a>
+</dd>
+</dl>
+<h3 id="hmjre">hmjre関連</h3>
+<h4 id="hmjre_version">hmjre_version</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hmjre_version
+</dd>
+<dt>機　能</dt>
+<dd>hmjre.dllのバージョンを文字列で返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hmjre_version")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>バージョン番号
+</dd>
+<dt>注　意</dt>
+<dd><a href="#function_summary">機能概要へ戻る</a>
+</dd>
+</dl>
+<h4 id="hmjre_load">hmjre_load</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hmjre_load
+</dd>
+<dt>機　能</dt>
+<dd>hmjre.dllをロードし、各種関数を使用できるようにする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hmjre_load", $filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Filename</dt>
+<dd><p>hmjre.dllの場所</p>
+<p>““だとDLLを検索します。</p>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>ロードに成功すれば1、失敗だと0
+</dd>
+<dt>注　意</dt>
+<dd>DLLは一般的な場所、秀丸エディタ、秀丸メールの順で検索します。 なるべくファイルを指定して下さい。 通常は hidemarudir + “\hmjre.dll” と指定すればいい。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hmjre_free">hmjre_free</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hmjre_free
+</dd>
+<dt>機　能</dt>
+<dd>hmjre.dllをアンロードする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hmjre_free")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>常に1を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hmjre_match">hmjre_match</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hmjre_match
+</dd>
+<dt>機　能</dt>
+<dd>hmjre.dllを使った検索
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hmjre_match", $target, $search, #flag, #start)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$target</dt>
+<dd>検索対象文字列
+</dd>
+<dt>$search</dt>
+<dd>正規表現
+</dd>
+<dt>#flag</dt>
+<dd>大文字/小文字を無視するフラグ。1 で大文字小文字を無視。
+</dd>
+<dt>#start</dt>
+<dd>検索開始位置
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd><dl>
+<dt>-1</dt>
+<dd>エラー
+</dd>
+<dt>0</dt>
+<dd>一致する文字がない。または”“に一致。
+</dd>
+<dt>1</dt>
+<dd>一致する文字あり
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>一度検索して、$target、$searchに”“を指定して呼びだすと同じ条件で マッチした文字列の後から再度検索します。この場合、#flag、#startは無視されます。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hmjre_match_string">hmjre_match_string</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hmjre_match_string
+</dd>
+<dt>機　能</dt>
+<dd>hmjre_match関数で一致した文字列を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hmjre_match_string")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>一致した文字列。 検索していない場合は”“を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hmjre_match_info">hmjre_match_info</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hmjre_match_info
+</dd>
+<dt>機　能</dt>
+<dd>hmjre_match関数で一致した文字列の位置情報を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncstr("hmjre_match_info", $target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$target</dt>
+<dd><dl>
+<dt>position または p</dt>
+<dd>一致した文字列の位置。先頭が”0”になります。
+</dd>
+<dt>length または l</dt>
+<dd>一致した文字列の長さ。
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>一致した文字列の位置。または、一致した文字列の長さ。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hmjre_match_tag_string">hmjre_match_tag_string</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hmjre_match_tag_string
+</dd>
+<dt>機　能</dt>
+<dd>hmjre_match関数で、タグに一致した文字列を取得
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hmjre_match_tag_string",#num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>取り出したいタグの番号
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>タグに一致した文字列。 検索していない(hmjre_matchを実行していない)場合は”“を返す。
+</dd>
+<dt>注　意</dt>
+<dd>指定されたタグがない場合は、““を返す。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="mecab">mecab関連</h3>
+<h4 id="mecab_load">mecab_load</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_load
+</dd>
+<dt>機　能</dt>
+<dd>mecab(libmecab.dll)をロードし、各種関数を使用できるようにする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("mecab_load",$filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>読み込む”libmecab.dll”をフルパスで指定する。 省略した場合、Windowsの標準動作に従い、“libmecab.dll”のロード行います。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>ロードに成功すれば1、失敗だと0
+</dd>
+<dt>注　意</dt>
+<dd><p>resource fileを指定する場合は、各コマンドのオプションで指定して下さい。</p>
+<pre><code>例)
+  #num = dllfunc(&quot;mecab_load&quot;);   //libmecab.dllがパスの通った場所にある場合。
+  #num = dllfunc(&quot;mecab_load&quot;,&quot;&quot;);//libmecab.dllがパスの通った場所にある場合。
+  #num = dllfunc(&quot;mecab_load&quot;,hidemarudir + &quot;\\libmecab.dll&quot;);   //libmecab.dllのパスを指定する場合</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_free">mecab_free</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_free
+</dd>
+<dt>機　能</dt>
+<dd>mecab(libmecab.dll)をアンロードする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("mecab_free")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>常に1を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_version">mecab_version</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_version
+</dd>
+<dt>機　能</dt>
+<dd>mecab(libmecab.dll)のバージョン情報を文字列で返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab_version")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>バージョン情報を文字列で返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab-1">mecab</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab
+</dd>
+<dt>機　能</dt>
+<dd>mecabコマンドの実行(最適解のみ)
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab", $Option, $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Option</dt>
+<dd>mecabへのオプション文字列
+</dd>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>解析結果を返す。
+</dd>
+<dt>注　意</dt>
+<dd>mecab_load関数を実行していないと”“を返します。 エラーの有無と詳細はmecab_error、mecab_errormessage、mecab_getstrerror関数で取得可能。 オプションの指定はmecabのドキュメントを参照してください。 複数の解析結果を得たい場合は、mecab_nbestを使用して下さい。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_getyomi">mecab_getyomi</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_getyomi
+</dd>
+<dt>機　能</dt>
+<dd>対処文字列の読みを返す。(最適解のみ)
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab_getyomi", $Option, $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Option</dt>
+<dd>追加するオプション。追加しない場合は”“を指定すること。
+</dd>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>読みを文字列で返す。
+</dd>
+<dt>注　意</dt>
+<dd>mecabコマンドを、オプション”-O yomi”を追加して実行しています。 mecab_load関数を実行していないと”“を返します。 エラーの有無と詳細はmecab_error、mecab_errormessage、mecab_getstrerror関数で取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_wakati">mecab_wakati</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_wakati
+</dd>
+<dt>機　能</dt>
+<dd>対象文字列を、意味のある単語毎に、スペースで区切る。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab_wakati", $Option, $Target)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Option</dt>
+<dd>追加するオプション。追加しない場合は”“を指定すること。
+</dd>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>わかち書きした結果を返す。
+</dd>
+<dt>注　意</dt>
+<dd>mecabコマンドを、オプション”O wakati”を追加して実行しています。 mecab_load関数を実行していないと”“を返します。 エラーの有無と詳細はmecab_error、mecab_errormessage、mecab_getstrerror関数で取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_nbest">mecab_nbest</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_nbest
+</dd>
+<dt>機　能</dt>
+<dd>mecabコマンドの実行(複数の解析結果を取得)
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab_nbest", $Option, $Target, #Num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Option</dt>
+<dd>mecabへのオプション文字列
+</dd>
+<dt>$Target</dt>
+<dd>対象文字列
+</dd>
+<dt>#Num</dt>
+<dd>取得したい結果の数(MAX 512)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>指定された個数の解析結果を返す。
+</dd>
+<dt>注　意</dt>
+<dd>mecab_load関数を実行していないと”“を返します。 エラーの有無と詳細はmecab_error、mecab_errormessage、mecab_getstrerror関数で取得可能。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_error">mecab_error</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_error
+</dd>
+<dt>機　能</dt>
+<dd>mecabコマンドのエラー情報を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("mecab_error")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd><p>エラーコード</p>
+<dl>
+<dt>MECAB_NOERROR(0x00)</dt>
+<dd>エラーなし
+</dd>
+<dt>MECAB_OPTIONERROR(0x01)</dt>
+<dd>オプション文字列の設定エラー
+</dd>
+<dt>MECAB_ARGVERROR(0x02)</dt>
+<dd>各種引数のエラー
+</dd>
+<dt>MECAB_LOADERROR(0x03)</dt>
+<dd>DLLのロードエラー
+</dd>
+<dt>MECAB_COMMANDERROR(0x04)</dt>
+<dd>各コマンドの実行エラー
+</dd>
+<dt>MECAB_FUNCTIONERROR(0x05)</dt>
+<dd>DLLの関数ポインタ取得エラー
+</dd>
+<dt>MECAB_VERIONERROR(0x06)</dt>
+<dd>DLLのバージョン不一致
+</dd>
+<dt>MECAB_MAKERROR(0x07)</dt>
+<dd>mecabのインスタンス作成エラー
+</dd>
+</dl>
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_errormessage">mecab_errormessage</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_errormessage
+</dd>
+<dt>機　能</dt>
+<dd>mecabコマンドのエラーメッセージを文字列で返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab_errormessage")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>エラーメッセージ
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_getstrerror">mecab_getstrerror</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_getstrerror
+</dd>
+<dt>機　能</dt>
+<dd>mecabコマンドのエラーメッセージを文字列で返す。(mecabが出力するメッセージ)
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab_getstrerror")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>エラーメッセージ
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="mecab_getmodulefilename">mecab_getmodulefilename</h4>
+<dl>
+<dt>関数名</dt>
+<dd>mecab_getmodulefilename
+</dd>
+<dt>機　能</dt>
+<dd>ロードしたlibmecab.dllのフルパスを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("mecab_getmodulefilename")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>ロードしたlibmecab.dllのフルパスを返します。 mecab_load を行っていない、または失敗している場合は、““を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="hunspell">hunspell関連</h3>
+<h4 id="hunspell_load">hunspell_load</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_load
+</dd>
+<dt>機　能</dt>
+<dd>hunspell(libhumspell.dll)をロードし、各種関数を使用できるようにする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_load",$filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>読み込む”libhumspell.dll”をフルパスで指定する。 省略した場合、Windowsの標準動作に従い、“libhumspell.dll”のロード行います。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>ロードに成功すれば1、失敗だと0
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_free">hunspell_free</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_free
+</dd>
+<dt>機　能</dt>
+<dd>hunspell(libhumspell.dll)をアンロードする。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_free")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>常に1を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_create">hunspell_Create</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_Create
+</dd>
+<dt>機　能</dt>
+<dd>指定された辞書を使用し、スペルチェッククラスを生成する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_Create", $Dictionary, $Affix)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Dictionary</dt>
+<dd>スペルチェックに使用する辞書を指定する。
+</dd>
+<dt>$Affix</dt>
+<dd>省略可能。スペルチェックに使用する接辞ファイルを指定する。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>スペルチェッククラスの生成に成功すれば 1、失敗の場合は 0を返す。
+</dd>
+<dt>注　意</dt>
+<dd><p>$Dictionary(辞書ファイル) と $Affix(接辞ファイル) の指定について。</p>
+<ul>
+<li><p>第一引数($Dictionary)のみ指定した場合、指定された文字列から、 辞書/接辞ファイル名を自動的に作成します。</p>
+<p>拡張子なしの文字列を指定した場合、“.dic”、“.aff”を補完し、 辞書/接辞ファイル名とします。</p>
+<p>拡張子(“.dic”、“.aff”)を指定してある場合は、そこから辞書/接辞ファイル名を作成します。</p></li>
+<li><p>第一引数($Dictionary)、第二引数($Affix)の両方を指定した場合は、 ファイルの存在チェックは行いますが、引数をそのまま使用するので、 第一引数に辞書ファイル、第二引数に接辞ファイルを指定してください。</p></li>
+<li><p>「C:\Hunspell\dic\」にある、「en_US.aff/en_US.dic」を使う場合の指定方法は、以下の方法があります。</p>
+<ol type="1">
+<li>第一引数に、「拡張子」なしを設定<br />
+<code>#num = dllfunc("hunspell_Create", "C:\\Hunspell\\dic\en_US")</code></li>
+<li>第一引数に、辞書ファイルを設定<br />
+<code>#num = dllfunc("hunspell_Create", "C:\\Hunspell\\dic\en_US.dic")</code></li>
+<li>第一引数に、辞書ファイルを設定<br />
+<code>#num = dllfunc("hunspell_Create", "C:\\Hunspell\\dic\en_US.aff")</code></li>
+<li>第一引数に、辞書ファイル、第二引数に、接辞ファイルを設定<br />
+<code>#num = dllfunc("hunspell_Create", "C:\\Hunspell\\dic\en_US.dic", "C:\\Hunspell\\dic\en_US.aff")</code></li>
+</ol></li>
+</ul>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_get_dic_encoding">hunspell_Get_Dic_Encoding</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_Get_Dic_Encoding
+</dd>
+<dt>機　能</dt>
+<dd>読み込んだ辞書のエンコードを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hunspell_Get_Dic_Encoding")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>エンコードを示す文字列。 <a href="#hunspell_create">hunspell_Create</a>を実行していない、または実行に失敗している場合には、““を返す。
+</dd>
+<dt>注　意</dt>
+<dd>辞書のエンコードが、“UTF-8”の場合は、unicode版関数(末尾に”W”がついている関数)を使用してください。 内部で、UTF-16LE -&gt; UTF-8 の変換を行っています。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_spell">hunspell_Spell</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_Spell
+</dd>
+<dt>機　能</dt>
+<dd>スペルチェックを実行する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_Spell", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>スペルチェックする語句
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>問題があれば 1、なければ 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_suggest">hunspell_Suggest</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_Suggest
+</dd>
+<dt>機　能</dt>
+<dd>語句のサジェスト候補を調べる。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_Suggest", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>実施する語句を指定する。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>サジェスト候補があればその数を、なければ 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd>サジェスト候補を取得するには、<a href="#hunspell_suggestlist">hunspell_SuggestList</a> を使用してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_suggestlist">hunspell_SuggestList</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_SuggestList :機　能 サジェスト候補を取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hunspell_SuggestList", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>サジェスト候補の番号
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>サジェスト候補
+</dd>
+<dt>注　意</dt>
+<dd><a href="#hunspell_suggest">hunspell_Suggest</a> を実行していない場合は、“” を返す。 候補数の最大は、<a href="#hunspell_suggest">hunspell_Suggest</a> の戻り値になります。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_add">hunspell_Add</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_Add
+</dd>
+<dt>機　能</dt>
+<dd>単語を辞書に登録する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_Add", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>追加する単語を指定する。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功すれば 1、失敗の場合は 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_remove">hunspell_Remove</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_Remove
+</dd>
+<dt>機　能</dt>
+<dd>単語を辞書から削除する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_Remove", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>削除する単語を指定する。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功すれば 1、失敗の場合は 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_adddictionary">hunspell_AddDictionary</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_AddDictionary
+</dd>
+<dt>機　能</dt>
+<dd>辞書ファイルを追加する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("hunspell_AddDictionary", $Dictionary)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$Dictionary</dt>
+<dd>追加する辞書ファイル名
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功すれば 1、失敗の場合は 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd><p>この関数を使用するには、改造版libhunspell.dllが必要です。</p>
+<p>辞書ファイルは、hunspellの辞書と同じ形式のファイルを指定して下さい。</p>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_getmodulefilename">hunspell_getmodulefilename</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_getmodulefilename
+</dd>
+<dt>機　能</dt>
+<dd>ロードしたlibhumspell.dllのフルパスを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hunspell_getmodulefilename")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>ロードしたlibhumspell.dllのフルパスを返します。 hunspell_load を行っていない、または失敗している場合は、““を返します。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_errormessage">hunspell_errormessage</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_errormessage
+</dd>
+<dt>機　能</dt>
+<dd>hunspell関連関数のエラーメッセージを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hunspell_errormessage")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>hunspell関連関数のエラーメッセージ。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_spellw">hunspell_SpellW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_SpellW
+</dd>
+<dt>機　能</dt>
+<dd>スペルチェックを実行する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("hunspell_SpellW", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>スペルチェックする語句
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>問題があれば 1、なければ 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd><em>dllfuncw</em> を使用して呼び出してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_suggestw">hunspell_SuggestW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_SuggestW
+</dd>
+<dt>機　能</dt>
+<dd>語句のサジェスト候補を調べる。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("hunspell_SuggestW", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>実施する語句を指定する。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>サジェスト候補があればその数を、なければ 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd><em>dllfuncw</em> を使用して呼び出してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_suggestlistw">hunspell_SuggestListW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_SuggestListW :機　能 サジェスト候補を取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstrw("hunspell_SuggestListW", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>サジェスト候補の番号
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>サジェスト候補
+</dd>
+<dt>注　意</dt>
+<dd><em>dllfuncstrw</em> を使用して呼び出してください。<br />
+hunspell_Suggest を実行していない場合は”” を返す。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_addw">hunspell_AddW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_AddW
+</dd>
+<dt>機　能</dt>
+<dd>単語を辞書に登録する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("hunspell_AddW", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>追加する単語を指定する。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功すれば 1、失敗の場合は 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd><em>dllfuncw</em> を使用して呼び出してください。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_removew">hunspell_RemoveW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_RemoveW
+</dd>
+<dt>機　能</dt>
+<dd>単語を辞書から削除する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("hunspell_RemoveW", $word)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$word</dt>
+<dd>削除する単語を指定する。
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>成功すれば 1、失敗の場合は 0を返す。 エラーがあった場合は -1 を返す。
+</dd>
+<dt>注　意</dt>
+<dd><em>dllfuncw</em> を使用して呼び出してください。<br />
+
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="hunspell_getversion">hunspell_GetVersion</h4>
+<dl>
+<dt>関数名</dt>
+<dd>hunspell_GetVersion :機　能 ロードしたlibhumspell.dllのバージョンを文字列で返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("hunspell_GetVersion")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>ロードしたlibhumspell.dllのバージョンを文字列で返す。 hunspell_load を行っていない、または失敗している場合は、““を返します。
+</dd>
+<dt>注　意</dt>
+<dd>この関数を使用するには、改造版libhunspell.dllが必要です。
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h3 id="editorconfig">EditorConfig関連</h3>
+<h4 id="editorconfigexecute">EditorConfigExecute</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigExecute
+</dd>
+<dt>機　能</dt>
+<dd>.editorconfigを検索し、適応するプロパティを取得する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("EditorConfigExecute",$filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>対象となるファイル(フルパスで指定すること。)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>適応するプロパティの数。エラーの場合は-1を返す。
+</dd>
+<dt>注　意</dt>
+<dd><pre><code>実行例
+#ec = loaddll(hidemarudir + &quot;\\ht_tools.dll&quot;);
+#max = dllfunc(#ec, &quot;EditorConfigExecute&quot;, filename);
+if(#max == 0){
+    freedll #ec;
+    endmacro;
+}else if(#max == -1){
+    message dllfuncstr(#ec, &quot;EditorConfigErrorMessage&quot;);
+    freedll #ec;
+    endmacro;
+}
+#cnt = 0;
+while(#cnt &lt; #max){
+    $key   = tolower(dllfuncstr(#ec, &quot;EditorConfigGetKey&quot;,   #cnt));
+    $value = tolower(dllfuncstr(#ec, &quot;EditorConfigGetValue&quot;, #cnt));
+    message $key + &quot;:&quot; + $value;
+    #cnt = #cnt + 1;
+}</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="editorconfigexecutew">EditorConfigExecuteW</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigExecuteW
+</dd>
+<dt>機　能</dt>
+<dd>.editorconfigを検索し、適応するプロパティを取得する。(<a href="#editorconfigexecute">EditorConfigExecute</a> のユニコード版)
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfuncw("EditorConfigExecuteW",$filename)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>$filename</dt>
+<dd>対象となるファイル(フルパスで指定すること。)
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>適応するプロパティの数。エラーの場合は-1を返す。
+</dd>
+<dt>注　意</dt>
+<dd><p><em>dllfuncw</em> を使用して呼び出してください。</p>
+<pre><code>実行例
+#ec = loaddll(hidemarudir + &quot;\\ht_tools.dll&quot;);
+#max = dllfuncw(#ec, &quot;EditorConfigExecuteW&quot;, filename);
+if(#max == 0){
+    freedll #ec;
+    endmacro;
+}else if(#max == -1){
+    message dllfuncstr(#ec, &quot;EditorConfigErrorMessage&quot;);
+    freedll #ec;
+    endmacro;
+}
+#cnt = 0;
+while(#cnt &lt; #max){
+    $key   = tolower(dllfuncstr(#ec, &quot;EditorConfigGetKey&quot;,   #cnt));
+    $value = tolower(dllfuncstr(#ec, &quot;EditorConfigGetValue&quot;, #cnt));
+    message $key + &quot;:&quot; + $value;
+    #cnt = #cnt + 1;
+}</code></pre>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="editorconfigerrormessage">EditorConfigErrorMessage</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigErrorMessage
+</dd>
+<dt>機　能</dt>
+<dd>EditorConfigのエラーメッセージを返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("EditorConfigErrorMessage")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>エラーメッセージ
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="editorconfiggetkey">EditorConfigGetKey</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigGetKey
+</dd>
+<dt>機　能</dt>
+<dd>EditorConfigExecuteで取得したプロパティの、キー名を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("EditorConfigGetKey", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>インデックス
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>プロパティの、キー名を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="editorconfiggetvalue">EditorConfigGetValue</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigGetValue
+</dd>
+<dt>機　能</dt>
+<dd>EditorConfigExecuteで取得したプロパティの、値を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("EditorConfigGetValue", #num)</code>
+</dd>
+<dt>引　数</dt>
+<dd><dl>
+<dt>#num</dt>
+<dd>インデックス
+</dd>
+</dl>
+</dd>
+<dt>戻り値</dt>
+<dd>プロパティの、値を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="editorconfigclear">EditorConfigClear</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigClear
+</dd>
+<dt>機　能</dt>
+<dd>EditorConfigExecute/EditorConfigExecuteW で取得したプロパティの、キー、値を破棄する。
+</dd>
+<dt>書　式</dt>
+<dd><code>#num = dllfunc("EditorConfigClear")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>常に1を返す。
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="editorconfiggetversionstr">EditorConfigGetVersionStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigGetVersionStr
+</dd>
+<dt>機　能</dt>
+<dd>使用している”EditorConfig C Core”のバージョン情報を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("EditorConfigGetVersionStr")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>“EditorConfig C Core”のバージョン情報
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<h4 id="editorconfiggetpcreversionstr">EditorConfigGetPcreVersionStr</h4>
+<dl>
+<dt>関数名</dt>
+<dd>EditorConfigGetPcreVersionStr
+</dd>
+<dt>機　能</dt>
+<dd>“EditorConfig C Core”で使用しているのPCREバージョン情報を返す。
+</dd>
+<dt>書　式</dt>
+<dd><code>$str = dllfuncstr("EditorConfigGetPcreVersionStr")</code>
+</dd>
+<dt>引　数</dt>
+<dd>なし
+</dd>
+<dt>戻り値</dt>
+<dd>“EditorConfig C Core”で使用しているのPCREバージョン情報
+</dd>
+<dt>注　意</dt>
+<dd>
+</dd>
+</dl>
+<p><a href="#function_summary">機能概要へ戻る</a></p>
+<p><a href="#contents">page top</a></p>
+<h2 id="attention">使用上の注意</h2>
+<ul>
+<li><p><a href="#urlencode">UrlEncode</a>関数でエンコードした文字列を、秀丸マクロのrun命令で、 他のプログラムの引数に使う場合は注意が必要です。</p>
+<p>マクロのrun命令では “%d”、“%f”、“%b”が以下のように特殊な意味を持ちます。</p>
+<pre><code>%f ：フルパスのファイル名
+%d ：フォルダ名
+%b ：フォルダを除いたファイル名
+(UrlEncodeでは常に大文字で返すが、大文字でも同様です。)</code></pre>
+<p>漢字をデコードした場合、これらの文字が含まれる場合があります。 引数に使用する場合はこれらの文字が含まれていないかチェックし、含まれる場合は “%%f”のように”%“を２重にする必要があります</p></li>
+<li><p>このDLLは作者本人は、Windows 10(x86/x64)上でしか動作確認していません。</p></li>
+<li><p>nkf32.dllはVer.1.xxとVer.2.xxがあります。 バージョンによって使用できない関数があります。 Ver.2系はUTF-8などUNICODE対応版です。</p>
+<ul>
+<li><a href="http://hp.vector.co.jp/authors/VA007219/">Ver.2.0.5以降</a>の使用を推奨。</li>
+</ul>
+<p>ht_tools.dll Version 1.9.00β6より、ロードするnkf32.dllを指定できます。 パスの通った場所に入れなくても、フルパスで指定すれば動作します。</p></li>
+<li><p>mecabはVer.0.97で動作確認。(Windowsインストーラ版) その他のバージョンでは確認していません。</p>
+<p>ht_tools.dll Version 1.9.00β5より、ロードするlibmecab.dllを指定できます。 パスの通った場所に入れなくても、フルパスで指定すれば動作します。</p></li>
+<li><p>hunspell Ver.1.7.0で動作確認。辞書ファイルは、適当に入手して下さい。</p></li>
+<li><p>操作するWindowが秀丸の場合、アクティブな秀丸にマクロの実行も移動するので注意してください。</p></li>
+<li><p>不具合をなくす意志はありますが、実力が伴っていないので治らないかもしれません。</p></li>
+<li><p>このDLLを使用したことによって如何なる不幸が生じても、 作者がそれらに対して補償を行う義務は無いものとさせてください。</p></li>
+</ul>
+<p><a href="#contents">page top</a></p>
+<h2 id="memo">メモ</h2>
+<ul>
+<li><p>ウィンドウハンドル</p>
+<p>ウィンドウハンドルとは、ウィンドウを識別する為につけられる番号です。 秀丸のウィンドウハンドルは「hidemaruhandle(x)」で取得できます。 秀丸以外のウィンドウハンドルは「findwindow」、「findwindowclass」で 検索・取得できます。</p></li>
+<li><p>バージョン番号について</p>
+<p>バージョン番号は　Major.Minor.Revision　です。</p>
+<dl>
+<dt>Major</dt>
+<dd>旧バージョンと互換性がないバージョンアップ
+</dd>
+<dt>Minor</dt>
+<dd>互換性を(なるべく)保証するバージョンアップ 機能追加、多少の仕様変更も含む。大幅な仕様変更は関数を追加する方向。
+</dd>
+<dt>Revision</dt>
+<dd>バグ修正のみ
+</dd>
+</dl>
+<p>各項目は10進数、2桁とする。</p>
+<p>配布用圧縮ファイルも同様の番号を含むファイル名になるが”.”は省略。 Revisionの後に小文字のアルファベットがつく場合はDLLのバージョンはそのままで、 圧縮ファイル内に含まれる文章が修正された事を示します。</p></li>
+</ul>
+<h3 id="numbers1">漢数字</h3>
+<p>このプログラムでは、漢字の”一”から”九”と0(zero)を示す記号の”〇”で、位取り記数法で 示したものをさします。1999年は一九九九年となる。</p>
+<h3 id="numbers2">漢字表記</h3>
+<p>このプログラムでは、「十百千万億兆」等の位取りの漢字を用いた数字表現をさします。 1999年は千九百九十九年となる。</p>
+<p><a href="#contents">page top</a></p>
+<h2 id="history">履　歴</h2>
+<dl>
+<dt>2002/04/13 Version 1.0.0</dt>
+<dd>初　版
+</dd>
+<dt>2002/04/15 Version 1.0.1</dt>
+<dd>CountTopWindow関数の値がおかしかったのを修正
+</dd>
+<dt>2002/04/15 Version 1.1.0</dt>
+<dd>GetWindowCaption関数を追加
+</dd>
+<dt>2002/04/16 Version 1.1.0a</dt>
+<dd>この文章のGetWindowCaption関数の説明、その他いろいろ修正・加筆
+</dd>
+<dt>2002/04/24 Version 1.1.0b</dt>
+<dd>この文章の修正
+</dd>
+<dt>2002/05/30 Version 1.1.0c</dt>
+<dd>この文章、IsTopWindows関数の説明を修正
+</dd>
+<dt>2002/06/07 Version 1.1.1</dt>
+<dd>Wait関数の追加。この文章の修正
+</dd>
+<dt>2003/02/17 Version 1.2.0</dt>
+<dd><p>ファイル名操作関係を追加。（文字列操作もこっそり追加）</p>
+<p>GetChangeFileExt, GetFileName, GetParentFolder, IsMatchFileName, GetFileExtention, GetFileBaseName, GetShortFileName, GetLongFileName を追加。</p>
+<p>このバージョンからいっそう環境を選ぶようになると思う。要IE5以上。</p>
+</dd>
+<dt>2003/02/18 Version 1.2.1</dt>
+<dd>InStr関数の追加。（本来は1.2.0でこれを追加するはずだったんだけどバグ取りに時間がかかった。）
+</dd>
+<dt>2003/02/19 Version 1.2.2</dt>
+<dd>InStrRev、TrimStr関数の追加。 InStrも”strstr”(標準関数)ではなくて”StrStr”(SHLWAPI.DLL内関数)を使えばもっと簡単になりそう。
+</dd>
+<dt>2003/02/22 Version 1.2.3</dt>
+<dd><p>「GetShortFileName,GetLongFileName」を「GetShortName,GetLongName」へ変更。</p>
+<p>GetExpandPath, GetSpecialFolder, URLExchange, UrlEncode, UrlDecode, GetStrCSpn, GetStrSpn, を追加。</p>
+</dd>
+<dt>2003/03/01 Version 1.2.4</dt>
+<dd>InsertStr、DeleteStr関数を追加。 UrlEncodeの注意を追加。
+</dd>
+<dt>2003/03/08 Version 1.2.5</dt>
+<dd><p>このバージョンでなんとかWindows2000以外でも動くようにしたつもり。 ただしWindows95、とXPは全然未確認。XPはたぶん大丈夫だと思うけどね。</p>
+<ul>
+<li><p>Windows98でロードに失敗する問題に対処</p>
+<p>ライブラリのリンク時の問題？ “SHLWAPI.DLL”の関数使うつもりが”SHELL32.DLL”の関数を使用していた。 Windows2000では両方に同じAPIが実装されているため問題ないがWindows98 では”SHELL32.DLL”にないためエラーになっていた。 リンク時に”SHLWAPI.Lib”を先にリンクさせるようにした。</p></li>
+<li><p>GetLongName関数を変更</p>
+<p>変換APIがWindows NTだと動作しないので自前のコードで変換</p></li>
+<li><p>“ht_version”を”GetDllVersion”へ変更。</p></li>
+<li><p>InStrRev関数のバグの修正。</p>
+<p>検索文字があると無限ループになってしまっていた。 検索開始位置を示すポインタ位置を更新していなかった。</p></li>
+<li><p>GetSpecialFolder関数がWindows NTで動作しなかったのを修正。</p>
+<p>MSDNにはWindows95、NT4.0でも使えるとのことだったが、どうやらIE4で アクティブディスクトップにしないと”SHELL32.DLL”が置き換えられない ので”SHGetSpecialFolderPath”が使えない。 “SHGetSpecialFolderLocation”を使うことでNTでも動作するようにした。</p></li>
+</ul>
+</dd>
+<dt>2003/03/11 Version 1.2.6</dt>
+<dd><p>InStr関数の検索開始位置を”0”からにした。（戻り値と同じ考え） 関数の説明にも明記するようにした。</p>
+<p>GetDllVersion関数の戻り値を数字に変更。ついでにht_version関数を復活。</p>
+</dd>
+<dt>2003/03/16 Version 1.2.7</dt>
+<dd>InStrI、InStrRevIを追加。
+</dd>
+<dt>2003/03/19 Version 1.2.8</dt>
+<dd>GetFileSizeByte、 GetFileSizeStr、 GetUnitStr、 GetSizeStr、 LeftJust、 RightJust を追加。
+</dd>
+<dt>2003/03/24 Version 1.2.9</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#instrex">InStrEx</a>、 <a href="#instrrevex">InStrRevEx</a>、 <a href="#upperstr">UpperStr</a>、 <a href="#lowerstr">LowerStr</a> を追加。</p></li>
+<li><p>仕様変更</p>
+<p><a href="#wait">Wait</a>関数で不正な値を指定された場合は-1を返すようにした。</p></li>
+<li><p>修正</p>
+<p><a href="#getunitstr">GetUnitStr</a>がUnitStr、 <a href="#getsizestr">GetSizeStr</a>がSizeStr という名前になってしまっていたので修正。 <a href="#rightjust">RightJust</a>/<a href="#leftjust">LeftJust</a>関数で1024を指定すると落ちるのを修正。</p></li>
+<li><p>その他</p>
+<p>文字列引数の正当性をチェックをするようにした。（目に付いたモノだけ）</p></li>
+</ul>
+</dd>
+<dt>2003/03/29 Version 1.03.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#timeformat">TimeFormat</a> を追加。</p></li>
+<li><p>修正</p>
+<p><a href="#getdllversion">GetDllVersion</a>が返す値を最低５桁になるように修正。</p></li>
+<li><p>その他</p>
+<p>バージョンの番号の付け方を明確に。</p></li>
+</ul>
+</dd>
+<dt>2003/04/05 Version 1.04.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#trim">Trim</a>、 <a href="#ltrim">LTrim</a>、 <a href="#rtrim">RTrim</a>、 <a href="#numstringtokanji">NumStringToKanji</a>、 <a href="#numtokanji">NumToKanji</a>、 <a href="#settime">SetTime</a>、 <a href="#resettime">ResetTime</a>、 <a href="#centor">Centor</a>、 RegexpCaseStr、 を追加。</p>
+<p><a href="#timeformat">TimeFormat</a>の書式に%km,%kM,%ks,%kh,%kI,%kH,%kd,%ky,%kYを追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p>
+<p>プログラムを１つのソースから、分野ごとに分割した。</p></li>
+</ul>
+</dd>
+<dt>2003/04/11 Version 1.05.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#string-1">String</a>、 <a href="#strings">Strings</a>、 <a href="#replace">Replace</a> を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/06/01 Version 1.06.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#nkf_load">nkf_load</a>、 <a href="#nkf_free">nkf_free</a>、 <a href="#nkf_version">nkf_version</a>、 <a href="#nkf_exec">nkf_exec</a>、 <a href="#nkf_tohankaku">nkf_tohankaku</a>、 <a href="#nkf_tozenkakukana">nkf_tozenkakukana</a>、 nkf_EncodeSubject、 <a href="#nkf_error">nkf_error</a>、 <a href="#fileopen">FileOpen</a>、 <a href="#wrfile">WrFile</a>、 <a href="#rdfile">RdFile</a>、 <a href="#isopen">IsOpen</a>、 <a href="#isferror">IsFerror</a>、 <a href="#iseof">IsEof</a>、 <a href="#fileclose">FileClose</a>、 <a href="#fileerror">FileError</a>、 <a href="#getstdout">GetStdout</a>、 <a href="#getexitcode">GetExitCode</a>、 を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/06/14 Version 1.06.01</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#getstdout">GetStdout</a>を修正。 標準入出力にアクセスする方法を、安全と思われる方法に変更。 それに伴い標準入力へコマンドを送れるようにした。</p>
+<p><a href="#getlongname">GetLongName</a>を修正。 アルゴリズムを入れ替え。フルパスでなくても変換できるようにした。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/07/07 Version 1.06.02</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#getstdout">GetStdout</a>を修正。 秀丸ごと死んでしまう現象に対処。（引数のチェックを行っていなかった。）</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/08/09 Version 1.07.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#readsectionkeys">ReadSectionKeys</a>、 <a href="#getinikeydata">GetIniKeyData</a>、 <a href="#getinikey">GetIniKey</a>、 <a href="#getinikeyvalue">GetIniKeyValue</a>、 <a href="#nextkey">NextKey</a>を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/08/16 Version 1.08.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#rdfile2">RdFile2</a>、<a href="#rdfilebyte">RdFileByte</a>を追加</p></li>
+<li><p>修正</p>
+<p>InStrI、 InStrRevIを削除。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/08/20 Version 1.09.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#getactivewindowhandle">GetActiveWindowHandle</a>、<a href="#getwindowclass">GetWindowClass</a>を追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/11/29 Version 1.10.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#existkey">ExistKey</a>、<a href="#getkeyvalue">GetKeyValue</a>を追加</p></li>
+<li><p>修正</p>
+<p>機能追加に伴い<a href="#readsectionkeys">ReadSectionKeys</a>を修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/12/14 Version 1.10.01</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#getdllversionstr">GetDllVersionStr</a>を追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2003/12/23 Version 1.10.01a</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+<p>この文章を修正。</p>
+</dd>
+<dt>2004/01/24 Version 1.11.00(β)</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#getwindowstate">GetWindowState</a>、 <a href="#setwindowstate">SetWindowState</a>、 <a href="#getfileattr">GetFileAttr</a>、 <a href="#isdirectory">IsDirectory</a>、 <a href="#isfile">IsFile</a>、 <a href="#filedelete">FileDelete</a>を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p>
+<p>秀丸Ver.4.10β9にて最前面に設定が可能になったので、 dll内関数がいくつか不要になった。</p></li>
+</ul>
+</dd>
+<dt>2004/04/17 Version 1.11.00</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#getwindowcaption">GetWindowCaption</a>が正常に動作していなかったのを修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2004/12/22 Version 1.12.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>FINDWINDOW、<a href="#openhtmlhelp">OpenHtmlHelp</a>を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2004/12/31 Version 1.13.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#searchwindow">SearchWindow</a>、 <a href="#nextwindowhandle">NextWindowHandle</a>、 <a href="#getwindowcount">GetWindowCount</a>、 <a href="#getsearchwindowcount">GetSearchWindowCount</a>、 <a href="#hmjre">hmjre関連</a>コマンド を追加。</p></li>
+<li><p>修正</p>
+<p>関数自体は存在していたが説明がない物があったので説明を追加。 <a href="#isrelativepath">IsRelativePath</a>、<a href="#getrelativepathto">GetRelativePathTo</a>。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/01/03 Version 1.13.00a</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>この文章を修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/01/04 Version 1.14.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>nkf32.dll Ver.2への対応。 <a href="#nkf_getkanjicode">nkf_getkanjicode</a>、 <a href="#nkf_fileconvert1">nkf_fileconvert1</a>、 <a href="#nkf_fileconvert2">nkf_fileconvert2</a>コマンドを追加。</p></li>
+<li><p>修正</p>
+<ul>
+<li>“nkf_EncodeSubject”を”<a href="#nkf_tomime">nkf_tomime</a>“に変更。</li>
+<li><a href="#hmjre_match">hmjre_match</a>の引数に検索開始位置を追加。</li>
+</ul></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/01/10 Version 1.14.01</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>hmjre関連の関数で内部構造を変更。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/01/10 Version 1.15.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#runsync">RUNSYNC</a>コマンドを追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/01/16 Version 1.15.01</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>iniファイル関連のモジュールを修正</p>
+<ul>
+<li><p><a href="#readsectionkeys">ReadSectionKeys</a>の修正</p>
+<p>キー位置保存配列を1024固定から可変へ。 最終キー位置が保存されないバグの修正。</p></li>
+<li><p>メモリ確保失敗時の処理を追加。</p></li>
+</ul></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/04/30 Version 1.16.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#sendkeypress">SendKeyPress</a>関数の追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/09/06 Version 1.16.01</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#getwindowclass">GetWindowClass</a>関数が正常に動作していないのを修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/09/07 Version 1.16.01a</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#hmjre_match_info">hmjre_match_info</a>の説明を修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/09/09 Version 1.16.02</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#hmjre_match">hmjre_match</a>でメモリーリークしていたバグの修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/09/10 Version 1.16.03</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>以下の関数を削除。 FINDWINDOW、ht_version、RegexpCaseStr</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/09/17 Version 1.16.04</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#getdllversion">GetDllVersion</a>、<a href="#getdllversionstr">GetDllVersionStr</a>の返す値をバージョンリソースから取得するように変更。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/09/19 Version 1.17.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#getfilenamefromhwnd">GetFileNameFromHwnd</a>、<a href="#getcompactpath">GetCompactPath</a>を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2005/09/22 Version 1.17.00a</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p>
+<p>ドキュメント修正。</p></li>
+</ul>
+</dd>
+<dt>2006/01/22 Version 1.18.00 β1</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<ul>
+<li><p>セクション取得関連の関数追加。</p>
+<p><a href="#readsectionnames">ReadSectionNames</a>、 <a href="#existsection">ExistSection</a>、 <a href="#getsectionname">GetSectionName</a>、 <a href="#getsection">GetSection</a>、 <a href="#nextsection">NextSection</a></p></li>
+<li><p>NKF32.DLLのVer.2.0.5に対応。</p>
+<p><a href="#nkf_getguess">nkf_getguess</a>を追加。 Ver.2.0.5の場合は、各関数も対応したDLL関数群を使用するよう変更。</p></li>
+</ul></li>
+<li><p>修正</p>
+<p><a href="#urldecode">UrlDecode</a>が正常に動作していなかったバグの修正。 途中から、“StrToIntEx”APIを使って16進数-&gt;10進数変換を行っていたが、 “0x”をつけずに変換していたため結果がおかしかった。</p></li>
+<li><p>その他</p>
+<p>メモがわりに。</p>
+<p>%xxをデコードする場合、“nkf_exec”で–url-input オプションを指定し、 実行すると、文字コード変換も同時にできます。</p></li>
+</ul>
+</dd>
+<dt>2006/03/21 Version 1.18.00正式版</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#nkf_errormessage">nkf_errormessage</a>を追加。</p></li>
+<li><p>修正</p>
+<p><a href="#openhtmlhelp">OpenHtmlHelp</a>、<a href="#nkf_fileconvert1">nkf_fileconvert1</a>、<a href="#nkf_fileconvert2">nkf_fileconvert2</a>が正常に動作していなかったバグの修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2006/05/05 Version 1.18.01</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>nkf32.dll Ver.2.0.7で正常に動作しないバグの修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2007/07/16 Version 1.19.00β1</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>mecab関連の関数を追加。</p>
+<p><a href="#mecab_load">mecab_load</a>、 <a href="#mecab_free">mecab_free</a>、 <a href="#mecab_version">mecab_version</a>、 <a href="#mecab_getyomi">mecab_getyomi</a>、 <a href="#mecab_wakati">mecab_wakati</a>、 <a href="#mecab-1">mecab</a>、 <a href="#mecab_nbest">mecab_nbest</a>、 <a href="#mecab_error">mecab_error</a>、 <a href="#mecab_errormessage">mecab_errormessage</a>、 <a href="#mecab_getstrerror">mecab_getstrerror</a></p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2007/08/11 Version 1.19.00β2</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>hmjre関連の関数を追加。</p>
+<p><a href="#hmjre_match_tag_string">hmjre_match_tag_string</a></p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2007/10/21 Version 1.19.00β3</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#findwindow">FINDWINDOW</a>関数を追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2007/10/27 Version 1.19.00β4</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#getancestorwindow">GetAncestorWindow</a>関数を追加</p></li>
+<li><p>修正</p>
+<p><a href="#getwindowclass">GetWindowClass</a>が正常に動作していなかったのを修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2008/01/16 Version 1.19.00β5</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p><a href="#mecab_load">mecab_load</a>で、読み込む”libmecab.dll”を指定できるようにした。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2008/01/20 Version 1.19.00β6</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#nkf_getmodulefilename">nkf_getmodulefilename</a>、<a href="#mecab_getmodulefilename">mecab_getmodulefilename</a>、 <a href="#getclipboardownerhandle">GetClipboardOwnerHandle</a>、 <a href="#getclipboarddsptext">GetClipboardDSPTEXT</a>を追加</p></li>
+<li><p>修正</p>
+<p><a href="#nkf_load">nkf_load</a>で、読み込む”nkf32.dll”を指定できるようにした。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2008/09/01 Version 1.19.00β7</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>ドキュメント修正</p>
+<ul>
+<li>mecab_strerror → mecab_getstrerror</li>
+<li>mecab_getyomi、mecab_wakati の関数の説明で、 追加オプションの記述が抜けていたのを修正。</li>
+</ul></li>
+<li><p>その他</p>
+<p>コンパイラを、Borland C++ Compiler 5.5から、Visual C++ 2008 Express Edition SP1へ 変更。 コンパイラ変更に伴い、多少コードを修正。</p></li>
+</ul>
+</dd>
+<dt>2009/12/31 Version 1.19.00(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<ul>
+<li><a href="#numtokanji">NumToKanji</a>が正常に動作していないバグの修正(コンパイラ変更に伴うバグ)。</li>
+<li><a href="#getfilenamefromhwnd">GetFileNameFromHwnd</a>の失敗時に、戻り値がおかしくなる場合があるのを修正。</li>
+<li><a href="#nkf_tohankaku">nkf_tohankaku</a>等、nkf関連コマンドが正常に動作していないので対処(nkf32.dll側の問題？)</li>
+</ul></li>
+<li><p>その他</p>
+<p>64bit対応</p></li>
+</ul>
+</dd>
+<dt>2010/04/03 Version 1.20.00β1</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#setutf8convertstring">SetUTF8ConvertString</a>、<a href="#setutf16convertstring">SetUTF16ConvertString</a>、 <a href="#getresult">GetResult</a>、<a href="#getresultw">GetResultW</a>、 <a href="#writeinistrw">WriteIniStrW</a>、<a href="#getinistrw">GetIniStrW</a>を追加</p></li>
+<li><p>修正</p>
+<ul>
+<li>文字関数の最大バッファサイズを1Mへ拡大。</li>
+<li>メモリ確保部分を修正。</li>
+</ul></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2010/10/24 Version 1.20.00β2</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<ul>
+<li>DLL 読み込みに関する脆弱性に対応(Windows XP SP1 以降のみ対応)</li>
+</ul></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2013/02/03 Version 1.20.00β3</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>hunspell関連の関数を追加。</p>
+<p><a href="#hunspell_load">hunspell_load</a>、 <a href="#hunspell_free">hunspell_free</a>、 hunspell_SetDictionary、 <a href="#hunspell_spell">hunspell_Spell</a>、 <a href="#hunspell_suggest">hunspell_Suggest</a>、 <a href="#hunspell_suggestlist">hunspell_SuggestList</a>、 <a href="#hunspell_getmodulefilename">hunspell_getmodulefilename</a></p></li>
+<li><p>修正</p>
+<p>NextActiveWindowの関数名が間違っていたのを修正。 (NextAvtiveWindow → NextActiveWindow)</p></li>
+<li><p>その他</p>
+<p>コンパイラを、Visual C++ 2008 Express Edition SP1から、Visual C++ 2010 Express Edition SP1へ 変更。</p></li>
+</ul>
+</dd>
+<dt>2013/03/03 Version 1.20.00β4</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>hunspell関連の関数を追加。</p>
+<p><a href="#hunspell_adddictionary">hunspell_AddDictionary</a>、 <a href="#hunspell_add">hunspell_Add</a>、 <a href="#hunspell_remove">hunspell_Remove</a>、 <a href="#hunspell_errormessage">hunspell_errormessage</a></p></li>
+<li><p>修正</p>
+<p>hunspell_SetDictionary → <a href="#hunspell_create">hunspell_Create</a> へ変更<br />
+<a href="#hunspell_spell">hunspell_Spell</a>、<a href="#hunspell_suggest">hunspell_Suggest</a>実行時毎に、 スペルチェッククラスを生成していたのを止め、辞書ファイル指定時に、 クラスを作成するように変更。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2013/05/06 Version 1.20.00(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#getwindowrect_top">GetWindowRect_Top</a>、 <a href="#getwindowrect_bottom">GetWindowRect_Bottom</a>、 <a href="#getwindowrect_left">GetWindowRect_Left</a>、 <a href="#getwindowrect_right">GetWindowRect_Right</a>、 <a href="#screentoclient_x">ScreenToClient_X</a>、 <a href="#screentoclient_y">ScreenToClient_Y</a></p></li>
+<li><p>修正</p>
+<ul>
+<li><p>InStr系関数で、全角文字を使用時に、検索文字があるのにマッチしない場合があるのを修正(完全ではないが)</p>
+<pre><code>例)InStrEx(0,&quot;Ｈｉｄｅｍａｒｕ Editor&quot;,&quot;ＭＡＲＵ&quot;, 1) 
+　 がマッチしない場合があった。</code></pre></li>
+<li><p>SetWindowStateの戻り値の説明が間違っていたので修正。</p></li>
+</ul></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2013/05/28 Version 1.20.00a(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>ドキュメントの誤字等修正のみ</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2013/06/23 Version 1.21.00(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>hunspell関連の関数(unicode版)を追加。</p>
+<p><a href="#hunspell_spellw">hunspell_SpellW</a>、 <a href="#hunspell_suggestw">hunspell_SuggestW</a>、 <a href="#hunspell_suggestlistw">hunspell_SuggestListW</a>、 <a href="#hunspell_addw">hunspell_AddW</a>、 <a href="#hunspell_removew">hunspell_RemoveW</a></p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2013/10/29 Version 1.22.00β1</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p>EditorConfig関連の関数を追加。</p>
+<p><a href="#editorconfigexecute">EditorConfigExecute</a>、 <a href="#editorconfigerrormessage">EditorConfigErrorMessage</a>、 <a href="#editorconfiggetkey">EditorConfigGetKey</a>、 <a href="#editorconfiggetvalue">EditorConfigGetValue</a>、 <a href="#editorconfigclear">EditorConfigClear</a>、 <a href="#editorconfiggetversionstr">EditorConfigGetVersionStr</a></p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2014/05/03 Version 1.22.00β2</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>editorconfig-core-c ライブラリ更新</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2014/09/28 Version 1.22.00β3</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#writeininumw">WriteIniNumW</a>、 <a href="#getininumw">GetIniNumW</a>、 <a href="#hunspell_getversion">hunspell_GetVersion</a></p></li>
+<li><p>修正</p>
+<p><a href="#writeinistrw">WriteIniStrW</a>を変更。引数のチェック追加および、 iniファイルが存在しない場合、UTF-16LEの空のファイルを作成するようにした。<br />
+editorconfig-core-c ライブラリ更新(0.12.0-beta)</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2014/10/18 Version 1.22.00(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#hunspell_get_dic_encoding">hunspell_Get_Dic_Encoding</a></p></li>
+<li><p>修正</p>
+<p>editorconfig-core-c ライブラリ更新(0.12.0)、 <a href="#settime">SetTime</a>でセットした日時が、<a href="#timeformat">TimeFormat</a>に反映されていなかったバグの修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2015/11/14 Version 1.23.00β1</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#urlencodew">UrlEncodeW</a>関数、<a href="#isutf16le">IsUTF16LE</a>関数を追加。</p>
+<p>iniファイル関連のunicode版関数を追加。 <a href="#readsectionkeysw">ReadSectionKeysW</a>、<a href="#existkeyw">ExistKeyW</a>、<a href="#getkeyvaluew">GetKeyValueW</a>、<a href="#getinikeydataw">GetIniKeyDataW</a>、 <a href="#getinikeyw">GetIniKeyW</a>、<a href="#getinikeyvaluew">GetIniKeyValueW</a>、<a href="#nextkeyw">NextKeyW</a>、<a href="#readsectionnamesw">ReadSectionNamesW</a>、 <a href="#existsectionw">ExistSectionW</a>、<a href="#getsectionnamew">GetSectionNameW</a>、<a href="#getsectionw">GetSectionW</a>、<a href="#nextsectionw">NextSectionW</a></p></li>
+<li><p>修正</p>
+<p><a href="#writeinistrw">WriteIniStrW</a>、<a href="#writeininumw">WriteIniNumW</a>で、UTF-16LE以外の場合は、失敗するように修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2015/11/22 Version 1.23.00β2</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#wrfileline">WrFileLine</a>、<a href="#editorconfiggetpcreversionstr">EditorConfigGetPcreVersionStr</a>関数を追加。</p></li>
+<li><p>修正</p>
+<p>editorconfig-core-c で使用しているPCREを更新(8.36 –&gt; 8.37)</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2016/03/19 Version 1.23.00β3</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>editorconfig-core-c で使用しているPCREを更新(8.37 –&gt; 8.38)</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2016/07/26 Version 1.23.00(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>editorconfig-core-c で使用しているPCREを更新(8.38 –&gt; 8.39)</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2016/07/30 Version 1.23.00a(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p>
+<p>ドキュメント修正。 mecabのリンク先を変更。</p></li>
+</ul>
+</dd>
+<dt>2016/08/01 Version 1.23.00b(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p>
+<p>ドキュメント修正。 Windows10(x64)上の、rdtool がうまく動いてなかった。</p></li>
+</ul>
+</dd>
+<dt>2016/11/03 Version 1.24.00β1</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>editorconfig-core-c を更新(master branch 2016.10.26)</p></li>
+<li><p>その他</p>
+<p>ドキュメント修正。 Windows10(x64)上の、rdtool がうまく動いてなかった。</p></li>
+</ul>
+</dd>
+<dt>2017/04/21 Version 1.24.00β2</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<p>editorconfig-core-c を更新(master branch 2017.04.02)<br />
+editorconfig-core-c で使用しているPCREを更新(8.39 –&gt; 8.40)</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2017/05/05 Version 1.24.00β3</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#movewindow">MOVEWINDOW</a>関数を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2019/01/05 Version 1.24.00β4</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<ul>
+<li>editorconfig-core-c を更新(0.12.3)<br />
+editorconfig-core-c で使用しているPCREを更新(8.40 –&gt; PCRE2 10.32)</li>
+<li>対応するlibhunspell.dllのバージョンを変更。(Version 1.5.4 –&gt; 1.7.0)</li>
+<li>Windows 9x 用のコードを削除</li>
+</ul></li>
+<li><p>その他</p>
+<p>コンパイラを、Visual C++ 2010 Express Edition SP1から、 Visual Studio Community 2017 Ver.15.9.4(Microsoft Visual C++ 2017)へ 変更。</p>
+<p>ドキュメントを rd から markdown(pandoc) に変更。</p></li>
+</ul>
+</dd>
+<dt>2019/12/07 Version 1.24.00β5</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#searchwindow">SearchWindow</a>関数で、非表示のウィンドウも対象にするようにオプションビット追加。</p></li>
+<li><p>修正</p>
+<p><a href="#searchwindow">SearchWindow</a>関数でバッファーオーバーランする場合があったので修正。</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2021/04/17 Version 1.24.00(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p>
+<ul>
+<li><p>editorconfig-core-c を更新(0.12.4)<br />
+editorconfig-core-c で使用しているPCREを更新(PCRE2 10.32 –&gt; 10.36)</p></li>
+<li><p><a href="#existsection">ExistSection</a>/<a href="#existsectionw">ExistSectionW</a>関数で、誤検出する場合があったのを修正。</p></li>
+</ul></li>
+<li><p>その他</p>
+<ul>
+<li>editorconfig-core-c、PCRE2 の LICENCE を更新</li>
+</ul></li>
+</ul>
+</dd>
+<dt>2021/04/17 Version 1.24.00a(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p>
+<p>ドキュメント修正。 editorconfig-core-c のバージョンが間違っていたのを修正。</p></li>
+</ul>
+</dd>
+<dt>2021/07/03 Version 1.25.00(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#editorconfigexecutew">EditorConfigExecuteW</a>関数を追加。(<a href="#editorconfigexecute">EditorConfigExecute</a>のユニコード版)</p></li>
+<li><p>修正</p>
+<ul>
+<li>editorconfig-core-c を更新(0.12.5)<br />
+editorconfig-core-c で使用しているPCREを更新(PCRE2 10.36 –&gt; 10.37)<br />
+</li>
+</ul></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2021/10/23 Version 1.26.00</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#dwmgetwindowrect_top">DwmGetWindowRect_Top</a>関数、<a href="#dwmgetwindowrect_bottom">DwmGetWindowRect_Bottom</a>関数、<a href="#dwmgetwindowrect_left">DwmGetWindowRect_Left</a>関数、<a href="#dwmgetwindowrect_right">DwmGetWindowRect_Right</a>関数、 <a href="#dwmgetwindowrectall">DwmGetWindowRectAll</a>関数、<a href="#getwindowrectall">GetWindowRectAll</a>関数を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+<dt>2021/10/25 Version 1.26.01(正式版)</dt>
+<dd><ul>
+<li><p>機能追加</p>
+<p><a href="#dwmmovewindow">DwmMoveWindow</a>関数を追加。</p></li>
+<li><p>修正</p></li>
+<li><p>その他</p></li>
+</ul>
+</dd>
+</dl>
+<p><a href="#contents">page top</a></p>
+<h2 id="exemption">その他・免責事項</h2>
+<ul>
+<li><p>このプログラムの動作保証はありません。 動作確認を行っていますが、プログラムの実行環境や、プログラムの不具合などによって、 問題が生じる場合があります。 それにより損害が生じても、損害に対する保証は出来かねますので、あらかじめ、ご了承ください。</p></li>
+<li><p>不具合をなくす意志はありますが、実力が伴っていないので、治らないかもしれません。</p></li>
+<li><p>ht_tools.dll は、「EditorConfig C Core」と「PCRE2」ライブラリを使用しています。 「EditorConfig C Core」、「PCRE2」は BSD ライセンスとなっています。<br />
+<a href="#editorconfig_core">EditorConfig C Core のライセンス</a>、 <a href="#PCRE">PCRE2 のライセンス</a> を参照してください。</p>
+<p>有用なライブラリの公開、ありがとうございます。</p></li>
+</ul>
+<h2 id="thanks">謝　辞</h2>
+<ul>
+<li><p>Ｑ＆Ａ集を作成された「秀丸エディタＱ＆Ａ集 制作しよう会」の皆様。 （このDLLは、「秀丸エディタＱ＆Ａ集(第５版)」 の「第V部～マクロから呼び出すＤＬＬの作り方」 を参考に作成。）</p></li>
+<li><p>使用している各ツールの開発者(hmjre.dll、nkf、mecab、hunspell、EditorConfig C Core)</p></li>
+</ul>
+<p>以上の皆さんに感謝します。</p>
+<p><a href="#contents">page top</a></p>
+<h2 id="copyright">著作権・配布規定等</h2>
+<ul>
+<li><p>著作権について</p>
+<p>この「ht_tools.dll」の著作権はh-tomが保持しています。</p></li>
+<li><p>配布規定等</p>
+<p>無断配布は禁止。</p></li>
+<li><p>問い合わせ先</p>
+<p>h-tom:<a href="mailto:QYT00713@nifty.com" class="email">QYT00713@nifty.com</a>まで</p></li>
+</ul>
+<p><a href="#contents">page top</a></p>
+<h2 id="editorconfig_core">EditorConfig C Core のライセンス</h2>
+<pre><code>Unless otherwise stated, all files are distributed under the Simplified BSD
+license. The inih(`src/lib/ini.c` and `src/lib/ini.h`) library is distributed
+under the New BSD license. `src/lib/utarray.h` is distributed under the Revised
+BSD License. The See LICENSE file for details. Some code in src/lib/misc.c is
+idstributed under their own license (see the source file for details).
+
+Copyright (c) 2011-2013 EditorConfig Team, including Hong Xu and Trey Hunner
+Copyright (c) 2014 Hong Xu &lt;hong AT topbug DOT net&gt;
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.</code></pre>
+<h2 id="PCRE">PCRE2 のライセンス</h2>
+<pre><code>PCRE2 LICENCE
+-------------
+
+PCRE2 is a library of functions to support regular expressions whose syntax
+and semantics are as close as possible to those of the Perl 5 language.
+
+Releases 10.00 and above of PCRE2 are distributed under the terms of the &quot;BSD&quot;
+licence, as specified below, with one exemption for certain binary
+redistributions. The documentation for PCRE2, supplied in the &quot;doc&quot; directory,
+is distributed under the same terms as the software itself. The data in the
+testdata directory is not copyrighted and is in the public domain.
+
+The basic library functions are written in C and are freestanding. Also
+included in the distribution is a just-in-time compiler that can be used to
+optimize pattern matching. This is an optional feature that can be omitted when
+the library is built.
+
+
+THE BASIC LIBRARY FUNCTIONS
+---------------------------
+
+Written by:       Philip Hazel
+Email local part: Philip.Hazel
+Email domain:     gmail.com
+
+University of Cambridge Computing Service,
+Cambridge, England.
+
+Copyright (c) 1997-2020 University of Cambridge
+All rights reserved.
+
+
+PCRE2 JUST-IN-TIME COMPILATION SUPPORT
+--------------------------------------
+
+Written by:       Zoltan Herczeg
+Email local part: hzmester
+Email domain:     freemail.hu
+
+Copyright(c) 2010-2020 Zoltan Herczeg
+All rights reserved.
+
+
+STACK-LESS JUST-IN-TIME COMPILER
+--------------------------------
+
+Written by:       Zoltan Herczeg
+Email local part: hzmester
+Email domain:     freemail.hu
+
+Copyright(c) 2009-2020 Zoltan Herczeg
+All rights reserved.
+
+
+THE &quot;BSD&quot; LICENCE
+-----------------
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notices,
+      this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright
+      notices, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    * Neither the name of the University of Cambridge nor the names of any
+      contributors may be used to endorse or promote products derived from this
+      software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+
+EXEMPTION FOR BINARY LIBRARY-LIKE PACKAGES
+------------------------------------------
+
+The second condition in the BSD licence (covering binary redistributions) does
+not apply all the way down a chain of software. If binary package A includes
+PCRE2, it must respect the condition, but if package B is software that
+includes package A, the condition is not imposed on package B unless it uses
+PCRE2 independently.
+
+End</code></pre>
+<p><a href="#contents">page top</a></p>
+</body>
+</html>

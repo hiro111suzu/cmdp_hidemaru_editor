@@ -1,0 +1,586 @@
+﻿<style>
+* {margin: 0; padding: 0}
+body {line-height: 1.4em; background-color: #F8F8F8; padding: .7em 10%}
+p {margin: 1em 0; line-height: 1.5em}
+table {font-size: inherit; font: 100%; margin: 1em}
+table th {border-bottom: 1px solid #bbb; padding: .2em 1em}
+table td {border-bottom: 1px solid #ddd; padding: .2em 1em}
+pre,code {font-family: monospace}
+pre {margin: 1em 0; background-color: #eee; border: 1px solid #ddd; padding: 5px; line-height: 1.5em; color: #444; overflow: auto; box-shadow: rgba(0,0,0,.07) 0 1px 2px inset; border-radius: 3px; border-radius: 3px; border-radius: 3px}
+pre code {padding: 0; background-color: #eee; border: none}
+code {background-color: #f8f8ff; color: #444; padding: 0 .2em; border: 1px solid #dedede}
+img {border: 0; margin: 1em 0; max-width: 100%}
+h2,h3 {margin: 1em 0}
+h1,h2,h3,h4,h5,h6 {border: 0}
+h1 {font-size: 150%; border-top: 4px solid #299; padding-top: .5em; margin-top: 1.5em}
+h1: first-child {margin-top: 0; padding-top: .25em; border-top: none}
+h2 {font-size: 120%; margin-top: 1.5em; border-bottom: 1px solid #ddd; padding-bottom: .5em}
+h3 {margin-top: 1em}
+hr {height: 0; margin: 15px 0; overflow: hidden; background: transparent; border: 0; border-bottom: 4px solid #ddd}
+ul {margin: 1em 0 1em 2em}
+ol {margin: 1em 0 1em 2em}
+ul li,ol li {margin-top: .5em; margin-bottom: .5em}
+ul ul,ul ol,ol ol,ol ul {margin-top: 0; margin-bottom: 0}
+blockquote {margin: 1em 0; border-left: 5px solid #ddd; padding-left: .6em; color: #555}
+dt {font-weight: 700; margin-left: 1em}
+dd {margin-left: 2em; margin-bottom: 1em}
+</style>
+
+<h1 id="秀丸エディタコマンドパレット-v1">秀丸エディタコマンドパレット v1</h1>
+<p><img src="img.png" alt="画像"> </p>
+<p>作者: suzu</p>
+<h1 id="目次">目次</h1>
+<ul>
+<li><a href="#%E7%A7%80%E4%B8%B8%E3%82%A8%E3%83%87%E3%82%A3%E3%82%BF%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%83%91%E3%83%AC%E3%83%83%E3%83%88-v1">秀丸エディタコマンドパレット v1</a></li>
+<li><a href="#%E6%A6%82%E8%A6%81">概要</a></li>
+<li><a href="#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB">インストール</a><ul>
+<li><a href="#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E8%AA%AC%E6%98%8E">ファイルの説明</a></li>
+<li><a href="#%E4%BB%98%E5%B1%9E%E3%81%AEdll%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">付属のDLLについて</a></li>
+<li><a href="#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%83%91%E3%83%AC%E3%83%83%E3%83%88%E3%81%AE%E3%82%A6%E3%82%A4%E3%83%B3%E3%83%89%E3%82%A6%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">コマンドパレットのウインドウについて</a></li>
+</ul>
+</li>
+<li><a href="#%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">操作方法</a><ul>
+<li><a href="#cmdpmac"><em>cmdp.mac</em></a></li>
+<li><a href="#hypmac"><em>hyp.mac</em></a></li>
+</ul>
+</li>
+<li><a href="#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89">コマンド</a><ul>
+<li><a href="#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E6%96%87">コマンド文</a></li>
+<li><a href="#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%81%AE%E6%A9%9F%E8%83%BD%E5%8B%95%E4%BD%9C">コマンドの機能・動作</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95">設定方法</a><ul>
+<li><a href="#cmdpini-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB"><em>cmdp.ini</em> ファイル</a></li>
+<li><a href="#%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E5%AE%9A%E7%BE%A9%E3%82%BB%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3">コマンド定義セクション</a></li>
+<li><a href="#%E7%89%B9%E6%AE%8A%E3%82%BB%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3">特殊セクション</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4">更新履歴</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">使用について</a></li>
+</ul>
+<h1 id="概要">概要</h1>
+<ul>
+<li>「コマンドパレット」を、秀丸エディタ・秀丸メールに導入するマクロです。</li>
+<li>コマンドパレットとは、<ul>
+<li>検索型コマンド入力インターフェースから、各種コマンドを呼び出す機能です。</li>
+<li>vscodeやWindows Termianlに搭載されていることで有名です。</li>
+<li>望みのコマンドを多数の候補から簡単なキーボード操作で探し出して実行できるので、コマンド数が多くなっても破綻しにくく、近年流行しているインタフェースです。</li>
+<li>（実はこのマクロはコマンドパレットのインスパイアではなくて、17年前から作り続けている"comalan"というマクロの後継です）</li>
+</ul>
+</li>
+<li>コマンドはINIファイルに記述します。<ul>
+<li>サンプルとして100以上のコマンドが登録されていて、多彩な機能を簡単に試すことができます。</li>
+<li>簡単な書式で多数の独自コマンドを登録できます。</li>
+<li>マクロ文、マクロファイル、URLやファイルを開く、独自メニュー作成と、幅広い機能を利用してコマンドを作成できます。</li>
+<li>コマンドごとに、秀丸エディタ、メールエディタ、メールメインウインドウの特定のウインドウ上でしか表示されないような設定も可能です。</li>
+</ul>
+</li>
+<li>作成したコマンドには、以下の使い道があります<ul>
+<li>コマンドパレットのコマンドとして</li>
+<li>独自メニューのアイテムとして<ul>
+<li>アクセスキーの設定も可能、二段階キーとしても使える</li>
+</ul>
+</li>
+<li>外部マクロや、外部プログラムから呼び出し<ul>
+<li>マクロ本体の起動時の引数として、コマンドを指定する</li>
+</ul>
+</li>
+<li>ハイパーリンクのようにテキスト内に埋め込む<ul>
+<li>付属マクロ <em>"hyp.mac"</em> を利用</li>
+</ul>
+</li>
+<li>付属のマクロ <em>keyx</em> と連携してキー割当</li>
+</ul>
+</li>
+<li>秀丸ファイラー用の同様のスクリプトも公開します。<ul>
+<li>併用すれば、エディタ、メール、ファイラーで同様のコマンド入力インターフェースを利用できるようになります。</li>
+</ul>
+</li>
+<li>テキストファイルのみの設定なので、機能の同期・複製・テスト・コメントアウトなど、管理が簡単です。</li>
+</ul>
+<h1 id="インストール">インストール</h1>
+<ul>
+<li>特に必要な作業はありませんが、以下のような設定をおすすめします。<ul>
+<li>展開したフォルダーを秀丸マクロ用のフォルダーに置く</li>
+<li><em>cmdp.mac</em> をマクロ登録し、押しやすいキーを割り当てる<ul>
+<li>簡単に押せるキーを割り当てると（重要！）、使用感がつかみやすくなる</li>
+<li>秀丸エディタ・秀丸メール両方使っているなら、両方に登録し、同じキーを割り当てると便利</li>
+<li>秀丸ファイラーを利用している場合は、秀丸ファイラー版も導入して、同じキーを割り当てると良い感じになる</li>
+</ul>
+</li>
+<li><em>hyp.mac</em> のマクロ登録とキー割り当てもおすすめ</li>
+</ul>
+</li>
+<li>好みに応じて徹底的にカスタマイズしてください。</li>
+</ul>
+<h2 id="ファイルの説明">ファイルの説明</h2>
+<ul>
+<li><em>cmdp.mac</em><ul>
+<li>コマンドパレットのマクロ本体</li>
+</ul>
+</li>
+<li><em>cmdp.ini</em><ul>
+<li>設定用ファイル</li>
+<li>この文書では、単に「INIファイル」と表記</li>
+</ul>
+</li>
+<li><em>ht_tools-32.dll</em>, <em>ht_tools-64.dll</em>, <em>macrodll-32.dll</em>, <em>macrodll-64.dll</em><ul>
+<li>コマンドパレットで利用するライブラリ（後述）</li>
+</ul>
+</li>
+<li><em>ht_tools.html</em><ul>
+<li><em>ht_tools</em> のドキュメント</li>
+</ul>
+</li>
+<li><em>hyp.mac</em><ul>
+<li>テキスト中に埋め込まれたコマンドをcmdpマクロに渡すマクロ</li>
+<li>テキストやソースコードに各種機能を埋め込んで、ハイパーテキスト的に利用するためのもの</li>
+<li>別のテキストへのリンクや、そのテキストに関連するプログラムの起動などの利用を想定</li>
+</ul>
+</li>
+<li><em>tool.mac</em><ul>
+<li>短いマクロをまとめて記述するためのファイル<ul>
+<li>サンプルとしていくつか書き込まれている</li>
+</ul>
+</li>
+<li>十行程度のマクロは、ここに書き込んでINIファイルに登録すると便利<ul>
+<li>一行でかけるマクロは直接INIファイルに書き込むのが楽</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>keyx（フォルダー、ダウンロード元によっては付属していない）<ul>
+<li>コマンドパレットと連携するキー割り当てツール</li>
+<li>詳細はフォルダー内の <em>readme.html</em> ファイルを参照</li>
+</ul>
+</li>
+</ul>
+<h2 id="付属のdllについて">付属のDLLについて</h2>
+<ul>
+<li>コマンドパレットの動作に必要な <em>ht_tools.dll</em>、<em>macrodll.dll</em> が同梱されています。<ul>
+<li><em>ht_tools.dll</em> はh-tom氏が開発したものです。<ul>
+<li><a href="http://htom.in.coocan.jp/macro/macro_dll.html#label-16">h-tom氏のサイトの、ht_tools.dllが公開されているページ</a></li>
+</ul>
+</li>
+<li><em>macrodll.dll</em> は、あべのり氏が開発したものです。<ul>
+<li><a href="https://www.ms.u-tokyo.ac.jp/~abenori/soft/hidemaru.html">あべのり氏のサイトの、macrodll.dllが公開されているページ</a></li>
+</ul>
+</li>
+<li><em>macrodll.dll</em>の4bit対応版はh-tom氏によるものです。<ul>
+<li><a href="http://htom.in.coocan.jp/macro/macro_dll.html#label-2">h-tom氏のサイトの、macrodll.dllが公開されているページ</a></li>
+</ul>
+</li>
+<li>両氏の許可を得て本パッケージに同梱してあます。</li>
+</ul>
+</li>
+<li>32bit用と64bitのファイルを同じディレクトリにおけるようにファイル名を変更してあります。</li>
+<li>環境にあったDLLが自動的に読み込まれるようになっています。</li>
+</ul>
+<h2 id="コマンドパレットのウインドウについて">コマンドパレットのウインドウについて</h2>
+<ul>
+<li>コマンドパレットのウインドウは、<em>macrodll.dll</em> の <em>"EDIT_CREATE"</em> を利用しています。</li>
+<li>同梱のdllファイルは、32bit版、64bit版ともに、以下のような改造が施されています。<ul>
+<li>コマンドパレットとして使いやすいようウインドウと構成要素を大きくし、フォントをモダンなMeiryo-UIに変更<ul>
+<li>秀丸ファイラー版、コマンドパレットと同じ</li>
+</ul>
+</li>
+<li>改造には、<a href="https://katahiromz.web.fc2.com/re/ja/"><em>RisohEditor</em></a>を利用</li>
+<li><em>EDIT_CREATE</em> ツールのリソースは、"RT_DIALOG"の102に記述されていて、フォントの種類・サイズ、各要素の大きさなどが編集可能（プログラミングの環境も知識も必要なく、簡単に変更できます）</li>
+</ul>
+</li>
+</ul>
+<h1 id="操作方法">操作方法</h1>
+<h2 id="cmdpmac"><em>cmdp.mac</em></h2>
+<ul>
+<li><em>cmdp.mac</em> がコマンドパレットマクロ本体です。</li>
+<li>コマンドパレットを起動すると、上部に<strong>コマンドの入力ボックス</strong>、下部に<strong>コマンドの候補ボックス</strong>をもつウインドウが表示されます。<ul>
+<li>入力ボックスに文字を入力するごとに、候補が絞り込まれます</li>
+<li>上下キーか、スペースキー、shift+スペースキーで候補の移動ができます</li>
+<li>タブキーで部分確定、 エンターキーで実行、エスケープキーでキャンセルです。</li>
+<li><em>macrodll.dll</em> の <em>EDIT_CREATE</em> の仕様で、検索は先頭一致のみです。</li>
+</ul>
+</li>
+<li>サンプルとして登録されている <em>google</em> を実行してみます。<ul>
+<li>秀丸エディタか、メールエディタ上で文字列を選択します。</li>
+<li>コマンドパレットを起動し、"google"と入力します。<ul>
+<li>おそらく、2文字目、"go"を入力した時点で、<em>google</em> にヒットするはずです。</li>
+</ul>
+</li>
+<li>エンターキーを押して実行。<ul>
+<li>選択した文字列のgoogle検索が実行されます。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="hypmac"><em>hyp.mac</em></h2>
+<ul>
+<li>テキストやソースコード中のコマンドを実行するためのツールです。<ul>
+<li>他のファイルやアプリ、ウェブサイトを開くコマンドを挿入すれば、通常のテキストファイルがハイパーテキスト的に利用できるようになります。</li>
+</ul>
+</li>
+<li>文字列選択中ならその文字列、そうでないならカーソルがある行の"{"と"}"の間の文字列をコマンドとして解釈し、実行します。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">例</th>
+<th align="left">動作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>{?秀丸}</code></td>
+<td align="left">この行でhyp.macを実行すると、「秀丸」をgoogle検索</td>
+</tr>
+<tr>
+<td align="left"><code>{$mspaint}</code></td>
+<td align="left">この行で実行すると、ペイントアプリが起動</td>
+</tr>
+<tr>
+<td align="left"><code>{.}</code>、または<code>{here}</code></td>
+<td align="left">そのファイルがあるフォルダを開く</td>
+</tr>
+</tbody></table>
+<ul>
+<li>コマンド見つからない場合は以下を試みます<ul>
+<li>タグジャンプできればタグジャンプ</li>
+<li>カーソルの位置がURLやファイル名らしければそれを開く</li>
+</ul>
+</li>
+</ul>
+<h1 id="コマンド">コマンド</h1>
+<h2 id="コマンド文">コマンド文</h2>
+<ul>
+<li>コマンド文は、「コマンド名」と「コマンド引数」(省略可能)からなる<ul>
+<li>コマンド名とコマンド引数の区切りは、" :;"（スペース、コロン、セミコロン）のいずれかの最初に出現した文字<ul>
+<li><em>EDIT_CREATE</em> ではスペースが入力できないので、このような仕様となっている</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>キャプション（コマンドの説明）部分は<strong>無視される</strong><ul>
+<li>タブキーで自動補完するとキャプションまで入ってしまうこともあるが、そのまま実行可能<ul>
+<li><code>google  #Google検索</code> → <code>google</code>と同じ</li>
+</ul>
+</li>
+<li>キャプションを消さなくても、";"そのまま（セミコロン）の後に引数を書き込める<ul>
+<li><code>google  #Google検索;hidemaru</code> → <code>google;hidemaru</code>と同じ</li>
+</ul>
+</li>
+<li>コマンド引数は、マクロやプログラム実行時にその引数として渡される<ul>
+<li>引数はINIファイルで設定することも可能。両方から受け取った場合、INIファイルのほうが先に渡される</li>
+<li>コマンドが後述の <em>open</em> キーで作成され、引数を必要とする場合、引数が省略されると選択文字列が引数となる（上述の <em>google</em> コマンドのような挙動になる）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>コマンドは、"/"（スラッシュ記号）で<strong>グループ化</strong>できる<ul>
+<li>例: <code>hoge/fuga</code> は"hoge"グループに含まれる"fuga"というコマンドとなる</li>
+<li>"/"で終わるコマンドは、「グループコマンド」となる<ul>
+<li>グループコマンドを実行すると、そのグループに含まれるコマンドのみのコマンドパレット（グループモード）が再表示される</li>
+<li><em>hidden</em> で「非表示」指定のコマンドも、グループモードでは表示される</li>
+</ul>
+</li>
+<li>グループコマンドは、<strong>メニューにもなる</strong><ul>
+<li>メニューのコマンド名は、"menu/グループ名"となる（つまり、それ自体が"menu"というグループに属したコマンドにもなる）</li>
+</ul>
+</li>
+<li>サンプルとして、"help/"や"conf/"が登録されている</li>
+</ul>
+</li>
+</ul>
+<h2 id="コマンドの機能・動作">コマンドの機能・動作</h2>
+<ul>
+<li><strong>「表示」</strong>されるコマンドと、<strong>「非表示」</strong>のコマンドがある<ul>
+<li>「非表示」とはコマンドパレットの候補リスト及び、独自メニューに<strong>表示されない</strong>という意味</li>
+<li>「非表示」でも<strong>実行は可能</strong>、コマンドが無効になるわけではない</li>
+<li>設定と状態次第で、各コマンドの「表示」「非表示」が切り替わる</li>
+</ul>
+</li>
+<li>登録されていないコマンドが入力された場合、以下の実行を試みる<ul>
+<li>ツールマクロ(<em>tool.mac</em>)内にコマンド名に一致するラベルがあれば、それを実行</li>
+<li>コマンド名に一致するマクロがあればそれを実行<ul>
+<li>つまり、初期状態でマクロフォルダ直下にあるマクロはすべて「非表示コマンド」と同等ということになります</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>作成したコマンドを外部から実行することも可能<ul>
+<li><em>cmdp.mac</em>を<strong>引数つき</strong>で呼び出すと、コマンドパレットウインドウを表示せず、その引数文字列を<strong>コマンド文と解釈</strong>して実行する</li>
+<li>この機能を利用すれば、以下の様なことも可能<ul>
+<li>特定のコマンドを<strong>マクロ登録</strong>し、ショートカットキーで直接実行できるようにする</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>コマンドは別名を定義すること可能<ul>
+<li>INIファイルの、aliasで定義</li>
+</ul>
+</li>
+</ul>
+<h1 id="設定方法">設定方法</h1>
+<h2 id="cmdpini-ファイル"><em>cmdp.ini</em> ファイル</h2>
+<ul>
+<li>コマンドパレットは、設定用INIファイル"cmdp.ini"の編集で設定を行います。<ul>
+<li>このドキュメントより、<strong>まずはINIファイルを直接見るほうがわかりやすいと思われる</strong></li>
+</ul>
+</li>
+<li>INIセクション名 ([]の中の文字列)は大きく分けて、2種類あります。<ul>
+<li>"_"アンダーバーで始まるものは、「特殊セクション」です。</li>
+<li>それ以外のセクションはすべて「コマンド定義セクション」です。</li>
+</ul>
+</li>
+</ul>
+<h2 id="コマンド定義セクション">コマンド定義セクション</h2>
+<ul>
+<li>セクション名<ul>
+<li>コマンド名となる</li>
+<li>"_"以外の文字で始まるセクション名はすべてコマンド登録として解釈される</li>
+<li>"/"（スラッシュ記号）で、コマンドのグループ化が可能</li>
+</ul>
+</li>
+<li><em>capt</em><ul>
+<li>キャプション。コマンドのひとこと説明</li>
+<li>コマンドパレットではコマンド名の後ろに表示される</li>
+<li>メニューではメニューアイテムの表示名となる</li>
+<li>省略可能だが、なるべく書かないと自分でわからなくなる</li>
+<li>裏技: 変数 <em>$capt</em> になにか代入するマクロ文を記述するとevalされるので、日付なども表記できる</li>
+</ul>
+</li>
+<li><em>mac_cmd</em><ul>
+<li>マクロコマンド文。";"（セミコロン）で区切れば、複数行分のマクロも記述可能</li>
+<li>変数 <em>$cmd_arg</em> に引数文字列が入った状態で実行(eval)される</li>
+</ul>
+</li>
+<li><em>mac</em><ul>
+<li>実行するマクロファイル名</li>
+<li>拡張子".mac"は省略可能</li>
+<li>秀丸エディタに登録されているマクロディレクトリの場合は、ディレクトリ名も省略可能</li>
+<li>マクロディレクリ直下のマクロファイルと同名ディレクトリ中の場合も、ディレクトリ名を省略可能<ul>
+<li>例: ..\Hidemaru\Macro\hoge\hoge.mac → hoge</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em>open</em><ul>
+<li>Windowsシェルで開く</li>
+<li>ファイル名やURLを指定</li>
+<li>文字列中の <em>"%arg%"</em> は、引数文字列におきかえられる</li>
+<li>引数文字列が省略された場合、エディタ上の選択文字列を引数として受け取る</li>
+</ul>
+</li>
+<li><em>tool</em><ul>
+<li>toolコマンド。付属の<em>tool.mac</em>内のコマンドを実行</li>
+<li><em>tool.mac</em> 内の該当するルーチンのラベルを指定する</li>
+<li><em>tool.mac</em> のマクロでは、引数は第二引数( <em>getarg(1)</em> )で受け取る<ul>
+<li>第一引数はツールのラベルになるので</li>
+</ul>
+</li>
+<li><em>tool.mac</em> に記述した時点でコマンドとしては成立するが、コマンド登録しないと「非表示」と同じ状態</li>
+</ul>
+</li>
+<li><em>tool2</em><ul>
+<li>toolコマンドと同様の、<em>tool2.mac</em>という別ファイル上のマクロを実行</li>
+<li>新機能の js{} など、秀丸メールが対応していないマクロ文法を利用する場合など、マクロを分けたいときに利用</li>
+</ul>
+</li>
+<li><em>arg</em><ul>
+<li>mac, toolなどへ渡す引数を指定</li>
+<li>コマンドが引数付きで呼ばれた場合は、この引数のあとに付け加えられる</li>
+</ul>
+</li>
+<li><em>window</em><ul>
+<li>これが指定されているコマンドは、そのウインドウ上のみ、そのコマンドが「表示」される</li>
+<li>以下の文字の組み合わせで指定</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">文字</th>
+<th align="left">ウインドウ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">h</td>
+<td align="left">秀丸エディタ</td>
+</tr>
+<tr>
+<td align="left">e</td>
+<td align="left">秀丸メールエディタ</td>
+</tr>
+<tr>
+<td align="left">m</td>
+<td align="left">秀丸メールメインウインドウと検索結果ウインドウ</td>
+</tr>
+<tr>
+<td align="left">(上の組み合わせ) 例:mh</td>
+<td align="left">例: 秀丸エディタ or メールメインウインドウ</td>
+</tr>
+<tr>
+<td align="left">editor</td>
+<td align="left">秀丸エディタ or メールエディタ ("he"と同義)</td>
+</tr>
+<tr>
+<td align="left">mail</td>
+<td align="left">メールエディタ or メールメインウインドウ ("me"と同義)</td>
+</tr>
+</tbody></table>
+<ul>
+<li><em>ext</em><ul>
+<li>ファイルの拡張子を指定する</li>
+<li>この値が指定されているコマンドは、その拡張子のファイル上のみ「表示」となる<ul>
+<li>その言語に特有の機能や、ドキュメントページなどに</li>
+</ul>
+</li>
+<li>拡張子前のピリオドが必要、スペース区切りで複数指定可能<ul>
+<li>例: <em>.md .txt</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em>hidden</em><ul>
+<li>1を指定すると、そのコマンドは「非表示」となる</li>
+<li>これを指定しても、メニュー上やグループモードでは、「表示」される</li>
+</ul>
+</li>
+<li><em>menu</em><ul>
+<li>独自メニューを出す</li>
+<li>コマンド名をスペース区切りで記述</li>
+<li>"-"は区切り線になる</li>
+<li>サブメニューは作れないが、メニューを出すメニューアイテムも設定可能なので、それで代用可能<ul>
+<li>組み合わせ次第で、複雑な構造のメニューや巡回するメニューも作成可能</li>
+</ul>
+</li>
+<li>サンプルのメニューコマンドは、"menu"というグループに属するコマンドとして登録されている<ul>
+<li>そうする必要がある訳ではない</li>
+<li>"menu/menu"コマンドは全メニューをメニュー表示（メニューのメニュー）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em>key</em><ul>
+<li>コマンドがメニューアイテムとして利用されたときのアクセスキーを指定</li>
+</ul>
+</li>
+<li>備考<ul>
+<li><em>mac_cmd</em>, <em>mac</em>, <em>open</em>, <em>tool</em>の値を"-"（ハイフン）とすると、コマンド名と同じ文字列とみなされる</li>
+</ul>
+</li>
+</ul>
+<h2 id="特殊セクション">特殊セクション</h2>
+<ul>
+<li><em>_alias</em><ul>
+<li>コマンドの別名を登録</li>
+<li>例として次のような項目が登録されている</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">ini例</th>
+<th align="left">コマンド</th>
+<th align="left">動作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><em>.=here</em></td>
+<td align="left">. (ピリオド)</td>
+<td align="left">開いているテキストのあるフォルダを開く</td>
+</tr>
+<tr>
+<td align="left"><em>1=setfocus;4</em></td>
+<td align="left">1</td>
+<td align="left">ファイルマネージャー枠にフォーカス</td>
+</tr>
+<tr>
+<td align="left"><em>2=setfocus;2</em></td>
+<td align="left">2</td>
+<td align="left">アウトライン枠にフォーカス</td>
+</tr>
+</tbody></table>
+<ul>
+<li><em>_alias_head</em><ul>
+<li>先頭一致の別名を登録</li>
+<li>区切り文字関係なしに、入力されたコマンド文の頭の部分が一致したら、その部分が置き換えられる<ul>
+<li>一致した部分以降の文字列はコマンド引数になる</li>
+<li>コマンドパレット自体よりも、<em>hyp.mac</em> 向けの機能</li>
+</ul>
+</li>
+<li>例として次のような項目が登録されている</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">ini例</th>
+<th align="left">コマンド例</th>
+<th align="left">動作</th>
+<th align="left">意味</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>&gt;=mac_cmd</code></td>
+<td align="left"><code>&gt;newfile</code></td>
+<td align="left">新規ファイル</td>
+<td align="left">マクロ文 <em>newfile</em> が実行される</td>
+</tr>
+<tr>
+<td align="left"><code>?=google</code></td>
+<td align="left"><code>?秀丸</code></td>
+<td align="left">「秀丸」をgoogle検索</td>
+<td align="left">コマンド文 "google 秀丸" と解釈</td>
+</tr>
+<tr>
+<td align="left"><code>$=run</code></td>
+<td align="left"><code>$mspaint</code></td>
+<td align="left">ペイントアプリを開く</td>
+<td align="left">コマンド文 "run mspaint" と解釈</td>
+</tr>
+</tbody></table>
+<ul>
+<li><em>_config</em><ul>
+<li>debug_mode: 0でデバッグ出力なし、1でアウトプット枠、2でデバグモニターツール</li>
+<li>debug_monitor_path: デバッグモニター実行ファイルのパス</li>
+</ul>
+</li>
+</ul>
+<h1 id="更新履歴">更新履歴</h1>
+<ul>
+<li>v1<ul>
+<li>別途必要なものをなくした<ul>
+<li>必要なDLLをすべてを同梱（作者のあべのり氏、h-tom氏に許可をいただきました）</li>
+</ul>
+</li>
+<li>キー割当ツールの <em>keyx</em> を同梱</li>
+<li>グループコマンドの動作を秀丸ファイラー版コマンドパレットと同様にした<ul>
+<li>グループコマンドは、自動的にメニューとしても登録される、など</li>
+</ul>
+</li>
+<li>ドキュメントの改善<ul>
+<li>引数についての記述足りてなかった、など</li>
+</ul>
+</li>
+<li>その他、たくさん</li>
+</ul>
+</li>
+<li>無印<ul>
+<li>公開</li>
+</ul>
+</li>
+</ul>
+<h1 id="使用について">使用について</h1>
+<ul>
+<li>同梱のdllファイルは、本パッケージ開発者suzuによるものではありません。<ul>
+<li><em>ht_tools.dll</em> は、h-tom氏によるものです。</li>
+<li><em>macrodll.dll</em> は、32bit版があべのり氏によるもの、その64bit版はh-tom氏によるものです。</li>
+<li><em>macrodll.dll</em>については、本スクリプト開発者suzuにより、リソース情報が変更されいています。</li>
+<li>両氏の許可を頂いて改変、同梱しています。</li>
+</ul>
+</li>
+<li>その他のコード、文書、データについては、使用、複製、改造、再配布に制限はありません。</li>
+<li>無保証です。</li>
+</ul>

@@ -1,0 +1,748 @@
+//. 初期設定
+//debuginfo 2;
+call dbginfo getarg(0), getarg(1);
+call prep_dlls;
+
+seterrormode 5, 0x00000000; //- goto飛び先がなくても、エラーを出さないモード
+$name = getarg(0);
+if ( $name == "" ) {
+	message "ツール実行マクロ: ツール名が指定されていません";
+	endmacro;
+} else {
+	goto $name;
+	message "ツール実行マクロ: ツールがありません: " + $name;
+	endmacro;
+}
+
+//. editor
+tool_test:
+	message "ツールのテスト\n引数:" + getarg(1);
+endmacro;
+
+//.. this 現在のファイルを「実行」
+this:
+	//- マクロ
+	if ( filetype == ".mac" ) {
+		execmacro filename, getarg(1);
+
+	//- マークダウン
+	} else if ( filetype == ".md" ) {
+		run @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe %f";
+
+	//- 秀丸ファイラースクリプト
+	} else if ( filetype == ".js" && strstr( filename, "hidefile") != -1 ) {
+		call dbginfo "tool: this", "秀丸ファイラースクリプト", filename;
+		run @"C:\tools\Hidefile\HmFilerClassic.exe /x " + "\"" +filename + "\"";
+	//- その他
+	} else {
+		openbyshell filename;
+		if ( ! result )
+			run filename;
+		endmacro;
+	}
+endmacro;
+
+//.. アウトプット枠
+output:
+	loaddll "HmOutputPane.dll";
+	$arg = getarg(1);
+	if ( $arg == "" ) {
+		//- 出す
+		#_ = dllfunc( "Output", hidemaruhandle(0), "" );
+	} else if ( $arg == "off" ) {
+		//- しまう
+		#_ = sendmessage(
+			dllfunc( "GetWindowHandle", hidemaruhandle(0) ) ,
+			0x111, //- WM_COMMAND
+			1001, //- close
+			0
+		);
+	} else if ( $arg == "clear" ) {
+		#_ = sendmessage(
+			dllfunc( "GetWindowHandle", hidemaruhandle(0) ) ,
+			0x111, //- WM_COMMAND
+			1009, //- clear
+			0
+		);
+	}
+endmacro;
+
+//.. ファイルマネージャー枠
+exp:
+	loaddll "HmExplorerPane.dll";
+	#_ = dllfunc("SetMode",hidemaruhandle(0), val( getarg(1) ) );
+	setfocus(4);
+endmacro;
+
+/*
+0 フォルダモード
+1 ファイル一覧モード
+2 ヒストリモード
+3 ウィンドウ一覧モード
+4 ブックマークモード
+5 プロジェクトモード
+6 フォルダ+ファイル一覧モード
+*/
+
+//.. yen
+yen:
+	if ( ! selecting ) {
+		golinetop2; beginsel; golineend2; endsel;
+	}
+	$s_buf = searchbuffer; #s_opt = searchoption; // 検索条件保存
+	replaceallfast "([^\\\\])\\\\([^\\\\])", "\\1\\\\\\\\\\2", regular, inselect;
+	setsearch $s_buf, #s_opt; //  検索条件の復帰
+endmacro;
+
+//.. open_text テキストファイルを適当に探して開く
+open_text:
+	$fn = getarg(1);
+	if ( strstr( $fn, "." ) == -1 )
+		$fn = $fn + filetype;
+	if ( existfile( $fn ) ) {
+		openfile $fn;
+		endmacro;
+	}
+	question "ファイルがありません\n新規作成しますか？\n" + $fn;
+	if ( result ) {
+		openfile $fn;	
+	}
+endmacro;
+
+//.. box_select
+box_select:
+	if ( ! selecting ) {
+		beginrect;
+		endmacro;
+	}
+	#top_x = seltopx;
+	#top_y = seltopy;
+	#end_x = selendx;
+	#end_y = selendy;
+	moveto #top_x, #top_y;
+	if ( rectselecting ) {
+		beginsel;
+	} else  {
+		beginrect;
+	}
+	moveto #end_x, #end_y;
+endmacro;
+
+//.. sendmessge test
+sendmsg:
+	#n = sendmessage( hidemaruhandle(0), 0x111, val( getarg(1) ), 0);
+endmacro;
+
+//.. debug_mode
+debug_mode:
+	$fn = currentmacrodirectory + "\\cmdp.ini";
+	$name[0] = "停止";
+	$name[1] = "デバッグモニタ";
+	$name[2] = "アウトプット枠";	
+	if ( getarg(1) == "" ) {
+		message "現在のデバッグ出力モード: " + $name[
+			getininum( $fn, "_config", "debug_mode" )
+		];
+	} else {
+		#num = val( getarg(1) );
+		writeininum $fn, "_config", "debug_mode", #num;
+		if ( #num != getininum( $fn, "_config", "debug_mode" ) ) {
+			message "iniファイルに書き込めません";
+			endmacro;
+		}
+		$msg = "コマンドパレットのデバッグ出力モードを「"
+			+ $name[ #num ] + "」に変更しました";
+		message $msg;
+		if ( #num == 1 ) {
+			$path = getinistr( $fn, "_config", "debug_monitor_path" );
+			if ( $path != "" )
+				run $path;
+		}
+		if ( #num != 0 ) {
+			debuginfo #num;
+			call dbginfo, $msg;
+		}
+	}
+endmacro;
+
+//.. readonly
+readonly:
+	readonlyswitch;
+	if ( ! result ) {
+		message "書換え禁止・許可を切替えできません";
+		endmacro;
+	}
+	if ( readonly ) {
+		message "書き換え 禁止 に切り替えました";
+	} else {
+		message "書き換え 許可 に切り替えました";
+	}
+endmacro;
+
+//.. help_auto
+help_auto:
+	$sel = gettext( seltopx, seltopy, selendx, selendy );
+	if ( filetype == ".php" ) {
+		openbyshell "http://jp2.php.net/manual/ja/function."
+			+ strreplace( $sel, "_", "-" ) + ".php";
+	} else if ( filetype == ".ahk" ) {
+		openbyshell "https://www.autohotkey.com/docs/commands/" + $sel + ".htm";
+	} else if ( filetype == ".nodoka" ) {
+		openbyshell "https://appletllc.com/web/nodoka-doc/README-ja.html";
+	} else if ( filetype == ".mac" ) {
+		macrohelp;
+	} else {
+		execmacro currentmacrodirectory + @"\cmdp.mac", "menu/help";
+	}
+endmacro;
+
+//.. tagjump_plus
+tagjump_plus:
+	disableerrormsg;
+	tagjump;
+	if ( ! result ) 
+		directtagjump;
+	enableerrormsg;
+endmacro;
+
+//.. quote
+quote:
+	if ( ! selecting ) {
+		selectword;
+	}
+	$term = getarg(1);
+	if ( $term == "" ) {
+		$left = "'";
+		$right = "'";
+	} else {
+		#split = strstr( $term, " " );
+		if ( #split == -1 ) {
+			$left  = $term;
+			$right = $term;
+		} else {
+			$left  = leftstr( $term, #split );
+			$right = midstr( $term, #split + 1 );
+		}
+	}
+
+	#x1 = seltopcolumn;
+	#y1 = seltoplineno;
+	#x2 = selendcolumn;
+	#y2 = selendlineno;
+	escape; //- 選択解除
+
+	begingroupundo;
+
+	movetolineno #x2 + 1, #y2;
+	insert $right;
+	movetolineno #x1 + 1, #y1;
+	insert $left;
+	beginsel;
+	movetolineno #x2 + 2, #y1;
+	endsel;
+
+	endgroupundo;
+endmacro;
+
+//.. foldmode 折りたたみモード
+foldmode:
+	setcompatiblemode 0x0f;
+	enabledraw;
+	disablebreak;
+
+	title "＝＝＝＝＝＝＝＝＝＝ 折りたたみ操作モード [H]ヘルプ [Esc]終了 ＝＝＝＝＝＝＝＝＝＝"; 
+	while (1) {
+		#k = keypressed;
+		if ( #k == 0x26 ) up;  			// [↑]
+		else if ( #k == 0x28 ) down; 	// [↓]
+		else if ( #k == 0x25 ) fold; 	// [←]
+		else if ( #k == 0x27 ) unfold;	// [→]
+		else if ( #k == 0x1b ) break;	//[esc]
+		else if ( #k == 0x20 ) if (folded) unfold; else fold; //space
+		else if ( #k == 0x21 ) prevpage; //pageup
+		else if ( #k == 0x22 ) nextpage; //pagedown
+		else if ( #k == 0x24 ) prevfoldable; //home
+		else if ( #k == 0x23 ) nextfoldable; //home
+		else if ( #k == 0x0d )
+			if (rangeeditmode == 0 ) rangeeditin;
+			else rangeeditout; //enter
+		else if ( #k == 0x31 ) unfoldall; //[1]
+		else if ( #k == 0x32 ) foldall; //[2]
+		else if ( #k == 0x48 )
+			message ""
+				+ "↑・↓\tカーソル移動\n"
+				+ "←・→\t折りたたみ・展開\n"
+				+ "Space\t折りたたみ・展開 切り替え\n"
+				+ "Enter\t部分編集モード\n"
+				+ "Esc\t終了\n"
+			, "折りたたみ操作モードのキー操作"
+			;
+		else if ( #k != 0    ) beep;
+		sleep 20;
+	}
+endmacro;
+
+//.. fontsize フォントサイズを一時的に変更
+fontsize:
+	enabledraw;
+	#fs = getconfig( "FontPoint" );
+	$decim = str( getconfig( "xFontDecimal" ) );
+	while ( true ) {
+		menu
+			"フォントサイズ変更 (" + str( #fs ) + "." + $decim + ") " ,
+			"\x01" ,
+			"拡大\t&L" ,
+			"縮小\t&S"
+		;
+		if ( result == 0 ) endmacro;
+		else if ( result == 3 ) #fs = #fs + 1;
+		else if ( result == 4 ) #fs = #fs - 1;
+		config "xFontPoint:" + str( #fs );
+	}
+endmacro;
+
+//.. next_prev
+next_prev:
+	$mode[1] = "result"     ; $mode_t[1] = "結果";
+	$mode[2] = "colormarker"; $mode_t[2] = "カラーマーカー";
+	$mode[3] = "func"       ; $mode_t[3] = "強調行";
+	$mode[4] = "page"       ; $mode_t[4] = "ページ";
+	$mode[5] = "mark"       ; $mode_t[5] = "マーク行";
+	$mode[6] = "pos"        ; $mode_t[6] = "カーソル位置";
+	$mode[7] = "foldable"   ; $mode_t[7] = "折りたたみ可能行";
+
+	#num = 1;
+	#num_mode = 1;
+	while ( $mode[ #num ] != "" ) {
+		if ( $mode[ #num ] == getarg(1) ) #num_mode = #num;
+		$menu[ 2 + #num ] = $mode_t[ #num ] + "\t&" + toupper( leftstr( $mode[ #num ], 1 ) );
+		#num = #num + 1;
+	}
+	$menu[2] = "\x01他\t&O";
+	#num_menu = #num + 2;
+	while ( true ) {
+		$menu[0] = "前の" + $mode_t[ #num_mode ] + "\t&P";
+		$menu[1] = "次の" + $mode_t[ #num_mode ] + "\t&N";
+		menuarray $menu, #num_menu;
+		#res = result - 1;
+		if ( result == 0 ) break;
+		if ( result == 1 ) {
+			if ( $mode[ #num_mode ] == "pos" ) {
+				prevposhistback;
+			} else {
+				eval( "prev" + $mode[ #num_mode ] );
+			}
+		} else if ( result == 2 ) {
+			if ( $mode[ #num_mode ] == "pos" ) {
+				prevposhistforward;
+			} else {
+				eval( "next" + $mode[ #num_mode ] );
+			}
+		} else {
+			#num_mode = result - 3;
+		}
+	}
+endmacro;
+
+//.. selectall_plus
+selectall_plus:
+	if ( ! selecting ) {
+		selectall;
+	} else if ( seltoplineno == 1 && selendlineno == linecount2 ) {
+		escape;
+		prevpos;
+		selectfoldable;
+	} else if ( seltoplineno != selendlineno - 1 ) {
+		escape;
+		prevposhistback;
+		prevposhistback;
+		selectline;
+	} else {
+		escape;
+	}
+endmacro;
+
+//.. ebwin
+ebwin:
+	//- 検索語を受け取る
+	$in = getarg(1);
+	if ( $in == "_clip" ) {
+		$in = getclipboard();
+	}
+	if ( $in == "" ) {
+		if ( selecting ) {
+			$in = gettext( seltopx, seltopy, selendx, selendy );
+		} else {
+			$in = gettext2( 0, lineno, column, lineno );
+		}
+	}
+	if ( $in == "" ) endmacro;
+
+	if ( filetype != "new" || updated == 1 )
+		newfile;
+//	setfiletype ".md"; 
+	runex "C:\\Program Files\\EBWin4(x64)\\ebwinc.exe /C=1 /E=u /S=\"" + $in + "\""
+	    , 1     //sync   0:async, 1:sync
+	    , 0, "" //stdin  0:none, 1:auto, 2:<file, 3:(reserved),
+	            //       4:current content, 5:selection
+	    , 5, "" //stdout 0:none, 1:auto, 2:>file 3:>>file, 4:new window,
+	            //       5:insert, 6:replace, 7:>output pane, 8:>>output pane
+	    , 0, "" //stderr 0:none, 1:auto or >>stdout, 2-8:same as stdout's param
+	    , 0, "" //folder 0:none, 1:current, 2:specify 3:(reserved), 4:exe's
+	    , 0     //show   0:auto, 1:show, 2:hide, 3-13:ShellExecute()'s SW_*
+	    , 1     //draw   0:draw, 1:no draw when stdout redirected
+	    , 6     //encode 0:ansi, 2:utf-16, 6:utf-8
+	    , 0     //extended flags
+	;
+	disabledraw;
+	gofiletop;
+	insert ". {ebwin_g " + $in + "}\n.. ";
+//	replaceallfast "^--\n\\[(.+?)\]"	, ".. [\\1]\n... ", regular;
+	replaceallfast "^--\n\\["	, ".. [", regular;
+	replaceallfast "^([1-9]) "	, "... \\1 ", regular;
+	replaceallfast "^([a-d]) "	, "... \\1 ", regular;
+	replaceallfast "^([1-9][a-d]) ", "... \\1 ", regular;
+	replaceallfast "^--\n"		, "... ", regular;
+	replaceallfast "\n\n\n+"	, "\n\n", regular;
+	gofiletop;
+	enabledraw;
+endmacro;
+
+//.. common_mac: mac 共通サブルーチンライブラリを挿入
+commonfunc:
+	$fn_lib = macrodir + "\\common.mac";
+	if ( getarg(1) == "edit" ){
+		openfile $fn_lib;
+		endmacro;
+	}
+	if ( getarg(1) == "copy" ) {
+		gofiletop;
+		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
+		setsearch $s_buf, #s_opt; //  検索条件の復帰
+		if ( result ) {
+			golinetop; beginsel; gofileend; endsel; copy;
+			message "コピーしました";
+		} else {
+			message "このファイルには含まれていないようです";
+		}
+	} else {
+		question "共通サブルーチンライブラリを挿入します";
+		if ( ! result ) endmacro;
+
+		$s_buf = searchbuffer; #s_opt = searchoption; // 検索条件保存
+		gofiletop;
+		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
+		setsearch $s_buf, #s_opt; //  検索条件の復帰
+		if ( result ) {
+			golinetop; beginsel; gofileend; endsel; delete;//- 
+		} else {
+			gofileend;
+		}
+		insertfile $fn_lib;
+	}
+endmacro;
+
+//. mail
+//.. 2行表示切替
+2deck:
+	openreg "CURRENTUSER", "Software\\Hidemaruo\\TuruKame\\Config";
+	#num = getregnum( "DoubleDeck" ); 
+	if ( #num == 0 )
+		#num = 3;
+	else
+		#num = 0;
+	writeregnum "DoubleDeck", #num;
+	loaddll "Tkinfo.dll";
+	#n = dllfunc( "EnvChanged" );
+	freedll;
+endmacro;
+
+//.. 今すぐ送信
+sendnow:
+	loaddll "tkinfo.dll";
+	//- 送信時実行マクロを実行
+	$macro = dllfuncstr("SendMacro");
+	if ( $macro != "" ) {
+		#n = dllfunc("SetCancel", 0);
+		execmacro $macro;
+		#n = dllfunc("GetCancel");
+		if ( #n != 0 ) endmacro;
+	}
+
+	//- 宛先確認ダイアログ
+	if ( dllfunc("ConfirmSend") == 0 ) endmacro;
+
+	//- 実行、送れたらエディタを閉じる
+	#n = dllfunc("SendNow");
+	if( #n != 0 ) exit;
+endmacro;
+
+//.. mail_folder
+mail_folder:
+	call redo_on_mail_main;
+	call split getarg(1), "\\";
+	if ( $split_r == "" )
+		$split_r = "受信";
+	loaddll "TKInfo.dll";
+	#n = dllfunc( "SelectFolder", $split_l, $split_r );
+endmacro;
+
+//.. mail_filter
+mail_filter:
+	call redo_on_mail_main;
+	$arg = getarg(1);
+	if ( $arg == "all" ) {
+		#num = 0;
+	} else if ( $arg == "unread" ) {
+		#num = 2;
+	} else if ( $arg == "marked" ) {
+		#num = 3;
+	} else if ( $arg == "attached" ) {
+		#num = 4;
+	} else {
+		#num = val( $arg );
+	}
+	loaddll "TKInfo.dll";
+	#n = dllfunc( "SetViewArea", #num );
+endmacro;
+
+//.. メールヘッダ切り替え
+header:
+	loaddll "TKInfo.dll";
+	$arg = getarg(1);
+	if ( $arg != "" )
+		#n = dllfunc("SwitchHeaderView", val( $arg ) );
+	else
+		#n = dllfunc("SwitchHeaderView", 3);
+endmacro;
+
+//.. copy_subj メールサブジェクトをコピー
+copy_subj:
+	loaddll "TKinfo.dll";
+	$subj = dllfuncstr( "CurrentHeader", "Subject" );
+	if ( $subj != "" ) {
+		setclipboard $subj;
+		#n = dllfunc( "ShowBalloonMessage", "メールサブジェクトをコビー", $subj );
+	}
+	freedll;
+endmacro;
+
+//.. copy_from メール fromをコピー
+copy_from:
+	loaddll "TKinfo.dll";
+	$subj = dllfuncstr( "SetEmailOnly", dllfuncstr( "CurrentHeader", "From" ) );
+	if ( $subj != "" ) {
+		setclipboard $subj;
+		#n = dllfunc( "ShowBalloonMessage", "Fromをコビー", $subj );
+	}
+	freedll;
+endmacro;
+
+//.. mail_subj_search メールサブジェクトの検索
+mail_subj_search:
+	call redo_on_mail_main;
+	$term = getarg(1);
+	if ( $term == "_clip" )
+		$term = getclipboard();
+	if ( $term == "" ) {
+		$term = input( "検索語は？" );
+		if ( $term == "" ) endmacro;
+	}
+	$s = dllfuncstr( "YenEncode", $term );
+	#n = dllfunc( "SetFindPack", "(\"" + $s + "\", target=subject)" );
+	#n = dllfunc( "StartDoGrep", "", "", 1, $arg );
+	freedll;
+endmacro;
+
+//.. 関連するメール検索
+related_mail_search:
+	loaddll "TKInfo.dll";
+	$subj = dllfuncstr( "CurrentHeader", "Subject" );
+	while ( true ) {
+		#flg = false;
+		$subj_l = tolower( $subj );
+		if (
+			strstr( $subj_l, "re:" ) == 0 || 
+			strstr( $subj_l, "fw:" ) == 0
+		) {
+			$subj = midstr( $subj, 3 );
+			#flg = true;
+		} else if ( strstr( $subj_l, "fwd:" ) == 0 ) {
+			$subj = midstr( $subj, 4 );
+			#flg = true;
+		}
+		if ( strstr( $subj, " " ) == 0 ) {
+			$subj = midstr( $subj, 1 );
+			#flg = true;
+		}
+		if ( #flg == false ) break;
+	}
+	if ( $subj == "" ) {
+		message "メールサブジェクトが見つかりません";
+		endmacro;
+	}
+	#n = dllfunc(
+		"SetFindPack" ,
+		"(\"" + dllfuncstr( "YenEncode", $subj ) + "\", target=subject)"
+	);
+	#n = dllfunc( "StartDoGrep", "", "", 1, $arg );
+endmacro;
+
+//. 共通サブルーチンライブラリ ==============
+//- @共通ライブラリ編集{commonfunc:edit}
+//- @共通ライブラリ挿入{commonfunc}
+
+//.. prep_dlls
+prep_dlls:
+	call dll_path "ht_tools";
+	$httools = $$return;
+	call dll_path "macrodll";
+	$macrodll = $$return;
+return;
+
+//.. dll_path
+dll_path:
+	$$fn = getinistr( $fn_ini, "_config", "path_" + $$1 );
+	if ( $$fn == "" ) {
+		$$bit = "32";
+		if ( platform & 0x00080000 )
+			$$bit = "64";
+		$$fn = currentmacrodirectory + "\\" + $$1 + "-" + $$bit + ".dll";
+	}
+	if ( ! existfile( $$fn ) ) {
+		message "DLLファイルが見つかりません\n" + $$fn;
+		endmacro;
+	}
+//	call dbginfo $$1 + " - DLLパス: " + $$fn;
+	return $$fn;
+return;
+
+//.. read_all_text
+read_all_text:
+	return member( member(
+		createobject("Scripting.FileSystemObject") ,
+		"OpenTextFile", $$1
+	), "ReadAll" );
+
+//.. env_expand
+env_expand:
+	$$1 = member(
+		createobject("Scripting.FileSystemObject") ,
+		"ExpandEnvironmentStrings", $$1
+	);
+return;
+
+//.. split: 文字列分割
+//- $$1 heystac, $$2 needle
+split:
+	##num = strstr( $$1, $$2 );
+	if ( ##num == -1 ) {
+		$split_l = $$1;
+		$split_r = "";
+		return;
+	}
+	$split_l = leftstr( $$1, ##num );
+	$split_r = midstr( $$1, ##num + strlen( $$2 ) );
+return;
+
+//.. split2: 文字列分割 複数文字種バージョン
+split2:
+	$$heystac_rep = $$1;
+	$$repto = midstr( $$2, 0, 1 );
+	#num = 1;
+	while ( #num < strlen( $$2 ) ) {
+		$$heystac_rep = strreplace( $$heystac_rep, midstr( $$2, #num, 1 ), $$repto );
+		#num = #num + 1;
+	}
+	##num = strstr( $$heystac_rep, $$repto );
+	if ( ##num == -1 ) {
+		$split_l = $$1;
+		$split_r = "";
+	} else {
+		$split_l = leftstr( $$1, ##num );
+		$split_r = midstr( $$1, ##num + 1 );
+	}
+return;
+
+//.. get_left_term: 前から順に取り出す デフォルト空白区切り
+//- $$1 heystac, $$2 needle
+get_left_term:
+	$$sep = $$2;
+	if ( $$sep == "" )
+		$$sep = " ";
+	##num = strstr( $$1, $$sep );
+	if ( ##num == -1 ) {
+		//- 最後のterm;
+		$$ret = $$1;
+		$$1 = "";
+	} else {
+		$$ret = leftstr( $$1, ##num );
+		$$1 = midstr( $$1, ##num + strlen( $$sep ) );
+	}
+	return $$ret;
+
+//.. trim
+trim:
+	loaddll $httools;
+	$$1 = dllfuncstr( "Trim", $$1 );
+return;
+
+//.. redo_on_mail_main: メールメイン画面じゃなかったら、やりなおし
+redo_on_mail_main:
+	loaddll "TKInfo.dll";
+	if ( result )
+		if( dllfunc( "IsHidemaruMailMain" ) )
+			#ok = 1;
+	if ( !#ok ) {
+		openreg "CURRENTUSER", "Software\\Hidemaruo\\TuruKame\\Config";
+		$dn = getregstr( "Turukamedir" );
+		if ( $dn == "" ) {
+			message "秀丸メールが見つかりません";
+			endmacro;
+		}
+		run  $dn + "Turukame.exe"
+			+ " /x " + currentmacrofilename
+			+ " /a " + getarg(0)
+			+ " /a " + getarg(1)
+		;
+		endmacro;
+	}
+return;
+
+//.. dbginfo
+dbginfo:
+	if ( $debug_str == "" ) {
+		#debug_mode = getininum(
+			currentmacrodirectory + "\\cmdp.ini",
+			"_config",
+			"debug_mode"
+		);
+		debuginfo #debug_mode;
+		$a[0] = "停止";
+		$a[1] = "出力モニタ";
+		$a[2] = "アウトプット枠";
+		$debug_str = $a[ #debug_mode ];
+	}
+	$msg = "[" + currentmacrobasename + "]";
+	if ( $$1 != "" ) $msg = $msg + " "  + $$1;
+	if ( $$2 != "" ) $msg = $msg + ", " + $$2;
+	if ( $$3 != "" ) $msg = $msg + ", " + $$3;
+	if ( $$4 != "" ) $msg = $msg + ", " + $$4;
+	if ( $$5 != "" ) $msg = $msg + ", " + $$5;
+	if ( $$6 != "" ) $msg = $msg + ", " + $$6;
+	if ( $$7 != "" ) $msg = $msg + ", " + $$7;
+	if ( $$8 != "" ) $msg = $msg + ", " + $$8;
+	if ( $$9 != "" ) $msg = $msg + ", " + $$9;
+	debuginfo $msg + "\x0A";
+
+return;
+
+//.. test_msg
+test_msg:
+	question $$1 + "\n「いいえ」で終了";
+	if ( !result ) endmacro;
+return;
+
+dummy:
+
+

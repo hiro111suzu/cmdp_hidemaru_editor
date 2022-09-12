@@ -1,0 +1,244 @@
+//. 初期設定
+//debuginfo 2;
+
+$s_buf = searchbuffer; #s_opt = searchoption2; // 検索条件保存
+//begingroupundo; // undoをまとめる
+
+$hidari = "{";
+$migi = "}"; 
+
+//. コマンドを探す
+//- 選択文字列
+if ( selecting ) {
+	//- 複数行選択してても、コマンドは一行目だけ
+	$cmd = gettext2( seltopcolumn, seltoplineno, selendcolumn, seltoplineno );
+	goto exec_cmdp;
+}
+
+call from_kakko; //- { }の中
+call try_tagjump; //- タグジャンプしてみる
+call from_url; //- URL・ファイル名文字列
+
+//- カーソル行全体
+$cmd = gettext2( 0, lineno, linelen2, lineno );
+goto command;
+
+//. コマンド受け取りループ {test}
+//.. {}の中から  {mc message "hoge"}
+from_kakko:
+	disabledraw;
+	#ln = lineno;
+
+	#init_x = x;
+	#init_y = y;
+
+	right;  searchup $hidari; //"{"を探す、左側
+	if ( #ln != lineno || ( ! result ) ) {
+		moveto #init_x, #init_y; //なければ右側
+		left;
+		searchdown $hidari;
+		if ( #ln != lineno || ( ! result ) ) {
+			moveto #init_x, #init_y;
+			return;
+		}
+	}
+	right;
+	#sc1 = column;
+
+	searchdown $migi;  // "}"を探す
+	if ( #ln != lineno || ( !result ) ) {
+		moveto #init_x, #init_y; //なければ行末まで
+		golineend2;
+	}
+	#sc2 = column;
+
+	// コマンドライン取得
+	$cmd = gettext2( #sc1, lineno, #sc2, lineno );
+	if ( $cmd == $migi ) { //空コマンドなら
+		$cmd = "";
+		moveto #init_x, #init_y;
+		return;
+	}
+
+	// 視覚効果 ({}の中を一瞬反転させる)
+	enabledraw;
+	enableinvert;
+	beginsel;
+	movetolineno #sc1 + 1, lineno;
+	sleep 200;
+	escape;
+
+	moveto #init_x, #init_y;
+	call dbginfo "{ }の中", $cmd;
+goto exec_cmdp;
+
+//.. タグジャンプしてみる
+try_tagjump:
+	disableerrormsg;
+	tagjump;
+	call dbginfo "タグジャンプ";
+	if ( result ) { 
+		disabledraw;
+		enabledraw y - windowheight / 4;
+		goto end;
+	}
+	enableerrormsg;
+return;
+
+//.. urlなどの文字列上なら開く
+from_url:
+	if ( ( colorcode & 0x00000400 ) == 0 ) return;
+	call dbginfo "色付きテキスト", $cmd;
+	openbyshell;
+goto end;
+
+//. comdpマクロ呼び出し
+exec_cmdp:
+	execmacro currentmacrodirectory + "\\cmdp.mac", $cmd;
+goto end;
+
+//. 終了処理
+end:
+//endgroupundo; //undoグループ化終わり
+setsearch $s_buf, #s_opt; //  検索条件の復帰
+freedll;
+endmacro;
+
+//. 共通サブルーチンライブラリ ==============
+//- @ 共通ライブラリ編集{commonfunc:edit}
+//- @ 共通ライブラリ挿入{commonfunc}
+
+//.. prep_3dlls
+prep_3dlls:
+	call dll_path "DengakuDLL.dll";
+	$dengaku = $$return;
+	call dll_path "ht_tools.dll";
+	$httools = $$return;
+	call dll_path "macrodll.dll";
+	$macrodll = $$return;
+return;
+
+//.. checkdll
+dll_path:
+	$$fn_ini = currentmacrodirectory + "\\dll_path.ini";
+	$$fn = getinistr( $$fn_ini, "dll_path", $$1 );
+	if ( $$fn != "" ) return $$fn;
+
+	$$p[0] = hidemarudir + "\\" + $$1;
+	$$p[1] = macrodir + "\\" + $$1;
+	$$p[2] = macrodir + "\\dll\\" + $$1;
+	$$p[3] = currentmacrodirectory + "\\" + $$1;
+	##num = 0;
+	while( $$p[ ##num ] != "" ) {
+		if ( existfile( $$p[ ##num ] ) ) {
+			writeinistr $$fn_ini, "dll_path", $$1, $$p[ ##num ];
+			return $$p[ ##num ];
+		}
+		##num = ##num + 1;
+	}
+	message "DLLファイルが見つかりません\n" + $$1;
+return;
+
+//.. read_all_text
+read_all_text:
+	return member( member(
+		createobject("Scripting.FileSystemObject") ,
+		"OpenTextFile", $$1
+	), "ReadAll" );
+
+//.. split: 文字列分割
+//- $$1 heystac, $$2 needle
+split:
+	##num = strstr( $$1, $$2 );
+	if ( ##num == -1 ) {
+		$split_l = $$1;
+		$split_r = "";
+		return;
+	}
+	$split_l = leftstr( $$1, ##num );
+	$split_r = midstr( $$1, ##num + strlen( $$2 ) );
+return;
+
+//.. split2: 文字列分割 複数文字種バージョン
+//- $$1 heystac, $$2 needle
+split2:
+	loaddll $dengaku;
+	$split_l = dllfuncstr( "GETTOKEN", $$1, $$2 );
+	$split_r = rightstr( $$1, strlen( $$1 ) - strlen( $split_l ) - 1 );
+	freedll;
+return;
+
+//.. get_left_term: 前から順に取り出す 空白区切り専門
+//- $$1 heystac, $$2 needle
+get_left_term:
+	$$sep = $$2;
+	if ( $$sep == "" )
+		$$sep = " ";
+	loaddll $httools;
+	$$str = dllfuncstr( "Trim", $$1 );
+	##num = strstr( $$str, $$sep );
+	if ( ##num == -1 ) {
+		//- 最後のterm;
+		$$ret = $$str;
+		$rest = "";
+	} else {
+//		$$1 = midstr( $$1, ##num + strlen( $$2 ) );  //- 秀丸メールでまだ refcallが使えない
+		$$ret = dllfuncstr( "Trim", leftstr( $$str, ##num ) );
+		$rest = dllfuncstr( "Trim", midstr( $$str, ##num + strlen( $$sep ) ) );
+	}
+	return $$ret;
+return;
+
+//.. redo_on_mail_main: メールメイン画面じゃなかったら、やりなおし
+redo_on_mail_main:
+	loaddll "TKInfo.dll";
+	if ( result )
+		if( dllfunc( "IsHidemaruMailMain" ) )
+			#ok = 1;
+	if ( !#ok ) {
+		openreg "CURRENTUSER", "Software\\Hidemaruo\\TuruKame\\Config";
+		$dn = getregstr( "Turukamedir" );
+		if ( $dn == "" ) {
+			message "秀丸メールが見つかりません";
+			endmacro;
+		}
+		run  $dn + "Turukame.exe"
+			+ " /x " + currentmacrofilename
+			+ " /a " + getarg(0)
+			+ " /a " + getarg(1)
+		;
+		endmacro;
+	}
+return;
+
+//.. dbginfo
+dbginfo:
+	if ( $debug_str == "" ) {
+		#debug_mode = getininum(
+			currentmacrodirectory + "\\cmdp.ini",
+			"_config",
+			"debug_mode"
+		);
+		debuginfo #debug_mode;
+		$a[0] = "停止";
+		$a[1] = "出力モニタ";
+		$a[2] = "アウトプット枠";
+		$debug_str = $a[ #debug_mode ];
+	}
+	$msg = "[" + currentmacrobasename + "]";
+	if ( $$1 != "" ) $msg = $msg + " "  + $$1;
+	if ( $$2 != "" ) $msg = $msg + ", " + $$2;
+	if ( $$3 != "" ) $msg = $msg + ", " + $$3;
+	if ( $$4 != "" ) $msg = $msg + ", " + $$4;
+	if ( $$5 != "" ) $msg = $msg + ", " + $$5;
+	if ( $$6 != "" ) $msg = $msg + ", " + $$6;
+	if ( $$7 != "" ) $msg = $msg + ", " + $$7;
+	if ( $$8 != "" ) $msg = $msg + ", " + $$8;
+	if ( $$9 != "" ) $msg = $msg + ", " + $$9;
+	debuginfo $msg + "\x0A";
+
+return;
+
+dummy:
+
+

@@ -607,13 +607,12 @@ dll_path:
 		$$bit = "32";
 		if ( platform & 0x00080000 )
 			$$bit = "64";
-		$$fn = currentmacrodirectory + "\\" + $$1 + "-" + $$bit + ".dll";
+		$$fn = currentmacrodirectory + "\\dll\\" + $$1 + "-" + $$bit + ".dll";
 	}
 	if ( ! existfile( $$fn ) ) {
-		message "DLLファイルが見つかりません\n" + $$fn;
+		message "DLLファイルが見つかりません\n" + $$fn, "マクロ共通ライブラリ";
 		endmacro;
 	}
-//	call dbginfo $$1 + " - DLLパス: " + $$fn;
 	return $$fn;
 return;
 
@@ -646,15 +645,14 @@ split:
 return;
 
 //.. split2: 文字列分割 複数文字種バージョン
+//- {tool_test hello world}{menu/edit
 split2:
-	$$heystac_rep = $$1;
-	$$repto = midstr( $$2, 0, 1 );
-	#num = 1;
-	while ( #num < strlen( $$2 ) ) {
-		$$heystac_rep = strreplace( $$heystac_rep, midstr( $$2, #num, 1 ), $$repto );
-		#num = #num + 1;
-	}
-	##num = strstr( $$heystac_rep, $$repto );
+	$$repto = leftstr( $$2, 1 );
+	loaddll "hmjre.dll";
+	##num = strstr( 
+		dllfuncstr( "ReplaceRegular", "[" + $$2 + "]", $$1, 0, $$repto, 1 ) ,
+		$$repto
+	);
 	if ( ##num == -1 ) {
 		$split_l = $$1;
 		$split_r = "";
@@ -679,6 +677,7 @@ get_left_term:
 		$$ret = leftstr( $$1, ##num );
 		$$1 = midstr( $$1, ##num + strlen( $$sep ) );
 	}
+	$rest = $$1;
 	return $$ret;
 
 //.. trim
@@ -689,24 +688,22 @@ return;
 
 //.. redo_on_mail_main: メールメイン画面じゃなかったら、やりなおし
 redo_on_mail_main:
-	loaddll "TKInfo.dll";
-	if ( result )
-		if( dllfunc( "IsHidemaruMailMain" ) )
-			#ok = 1;
-	if ( !#ok ) {
-		openreg "CURRENTUSER", "Software\\Hidemaruo\\TuruKame\\Config";
-		$dn = getregstr( "Turukamedir" );
-		if ( $dn == "" ) {
-			message "秀丸メールが見つかりません";
-			endmacro;
-		}
-		run  $dn + "Turukame.exe"
-			+ " /x " + currentmacrofilename
-			+ " /a " + getarg(0)
-			+ " /a " + getarg(1)
-		;
+	if ( (platform & 0x00800000) != 0 ) {
+		loaddll "TKInfo.dll";
+		if ( result && dllfunc( "IsHidemaruMailMain" ) ) return;
+	}
+	openreg "CURRENTUSER", "Software\\Hidemaruo\\TuruKame\\Config";
+	$dn = getregstr( "Turukamedir" );
+	if ( $dn == "" ) {
+		message "秀丸メールが見つかりません";
 		endmacro;
 	}
+	run  $dn + "Turukame.exe"
+		+ " /x " + currentmacrofilename
+		+ " /a " + getarg(0)
+		+ " /a " + getarg(1)
+	;
+	endmacro;
 return;
 
 //.. dbginfo
@@ -735,6 +732,11 @@ dbginfo:
 	if ( $$9 != "" ) $msg = $msg + ", " + $$9;
 	debuginfo $msg + "\x0A";
 
+return;
+
+//.. time_log
+time_log:
+	call dbginfo str( tickcount - #time_start ) + " msec, " + $$1;
 return;
 
 //.. test_msg

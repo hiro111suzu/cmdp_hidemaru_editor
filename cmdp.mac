@@ -189,6 +189,13 @@ command:
 		goto command;
 	}
 
+//... フィアル・フォルダー
+	if ( existfile( $cmd_line ) ) {
+		call dbginfo "ファイルらしいので、開く";
+		openbyshell $cmd_line;
+		goto end;
+	}
+
 //.. エラー表示して終了
 	message "不明なコマンド: " + $cmd_line, $cmdp_title;
 goto end;
@@ -225,13 +232,16 @@ open:
 		if ( $cmd_arg == "" )
 			$cmd_arg = gettext( seltopx, seltopy, selendx, selendy );
 //		$open = strreplace( $open, "%arg%", $cmd_arg ); //- 秀丸メールにはまだない
-		loaddll "hmjre.dll";
-		$open = dllfuncstr( "ReplaceRegular", "%arg%", $open, 0, $cmd_arg, 1 );
+		#n = strstr( $open, "%arg%" );
+		$open = leftstr( $open, #n ) + $cmd_arg + midstr( $open, #n + 5 );
 	}
 
 	openbyshell $open;
 	if ( result ) goto end;
 	run $open;
+	if ( ! result ) {
+		message "openコマンド: 開けませんでした\n" + $open;
+	}
 goto end;
 
 //.. tool
@@ -437,13 +447,12 @@ dll_path:
 		$$bit = "32";
 		if ( platform & 0x00080000 )
 			$$bit = "64";
-		$$fn = currentmacrodirectory + "\\" + $$1 + "-" + $$bit + ".dll";
+		$$fn = currentmacrodirectory + "\\dll\\" + $$1 + "-" + $$bit + ".dll";
 	}
 	if ( ! existfile( $$fn ) ) {
 		message "DLLファイルが見つかりません\n" + $$fn, "マクロ共通ライブラリ";
 		endmacro;
 	}
-//	call dbginfo $$1 + " - DLLパス: " + $$fn;
 	return $$fn;
 return;
 
@@ -519,8 +528,10 @@ return;
 
 //.. redo_on_mail_main: メールメイン画面じゃなかったら、やりなおし
 redo_on_mail_main:
-	loaddll "TKInfo.dll";
-	if ( result && dllfunc( "IsHidemaruMailMain" ) ) return;
+	if ( (platform & 0x00800000) != 0 ) {
+		loaddll "TKInfo.dll";
+		if ( result && dllfunc( "IsHidemaruMailMain" ) ) return;
+	}
 	openreg "CURRENTUSER", "Software\\Hidemaruo\\TuruKame\\Config";
 	$dn = getregstr( "Turukamedir" );
 	if ( $dn == "" ) {

@@ -66,11 +66,11 @@ inputd:
 			$c = $capt_separator + $capt;
 		$item_set = $item_set + $cmd_name + $c + ",";
 	}
-	
+
 //.. コマンドパレット実行
 	if ( $item_set == "" )
 		$item_set = "  # no item";
-	
+
 	#ime_state = imestate;
 	if ( #ime_state ) imeswitch;
 	loaddll $macrodll;
@@ -87,12 +87,19 @@ inputd:
 		$item_set,
 		$cmdp_title
 	);
+	$mod_key = "";
+	if ( iskeydown( 0x10 ) ) $mod_key = "shift";
+//	if ( iskeydown( 0x12 ) ) $mod_key = "alt";
+	if ( iskeydown( 0x11 ) ) $mod_key = "ctrl";
+	if ( $mod_key != "" )
+		call dbginfo "key: " + $mod_key;
+
 	freedll;
 	if ( #ime_state != imestate ) imeswitch;
 	if ( $cmd_line == "" ) goto end;
 	if ( $group_name != "" )
 		$cmd_line = $group_name + $cmd_line;
-	
+
 //.. キャプション削除
 	//- [コマンド名]$capt_separator[キャプション]";"[コマンド引数] の並びと判断
 	call split $cmd_line, $capt_separator;
@@ -107,6 +114,7 @@ goto command;
 //. コマンド解釈
 command:
 	call dbginfo "cmd_line", $cmd_line;
+//	call dbginfo "mod_key", $mod_key;
 
 //.. 「コマンド名」 と 「引数」にわける
 	call split2 $cmd_line, $arg_separator;
@@ -128,6 +136,7 @@ command:
 			goto command;
 		}
 	}
+
 //.. iniのアイテム
 	$mac_cmd	= getinistr( $fn_ini, $cmd_name, "mac_cmd" );
 	$mac  		= getinistr( $fn_ini, $cmd_name, "mac" );
@@ -137,6 +146,14 @@ command:
 	$arg		= getinistr( $fn_ini, $cmd_name, "arg" );
 	$menu		= getinistr( $fn_ini, $cmd_name, "menu" );
 	call get_capt $cmd_name; //- >$capt
+
+	//- mod_key
+	if (
+		$mod_key == "shift"
+		|| (  $mod_key == "ctrl" && ( $mac_cmd + $open + $menu ) != "" )
+	) {
+		goto open_ini;
+	}
 
 	if ( $arg == "-" ) $arg = $cmd_name;
 	if ( $mac_cmd	!= "" ) goto macro_command;
@@ -153,14 +170,18 @@ command:
 	call read_all_text $fn_tool_mac;
 	if ( strstr( $$return, "\n" + $cmd_name + ":" ) > -1 ) {
 		call dbginfo "tool発見";
-		if ( $arg == "" ) {
-			execmacro $fn_tool_mac, $cmd_name, $cmd_arg;
-		} else {
-			execmacro $fn_tool_mac, $cmd_name, $arg, $cmd_arg;
-		}
-		goto end;
+		$tool = $cmd_name;
+		goto tool;
 	}
-	$$return = "";
+
+//... そういうtool2がある？
+	call read_all_text $fn_tool2_mac;
+	if ( strstr( $$return, "\n" + $cmd_name + ":" ) > -1 ) {
+		call dbginfo "tool発見";
+		$tool2 = $cmd_name;
+		goto tool2;
+	}
+
 //	call time_log "tool scan end";
 
 //... そういう名前のマクロがある？
@@ -248,6 +269,8 @@ goto end;
 tool:
 	if ( $tool == "-" )
 		$tool = $cmd_name;
+	if ( $mod_key == "ctrl" )
+		call open_find $fn_tool_mac, $tool + ":";
 	if ( $arg == "" ) {
 		execmacro $fn_tool_mac, $tool, $cmd_arg;
 	} else {
@@ -259,13 +282,14 @@ goto end;
 tool2:
 	if ( $tool2 == "-" )
 		$tool2 = $cmd_name;
+	if ( $mod_key == "ctrl" )
+		call open_find $fn_tool2_mac, $tool2 + ":";
 	if ( $arg == "" ) {
 		execmacro $fn_tool2_mac, $tool2, $cmd_arg;
 	} else {
 		execmacro $fn_tool2_mac, $tool2, $arg, $cmd_arg;
 	}
 goto end;
-
 
 //.. menu
 make_menu:
@@ -337,6 +361,8 @@ group_menu:
 
 //.. グループアイテム
 group_item:
+	if ( $mod_key == "ctrl" )
+		goto open_ini;
 	$group_name = $cmd_name;
 	$group_caption = $group_name;
 	call get_capt $cmd_name; //- >$capt
@@ -347,10 +373,11 @@ goto inputd;
 //. 終了処理
 end:
 freedll;
+call dbginfo "終了";
 endmacro;
 
 //. サブルーチン
-//.. read_all_section
+//.. get_all_section
 get_all_section:
 	if ( $all_cmd[0] != "" ) return;
 	loaddll $httools; 
@@ -379,7 +406,7 @@ get_all_section:
 		}
 		if ( ! dllfunc( "NextSection" ) ) break;
 	}
-	call dbginfo "コマンド数: " + str( ##num );
+//	call dbginfo "コマンド数: " + str( ##num );
 return;
 
 //.. tobe_hidden
@@ -422,11 +449,22 @@ findmac:
 	#i = 0;
 	while(1){
 		if ( $fn[#i] == "" ) break;
-//		call dbginfo $fn[#i];
-		if ( existfile( $fn[#i] ) ) return $fn[#i];
+		if ( existfile( $fn[#i] ) ) {
+			if ( $mod_key != "ctrl" )
+				return $fn[#i];
+			openfile $fn[#i];
+			goto end;
+		}
 		#i = #i + 1;
 	}
-return;
+return "";
+
+
+//.. open
+open_ini:
+	call dbginfo "INIファイルを開く";
+	openfile  "/sR,\"[" + $cmd_name + "]\" " + $fn_ini;
+goto end;
 
 //. 共通サブルーチンライブラリ ==============
 //- @共通ライブラリ編集{commonfunc:edit}
@@ -543,8 +581,17 @@ redo_on_mail_main:
 		+ " /a " + getarg(0)
 		+ " /a " + getarg(1)
 	;
+	call dbginfo "秀丸メールでやりなおし";
 	endmacro;
 return;
+
+//.. open_find
+open_find:
+	openfile  "/sR,\"" + $$2 + "\" " + $$1;
+	if ( ! result )
+		message "ファイルが見つかりません\n" + $$1;
+	call dbginfo "検索: " + $$2;
+goto end;
 
 //.. dbginfo
 dbginfo:
@@ -555,28 +602,37 @@ dbginfo:
 			"debug_mode"
 		);
 		debuginfo #debug_mode;
-		$a[0] = "停止";
+		$a[-1] = "停止";
+		$a[0] = "ステータスバー";
 		$a[1] = "出力モニタ";
 		$a[2] = "アウトプット枠";
 		$debug_str = $a[ #debug_mode ];
 	}
-	$msg = "[" + currentmacrobasename + "]";
-	if ( $$1 != "" ) $msg = $msg + " "  + $$1;
-	if ( $$2 != "" ) $msg = $msg + ", " + $$2;
-	if ( $$3 != "" ) $msg = $msg + ", " + $$3;
-	if ( $$4 != "" ) $msg = $msg + ", " + $$4;
-	if ( $$5 != "" ) $msg = $msg + ", " + $$5;
-	if ( $$6 != "" ) $msg = $msg + ", " + $$6;
-	if ( $$7 != "" ) $msg = $msg + ", " + $$7;
-	if ( $$8 != "" ) $msg = $msg + ", " + $$8;
-	if ( $$9 != "" ) $msg = $msg + ", " + $$9;
-	debuginfo $msg + "\x0A";
-
+	if ( 1 < #debug_mode ) {
+		$msg = "[" + currentmacrobasename + "]";
+		if ( $$1 != "" ) $msg = $msg + " "  + $$1;
+		if ( $$2 != "" ) $msg = $msg + ", " + $$2;
+		if ( $$3 != "" ) $msg = $msg + ", " + $$3;
+		if ( $$4 != "" ) $msg = $msg + ", " + $$4;
+		if ( $$5 != "" ) $msg = $msg + ", " + $$5;
+		if ( $$6 != "" ) $msg = $msg + ", " + $$6;
+		if ( $$7 != "" ) $msg = $msg + ", " + $$7;
+		if ( $$8 != "" ) $msg = $msg + ", " + $$8;
+		if ( $$9 != "" ) $msg = $msg + ", " + $$9;
+		debuginfo $msg + "\x0A";
+	} else if ( #debug_mode == 0 ) {
+		//- statusbar 
+		if ( $statusbar_txt == "" )
+			$statusbar_txt = currentmacrobasename;
+		$statusbar_txt = $statusbar_txt + ", " + $$1;
+		title $statusbar_txt, 1;
+		title -1, 1;
+	}
 return;
 
 //.. time_log
 time_log:
-	call dbginfo str( tickcount - #time_start ) + " msec, " + $$1;
+//	call dbginfo str( tickcount - #time_start ) + " msec, " + $$1;
 return;
 
 //.. test_msg

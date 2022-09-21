@@ -136,7 +136,8 @@ endmacro;
 //.. debug_mode
 debug_mode:
 	$fn = currentmacrodirectory + "\\cmdp.ini";
-	$name[0] = "停止";
+	$name[-1] = "停止";
+	$name[0] = "ステータスバー";
 	$name[1] = "デバッグモニタ";
 	$name[2] = "アウトプット枠";	
 	if ( getarg(1) == "" ) {
@@ -351,6 +352,7 @@ selectall_plus:
 	} else if ( seltoplineno == 1 && selendlineno == linecount2 ) {
 		escape;
 		prevpos;
+//		prevposhistback;
 		selectfoldable;
 	} else if ( seltoplineno != selendlineno - 1 ) {
 		escape;
@@ -362,84 +364,14 @@ selectall_plus:
 	}
 endmacro;
 
-//.. ebwin
-ebwin:
-	//- 検索語を受け取る
-	$in = getarg(1);
-	if ( $in == "_clip" ) {
-		$in = getclipboard();
-	}
-	if ( $in == "" ) {
-		if ( selecting ) {
-			$in = gettext( seltopx, seltopy, selendx, selendy );
-		} else {
-			$in = gettext2( 0, lineno, column, lineno );
-		}
-	}
-	if ( $in == "" ) endmacro;
+//.. temp_rep
+temp_rep:
+	title "ステータスバーです", 1;
+	title -1, 1;
 
-	if ( filetype != "new" || updated == 1 )
-		newfile;
-//	setfiletype ".md"; 
-	runex "C:\\Program Files\\EBWin4(x64)\\ebwinc.exe /C=1 /E=u /S=\"" + $in + "\""
-	    , 1     //sync   0:async, 1:sync
-	    , 0, "" //stdin  0:none, 1:auto, 2:<file, 3:(reserved),
-	            //       4:current content, 5:selection
-	    , 5, "" //stdout 0:none, 1:auto, 2:>file 3:>>file, 4:new window,
-	            //       5:insert, 6:replace, 7:>output pane, 8:>>output pane
-	    , 0, "" //stderr 0:none, 1:auto or >>stdout, 2-8:same as stdout's param
-	    , 0, "" //folder 0:none, 1:current, 2:specify 3:(reserved), 4:exe's
-	    , 0     //show   0:auto, 1:show, 2:hide, 3-13:ShellExecute()'s SW_*
-	    , 1     //draw   0:draw, 1:no draw when stdout redirected
-	    , 6     //encode 0:ansi, 2:utf-16, 6:utf-8
-	    , 0     //extended flags
-	;
-	disabledraw;
-	gofiletop;
-	insert ". {ebwin_g " + $in + "}\n.. ";
-//	replaceallfast "^--\n\\[(.+?)\]"	, ".. [\\1]\n... ", regular;
-	replaceallfast "^--\n\\["	, ".. [", regular;
-	replaceallfast "^([1-9]) "	, "... \\1 ", regular;
-	replaceallfast "^([a-d]) "	, "... \\1 ", regular;
-	replaceallfast "^([1-9][a-d]) ", "... \\1 ", regular;
-	replaceallfast "^--\n"		, "... ", regular;
-	replaceallfast "\n\n\n+"	, "\n\n", regular;
-	gofiletop;
-	enabledraw;
-endmacro;
+//	message "hogerian";
 
-//.. common_mac: mac 共通サブルーチンライブラリを挿入
-commonfunc:
-	$fn_lib = macrodir + "\\common.mac";
-	if ( getarg(1) == "edit" ){
-		openfile $fn_lib;
-		endmacro;
-	}
-	if ( getarg(1) == "copy" ) {
-		gofiletop;
-		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
-		setsearch $s_buf, #s_opt; //  検索条件の復帰
-		if ( result ) {
-			golinetop; beginsel; gofileend; endsel; copy;
-			message "コピーしました";
-		} else {
-			message "このファイルには含まれていないようです";
-		}
-	} else {
-		question "共通サブルーチンライブラリを挿入します";
-		if ( ! result ) endmacro;
-
-		$s_buf = searchbuffer; #s_opt = searchoption; // 検索条件保存
-		gofiletop;
-		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
-		setsearch $s_buf, #s_opt; //  検索条件の復帰
-		if ( result ) {
-			golinetop; beginsel; gofileend; endsel; delete;//- 
-		} else {
-			gofileend;
-		}
-		insertfile $fn_lib;
-	}
+//	message "現在機能なし";
 endmacro;
 
 //. mail
@@ -453,7 +385,7 @@ endmacro;
 		#num = 0;
 	writeregnum "DoubleDeck", #num;
 	loaddll "Tkinfo.dll";
-	#n = dllfunc( "EnvChanged" );
+	#_ = dllfunc( "EnvChanged" );
 	freedll;
 endmacro;
 
@@ -485,6 +417,55 @@ mail_folder:
 		$split_r = "受信";
 	loaddll "TKInfo.dll";
 	#n = dllfunc( "SelectFolder", $split_l, $split_r );
+endmacro;
+
+//.. mail_folder_change
+mail_folder_change2:
+	call prep_dlls;
+	loaddll "TKInfo.dll";
+	#num = 0;
+	$item_set = "";
+	$account = dllfuncstr( "Account", 0 );
+	$folder = "";
+	$item_set = $item_set + $account + "\\,";
+	while ( true ) {
+		$path = dllfuncstr( "GetNextFolder", $account, $folder );
+		if ( $path == "" ) break;
+		call split $path, "\\";
+		$account = $split_l;
+		$folder  = $split_r;
+		$item_set = $item_set + tolower( $account ) + "\\" + $folder + ",";
+	}
+	loaddll $macrodll;
+	$selected = dllfuncstr(
+		"EDIT_CREATE",
+		hidemaruhandle(0),
+		$item_set,
+		"フォルダの選択"
+	);
+	loaddll "TKInfo.dll";
+	call split $selected, "\\";
+	if ( $split_r == "" )
+		$split_r = "受信";
+	#n = dllfunc( "SelectFolder", $split_l, $split_r );
+endmacro;
+
+mail_folder_change:
+	loaddll "TKInfo.dll";
+	if ( dllfuncstr( "CurrentFolder" ) != "受信" ) {
+		#n = dllfunc( "SelectFolder", "", "受信" );	
+	} else {
+		$cur_acc = dllfuncstr( "CurrentAccount" );
+		#num = 0;
+		while ( true ) {
+			if ( $cur_acc == dllfuncstr( "Account", #num ) ) break;
+			#num = #num + 1;
+		}
+		$next_acc = dllfuncstr( "Account", #num + 1 );
+		if ( $next_acc == "" )
+			$next_acc = dllfuncstr( "Account", 0 );
+		#n = dllfunc( "SelectFolder", $next_acc, "受信" );
+	}
 endmacro;
 
 //.. mail_filter
@@ -586,6 +567,127 @@ related_mail_search:
 		"(\"" + dllfuncstr( "YenEncode", $subj ) + "\", target=subject)"
 	);
 	#n = dllfunc( "StartDoGrep", "", "", 1, $arg );
+endmacro;
+
+//. プライベート
+//.. fx: firefox
+fx:
+	run @"C:\Program Files\mozilla Firefox\firefox.exe "
+		 + strreplace( getarg(1), " ", " -new-tab " );
+endmacro;
+
+//.. focus_pane
+focus_pane:
+	#f = getfocus;
+	if ( #f == 2 ) {
+		setfocus(4); //- フォルダ枠へ
+	} else {
+		setfocus(2); //- アウトラインへ
+	}
+endmacro;
+
+//.. ebwin
+ebwin:
+	//- 検索語を受け取る
+	$in = getarg(1);
+	if ( $in == "_clip" ) {
+		$in = getclipboard();
+	}
+	if ( $in == "" ) {
+		if ( selecting ) {
+			$in = gettext( seltopx, seltopy, selendx, selendy );
+		} else {
+			$in = gettext2( 0, lineno, column, lineno );
+		}
+	}
+	if ( $in == "" ) endmacro;
+
+	if ( filetype != "new" || updated == 1 )
+		newfile;
+//	setfiletype ".md"; 
+	runex "C:\\Program Files\\EBWin4(x64)\\ebwinc.exe /C=1 /E=u /S=\"" + $in + "\""
+	    , 1     //sync   0:async, 1:sync
+	    , 0, "" //stdin  0:none, 1:auto, 2:<file, 3:(reserved),
+	            //       4:current content, 5:selection
+	    , 5, "" //stdout 0:none, 1:auto, 2:>file 3:>>file, 4:new window,
+	            //       5:insert, 6:replace, 7:>output pane, 8:>>output pane
+	    , 0, "" //stderr 0:none, 1:auto or >>stdout, 2-8:same as stdout's param
+	    , 0, "" //folder 0:none, 1:current, 2:specify 3:(reserved), 4:exe's
+	    , 0     //show   0:auto, 1:show, 2:hide, 3-13:ShellExecute()'s SW_*
+	    , 1     //draw   0:draw, 1:no draw when stdout redirected
+	    , 6     //encode 0:ansi, 2:utf-16, 6:utf-8
+	    , 0     //extended flags
+	;
+	disabledraw;
+	gofiletop;
+	insert ". {ebwin_g " + $in + "}\n.. ";
+//	replaceallfast "^--\n\\[(.+?)\]"	, ".. [\\1]\n... ", regular;
+	replaceallfast "^--\n\\["	, ".. [", regular;
+	replaceallfast "^([1-9]) "	, "... \\1 ", regular;
+	replaceallfast "^([a-d]) "	, "... \\1 ", regular;
+	replaceallfast "^([1-9][a-d]) ", "... \\1 ", regular;
+	replaceallfast "^--\n"		, "... ", regular;
+	replaceallfast "\n\n\n+"	, "\n\n", regular;
+	gofiletop;
+	enabledraw;
+endmacro;
+
+//.. close_new
+close_new:
+	#num = 0;
+	#ids = 0;
+	while ( #idx < hidemarucount ) {
+		if ( filename[ #idx ] == "" )
+			#num = #num + 1;
+		#idx = #idx + 1;
+	}
+	if ( #num == 0 ) {
+		message "無題のタブはありません";
+		endmacro;
+	}
+	question "無題のタブが" + str( #num ) + "個あります。\n全部閉じますか？";
+	if ( result == 0 ) endmacro;
+	if ( filename == "" )
+		prevhidemaru;
+	while ( true ) {
+		#handle = findhidemaru("");
+		if ( #handle == -1 ) endmacro;
+		closehidemaruforced( #handle );
+	}
+endmacro;
+
+//.. common_mac: mac 共通サブルーチンライブラリを挿入
+commonfunc:
+	$fn_lib = macrodir + "\\common.mac";
+	if ( getarg(1) == "edit" ){
+		openfile $fn_lib;
+		endmacro;
+	}
+	if ( getarg(1) == "copy" ) {
+		gofiletop;
+		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
+		setsearch $s_buf, #s_opt; //  検索条件の復帰
+		if ( result ) {
+			golinetop; beginsel; gofileend; endsel; copy;
+			message "コピーしました";
+		} else {
+			message "このファイルには含まれていないようです";
+		}
+	} else {
+		question "共通サブルーチンライブラリを挿入します";
+		if ( ! result ) endmacro;
+
+		$s_buf = searchbuffer; #s_opt = searchoption; // 検索条件保存
+		gofiletop;
+		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
+		setsearch $s_buf, #s_opt; //  検索条件の復帰
+		if ( result ) {
+			golinetop; beginsel; gofileend; endsel; delete;//- 
+		} else {
+			gofileend;
+		}
+		insertfile $fn_lib;
+	}
 endmacro;
 
 //. 共通サブルーチンライブラリ ==============
@@ -703,8 +805,17 @@ redo_on_mail_main:
 		+ " /a " + getarg(0)
 		+ " /a " + getarg(1)
 	;
+	call dbginfo "秀丸メールでやりなおし";
 	endmacro;
 return;
+
+//.. open_find
+open_find:
+	openfile  "/sR,\"" + $$2 + "\" " + $$1;
+	if ( ! result )
+		message "ファイルが見つかりません\n" + $$1;
+	call dbginfo "検索: " + $$2;
+goto end;
 
 //.. dbginfo
 dbginfo:
@@ -715,28 +826,37 @@ dbginfo:
 			"debug_mode"
 		);
 		debuginfo #debug_mode;
-		$a[0] = "停止";
+		$a[-1] = "停止";
+		$a[0] = "ステータスバー";
 		$a[1] = "出力モニタ";
 		$a[2] = "アウトプット枠";
 		$debug_str = $a[ #debug_mode ];
 	}
-	$msg = "[" + currentmacrobasename + "]";
-	if ( $$1 != "" ) $msg = $msg + " "  + $$1;
-	if ( $$2 != "" ) $msg = $msg + ", " + $$2;
-	if ( $$3 != "" ) $msg = $msg + ", " + $$3;
-	if ( $$4 != "" ) $msg = $msg + ", " + $$4;
-	if ( $$5 != "" ) $msg = $msg + ", " + $$5;
-	if ( $$6 != "" ) $msg = $msg + ", " + $$6;
-	if ( $$7 != "" ) $msg = $msg + ", " + $$7;
-	if ( $$8 != "" ) $msg = $msg + ", " + $$8;
-	if ( $$9 != "" ) $msg = $msg + ", " + $$9;
-	debuginfo $msg + "\x0A";
-
+	if ( 1 < #debug_mode ) {
+		$msg = "[" + currentmacrobasename + "]";
+		if ( $$1 != "" ) $msg = $msg + " "  + $$1;
+		if ( $$2 != "" ) $msg = $msg + ", " + $$2;
+		if ( $$3 != "" ) $msg = $msg + ", " + $$3;
+		if ( $$4 != "" ) $msg = $msg + ", " + $$4;
+		if ( $$5 != "" ) $msg = $msg + ", " + $$5;
+		if ( $$6 != "" ) $msg = $msg + ", " + $$6;
+		if ( $$7 != "" ) $msg = $msg + ", " + $$7;
+		if ( $$8 != "" ) $msg = $msg + ", " + $$8;
+		if ( $$9 != "" ) $msg = $msg + ", " + $$9;
+		debuginfo $msg + "\x0A";
+	} else if ( #debug_mode == 0 ) {
+		//- statusbar 
+		if ( $statusbar_txt == "" )
+			$statusbar_txt = currentmacrobasename;
+		$statusbar_txt = $statusbar_txt + ", " + $$1;
+		title $statusbar_txt, 1;
+		title -1, 1;
+	}
 return;
 
 //.. time_log
 time_log:
-	call dbginfo str( tickcount - #time_start ) + " msec, " + $$1;
+//	call dbginfo str( tickcount - #time_start ) + " msec, " + $$1;
 return;
 
 //.. test_msg

@@ -89,9 +89,8 @@ yen:
 	if ( ! selecting ) {
 		golinetop2; beginsel; golineend2; endsel;
 	}
-	$s_buf = searchbuffer; #s_opt = searchoption; // 検索条件保存
+	setcompatiblemode 0x00020000; // 終了後、検索条件を戻すモード
 	replaceallfast "([^\\\\])\\\\([^\\\\])", "\\1\\\\\\\\\\2", regular, inselect;
-	setsearch $s_buf, #s_opt; //  検索条件の復帰
 endmacro;
 
 //.. open_text テキストファイルを適当に探して開く
@@ -663,10 +662,10 @@ commonfunc:
 		openfile $fn_lib;
 		endmacro;
 	}
+	setcompatiblemode 0x00020000; // 終了後、検索条件を戻すモード
 	if ( getarg(1) == "copy" ) {
 		gofiletop;
 		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
-		setsearch $s_buf, #s_opt; //  検索条件の復帰
 		if ( result ) {
 			golinetop; beginsel; gofileend; endsel; copy;
 			message "コピーしました";
@@ -677,10 +676,8 @@ commonfunc:
 		question "共通サブルーチンライブラリを挿入します";
 		if ( ! result ) endmacro;
 
-		$s_buf = searchbuffer; #s_opt = searchoption; // 検索条件保存
 		gofiletop;
 		searchdown "//. 共通サブルーチンライブラリ" + " ==============";
-		setsearch $s_buf, #s_opt; //  検索条件の復帰
 		if ( result ) {
 			golinetop; beginsel; gofileend; endsel; delete;//- 
 		} else {

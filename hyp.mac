@@ -1,7 +1,7 @@
 //. 初期設定
 //debuginfo 2;
 
-$s_buf = searchbuffer; #s_opt = searchoption2; // 検索条件保存
+setcompatiblemode 0x00020000; // 終了後、検索条件を戻すモード
 //begingroupundo; // undoをまとめる
 
 $hidari = "{";
@@ -24,7 +24,7 @@ $cmd = gettext2( 0, lineno, linelen2, lineno );
 goto command;
 
 //. コマンド受け取りループ {test}
-//.. {}の中から  {mc message "hoge"}
+//.. {}の中から  {>message "hoge"}
 from_kakko:
 	disabledraw;
 	#ln = lineno;
@@ -100,7 +100,6 @@ goto end;
 //. 終了処理
 end:
 //endgroupundo; //undoグループ化終わり
-setsearch $s_buf, #s_opt; //  検索条件の復帰
 freedll;
 endmacro;
 
